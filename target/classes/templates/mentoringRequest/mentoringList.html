@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout-board}">
+
+<head>
+    <title>멘토링 내역</title>
+    <th:block layout:fragment="css">
+        <link rel="stylesheet" href="/css/boardList.css" />
+        <link rel="stylesheet" href="css/mentoringRequest/mentoringList.css">
+    </th:block>
+    <meta name="_csrf" th:content="${_csrf.token}">
+    <meta name="_csrf_header" th:content="${_csrf.headerName}">
+</head>
+
+<body>
+<div layout:fragment="content">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h3>멘토링</h3>
+        <div class="d-flex gap-2">
+            <a href="/mentoring/request" class="btn btn-outline-primary">멘토링 신청</a>
+            <a href="/mentoring/register" class="btn btn-outline-success">멘토 등록</a>
+        </div>
+    </div>
+
+    <ul class="nav nav-tabs mb-3" id="mentoringTabs">
+        <li class="nav-item">
+            <a class="nav-link active" data-type="received" href="#">받은 신청</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" data-type="sent" href="#">보낸 신청</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" data-type="accepted" href="#">수락됨</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" data-type="completed" href="#">완료됨</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" data-type="mentors" href="#">멘토 목록</a>
+        </li>
+    </ul>
+
+    <div id="mentoring-content"></div>
+</div>
+
+<th:block layout:fragment="script">
+    <script th:src="@{/js/mentorRequest/mentoringList.js}"></script>
+</th:block>
+</body>
+</html>

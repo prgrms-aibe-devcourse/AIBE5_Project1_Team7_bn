@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout-board}">
+
+<head>
+    <title>멘토 등록</title>
+    <meta name="_csrf" th:content="${_csrf.token}">
+    <meta name="_csrf_header" th:content="${_csrf.headerName}">
+
+    <th:block layout:fragment="css">
+        <link rel="stylesheet" href="/css/mentoringRequest/mentorRegister.css">
+    </th:block>
+</head>
+
+<body>
+<div layout:fragment="content">
+    <div class="mentor-register-container">
+        <div class="mentor-register-form">
+            <div class="form-container">
+                <h4 class="form-title">멘토 등록</h4>
+
+                <form id="mentorRegisterForm">
+                    <div class="mb-3">
+                        <label class="form-label">전문 기술 스택</label>
+                        <input type="text" name="techStack" class="form-control" placeholder="예: Spring, JPA" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">소개글</label>
+                        <textarea name="description" class="form-control" rows="5" placeholder="자기 소개를 작성해주세요" required></textarea>
+                    </div>
+
+                    <div class="d-flex justify-content-center">
+                        <button type="submit" class="btn btn-primary">등록하기</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<th:block layout:fragment="script">
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script th:src="@{/js/mentorRequest/mentorRegister.js}"></script>
+</th:block>
+</body>
+</html>

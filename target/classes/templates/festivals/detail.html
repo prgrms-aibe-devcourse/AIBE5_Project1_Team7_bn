@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <title th:text="${festival.name} + ' - 축제 상세'">축제 상세</title>
+    <style>
+        .festival-detail {
+            max-width: 900px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .festival-header {
+            border-bottom: 2px solid #1976d2;
+            padding-bottom: 20px;
+            margin-bottom: 20px;
+        }
+        .festival-title {
+            font-size: 32px;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        .info-section {
+            margin: 20px 0;
+        }
+        .info-row {
+            display: flex;
+            margin-bottom: 15px;
+            padding: 10px;
+            background-color: #f9f9f9;
+            border-radius: 4px;
+        }
+        .info-label {
+            font-weight: bold;
+            min-width: 120px;
+            color: #555;
+        }
+        .info-value {
+            color: #333;
+        }
+        .festival-description {
+            margin: 20px 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+            border-radius: 4px;
+            line-height: 1.6;
+        }
+        .badge-section {
+            margin: 20px 0;
+        }
+        .badge-section h3 {
+            margin-bottom: 10px;
+            color: #555;
+        }
+        .badges {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .category-badge {
+            background-color: #f3e5f5;
+            color: #7b1fa2;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        .label-badge {
+            background-color: #e3f2fd;
+            color: #1976d2;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        .free-badge {
+            background-color: #4caf50;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 4px;
+            font-size: 16px;
+            font-weight: bold;
+        }
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            margin: 10px 5px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 16px;
+        }
+        .btn-primary {
+            background-color: #1976d2;
+            color: white;
+        }
+        .btn-secondary {
+            background-color: #757575;
+            color: white;
+        }
+        .similar-section {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
+        }
+        .similar-festivals {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .similar-card {
+            border: 1px solid #ddd;
+            padding: 15px;
+            border-radius: 4px;
+            background-color: #f9f9f9;
+        }
+        .similar-card h4 {
+            margin: 0 0 10px 0;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="festival-detail">
+        <div class="festival-header">
+            <h1 class="festival-title" th:text="${festival.name}">축제 이름</h1>
+        </div>
+
+        <div class="info-section">
+            <div class="info-row">
+                <span class="info-label">개최 기간</span>
+                <span class="info-value">
+                    <span th:text="${#temporals.format(festival.startDate, 'yyyy년 MM월 dd일')}"></span> ~ 
+                    <span th:text="${#temporals.format(festival.endDate, 'yyyy년 MM월 dd일')}"></span>
+                </span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">지역</span>
+                <span class="info-value" th:text="${festival.region}"></span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">장소</span>
+                <span class="info-value" th:text="${festival.location}"></span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">입장료</span>
+                <span class="info-value">
+                    <span th:if="${festival.free}" class="free-badge">무료</span>
+                    <span th:unless="${festival.free}" th:text="${festival.fee != null ? festival.fee + '원' : '별도 문의'}"></span>
+                </span>
+            </div>
+            <div class="info-row" th:if="${festival.website}">
+                <span class="info-label">홈페이지</span>
+                <span class="info-value">
+                    <a th:href="${festival.website}" target="_blank" th:text="${festival.website}">웹사이트</a>
+                </span>
+            </div>
+            <div class="info-row" th:if="${festival.contact}">
+                <span class="info-label">문의</span>
+                <span class="info-value" th:text="${festival.contact}"></span>
+            </div>
+        </div>
+
+        <div class="festival-description" th:if="${festival.description}">
+            <h3>축제 소개</h3>
+            <p th:text="${festival.description}"></p>
+        </div>
+
+        <div class="badge-section" th:if="${!festival.categories.isEmpty()}">
+            <h3>카테고리</h3>
+            <div class="badges">
+                <span th:each="category : ${festival.categories}" 
+                      class="category-badge" 
+                      th:text="${category}"></span>
+            </div>
+        </div>
+
+        <div class="badge-section" th:if="${!festival.labels.isEmpty()}">
+            <h3>특징</h3>
+            <div class="badges">
+                <span th:each="label : ${festival.labels}" 
+                      class="label-badge" 
+                      th:text="${label}"></span>
+            </div>
+        </div>
+
+        <div style="margin-top: 30px;">
+            <a href="/festivals" class="btn btn-secondary">목록으로</a>
+            <button class="btn btn-primary" onclick="loadSimilarFestivals()">비슷한 축제 보기</button>
+        </div>
+
+        <div id="similarSection" class="similar-section" style="display: none;">
+            <h2>비슷한 축제</h2>
+            <div id="similarFestivals" class="similar-festivals"></div>
+        </div>
+    </div>
+
+    <script th:inline="javascript">
+        const festivalId = /*[[${festival.id}]]*/ 0;
+
+        function loadSimilarFestivals() {
+            fetch(`/api/festivals/${festivalId}/similar?limit=6`)
+                .then(response => response.json())
+                .then(festivals => {
+                    const section = document.getElementById('similarSection');
+                    const container = document.getElementById('similarFestivals');
+                    
+                    if (festivals.length === 0) {
+                        container.innerHTML = '<p>비슷한 축제를 찾을 수 없습니다.</p>';
+                    } else {
+                        container.innerHTML = '';
+                        festivals.forEach(festival => {
+                            const card = document.createElement('div');
+                            card.className = 'similar-card';
+                            card.innerHTML = `
+                                <h4>${festival.name}</h4>
+                                <div><strong>지역:</strong> ${festival.region}</div>
+                                <div><strong>기간:</strong> ${festival.startDate} ~ ${festival.endDate}</div>
+                                <div style="margin-top: 10px;">
+                                    <a href="/festivals/${festival.id}" class="btn btn-primary" style="padding: 6px 12px; font-size: 14px;">보기</a>
+                                </div>
+                            `;
+                            container.appendChild(card);
+                        });
+                    }
+                    section.style.display = 'block';
+                })
+                .catch(error => console.error('Error:', error));
+        }
+    </script>
+</div>
+</body>
+</html>

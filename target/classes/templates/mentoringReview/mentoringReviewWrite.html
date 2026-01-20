@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout-board}">
+
+<head>
+    <title>멘토링 후기 작성</title>
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+
+    <th:block layout:fragment="css">
+        <link rel="stylesheet" href="/css/mentoringReview/mentoringReviewWrite.css">
+    </th:block>
+</head>
+
+<body>
+<div layout:fragment="content">
+    <div class="form-container">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="mb-0">멘토링 후기 작성</h4>
+                <small class="text-muted">완료된 멘토링에 대한 솔직한 후기를 남겨주세요</small>
+            </div>
+
+            <div class="card-body">
+                <form id="reviewForm">
+                    <div class="mb-3">
+                        <label class="form-label">후기를 작성할 멘토링 선택 *</label>
+                        <div id="mentoringList">
+                            <div class="text-center">
+                                <div class="spinner-border spinner-border-sm me-2"></div>
+                                로딩 중...
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="title" class="form-label">제목 *</label>
+                        <input type="text" class="form-control" id="title" name="title"
+                               placeholder="후기 제목을 입력해주세요" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">평점 *</label>
+                        <div class="star-rating-input" id="starRating">
+                            <span class="star-input" data-rating="1">★</span>
+                            <span class="star-input" data-rating="2">★</span>
+                            <span class="star-input" data-rating="3">★</span>
+                            <span class="star-input" data-rating="4">★</span>
+                            <span class="star-input" data-rating="5">★</span>
+                        </div>
+                        <small class="text-muted" id="ratingText">별점을 선택해주세요</small>
+                        <input type="hidden" id="rating" name="rating" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="content" class="form-label">후기 내용 *</label>
+                        <textarea class="form-control" id="content" name="content" rows="6"
+                                  placeholder="멘토링은 어떠셨나요? 솔직한 후기를 남겨주세요." required></textarea>
+                    </div>
+
+                    <div class="d-flex gap-2 justify-content-end">
+                        <button type="button" class="btn btn-secondary" onclick="goBack()">취소</button>
+                        <button type="submit" class="btn btn-primary" id="submitBtn" disabled>
+                            후기 등록
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<th:block layout:fragment="script">
+    <script th:src="@{/js/mentorReview/mentoringReviewWrite.js}"></script>
+</th:block>
+</body>
+</html>

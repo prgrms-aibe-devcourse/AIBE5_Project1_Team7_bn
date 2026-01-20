@@ -1,0 +1,37 @@
+<div th:fragment="sidebar" class="sidebar">
+  <a href="/admin" class="logo-container">
+    <img th:src="@{/img/logo_light.png}" alt="PortPilot Logo" />
+  </a>
+  <ul class="sidebar-menu">
+    <li>
+      <a href="/admin"
+         th:classappend="${#httpServletRequest.requestURI == '/admin'} ? 'active'">
+        대시보드
+      </a>
+    </li>
+    <li>
+      <a href="/admin/report"
+         th:classappend="${#httpServletRequest.requestURI.startsWith('/admin/report')} ? 'active'">
+        신고 관리
+      </a>
+    </li>
+    <li>
+      <a href="/admin/user-management"
+         th:classappend="${#httpServletRequest.requestURI.startsWith('/admin/user-management')} ? 'active'">
+        회원 관리
+      </a>
+    </li>
+    <li>
+      <a href="/admin/board-management"
+         th:classappend="${#httpServletRequest.requestURI.startsWith('/admin/board-management')} ? 'active'">
+        게시판 관리
+      </a>
+    </li>
+    <!--<li>
+      <a href="#"
+         th:classappend="${#httpServletRequest.requestURI.startsWith('/admin/match')} ? 'active'">
+        매칭 관리
+      </a>
+    </li>-->
+  </ul>
+</div>
