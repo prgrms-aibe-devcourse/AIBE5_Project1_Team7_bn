@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout-board}">
+
+<head>
+    <title>멘토링 후기 수정</title>
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+
+    <th:block layout:fragment="css">
+        <link rel="stylesheet" href="/css/mentoringReview/mentoringReviewEdit.css">
+    </th:block>
+</head>
+
+<body>
+<div layout:fragment="content">
+    <div class="form-container">
+        <div class="mb-3">
+            <button type="button" class="btn btn-outline-secondary" onclick="goBack()">
+                ← 뒤로가기
+            </button>
+        </div>
+
+        <div id="loadingState" class="text-center py-5">
+            <div class="spinner-border text-primary mb-3"></div>
+            <div>후기 정보를 불러오는 중...</div>
+        </div>
+
+        <div id="errorState" class="text-center py-5 text-danger" style="display: none;">
+            <div class="mb-3">오류 발생</div>
+            <div id="errorMessage">후기를 불러올 수 없습니다.</div>
+            <button class="btn btn-primary mt-3" onclick="loadReviewData()">다시 시도</button>
+        </div>
+
+        <div id="editForm" style="display: none;">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="mb-0">멘토링 후기 수정</h4>
+                    <small class="text-muted">후기 내용을 수정하실 수 있습니다</small>
+                </div>
+
+                <div class="card-body">
+                    <form id="reviewForm">
+                        <div class="mb-3">
+                            <label class="form-label">멘토링 정보</label>
+                            <div class="alert alert-light">
+                                <div class="fw-bold">후기 작성 완료된 멘토링</div>
+                                <div class="text-muted small">멘토: <span id="mentorName"></span></div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="title" class="form-label">제목 *</label>
+                            <input type="text" class="form-control" id="title" name="title"
+                                   placeholder="후기 제목을 입력해주세요" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">평점 *</label>
+                            <div class="star-rating-input" id="starRating">
+                                <span class="star-input" data-rating="1">★</span>
+                                <span class="star-input" data-rating="2">★</span>
+                                <span class="star-input" data-rating="3">★</span>
+                                <span class="star-input" data-rating="4">★</span>
+                                <span class="star-input" data-rating="5">★</span>
+                            </div>
+                            <small class="text-muted" id="ratingText">별점을 선택해주세요</small>
+                            <input type="hidden" id="rating" name="rating" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="content" class="form-label">후기 내용 *</label>
+                            <textarea class="form-control" id="content" name="content" rows="6"
+                                      placeholder="멘토링은 어떠셨나요? 솔직한 후기를 남겨주세요." required></textarea>
+                        </div>
+
+                        <div class="d-flex gap-2 justify-content-end">
+                            <button type="button" class="btn btn-secondary" onclick="goBack()">취소</button>
+                            <button type="submit" class="btn btn-primary" id="submitBtn" disabled>
+                                수정 완료
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<th:block layout:fragment="script">
+    <script th:src="@{/js/mentorReview/mentoringReviewEdit.js}"></script>
+</th:block>
+</body>
+</html>

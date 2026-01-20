@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout-board}">
+
+<head>
+    <title>멘토링 후기</title>
+
+    <th:block layout:fragment="css">
+        <link rel="stylesheet" href="/css/mentoringReview/mentoringReviewList.css">
+    </th:block>
+</head>
+
+<body>
+<div layout:fragment="content">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h3>멘토링 후기</h3>
+        <div class="d-flex gap-2">
+            <button class="btn btn-outline-secondary" onclick="loadReviews()">전체 보기</button>
+            <button class="btn btn-outline-secondary" onclick="loadMyReceivedReviews()">내가 받은 후기</button>
+            <button class="btn btn-outline-secondary" onclick="loadMyWrittenReviews()">내가 작성한 후기</button>
+            <a href="/mentoringReview/write" class="btn btn-outline-primary">후기 작성하기</a>
+        </div>
+    </div>
+
+    <div id="review-content">
+        <div class="card">
+            <table class="table table-hover mb-0">
+                <thead class="table-light">
+                <tr>
+                    <th style="width: 60px;">번호</th>
+                    <th style="width: 100px;">글쓴이</th>
+                    <th style="width: 100px;">멘토명</th>
+                    <th style="width: 350px;">제목</th>
+                    <th style="width: 100px;">평점</th>
+                    <th style="width: 70px;">조회수</th>
+                    <th style="width: 110px;">작성일</th>
+                </tr>
+                </thead>
+                <tbody id="reviewTableBody">
+                <tr>
+                    <td colspan="7" class="text-center">
+                        <div class="spinner-border spinner-border-sm me-2"></div>
+                        로딩 중...
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div id="pagination" class="d-flex justify-content-center mt-4" style="display: none !important;">
+            <nav>
+                <ul class="pagination">
+                    <li class="page-item" id="prevPage">
+                        <a class="page-link" href="#" onclick="loadPage(currentPage - 1)">이전</a>
+                    </li>
+                    <div id="pageNumbers" class="d-flex"></div>
+                    <li class="page-item" id="nextPage">
+                        <a class="page-link" href="#" onclick="loadPage(currentPage + 1)">다음</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+<th:block layout:fragment="script">
+    <script th:src="@{/js/mentorReview/mentoringReviewList.js}"></script>
+</th:block>
+</body>
+</html>

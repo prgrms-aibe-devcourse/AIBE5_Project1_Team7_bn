@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout}">
+
+<head layout:fragment="head">
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>포트폴리오 탐색 – PortPilot</title>
+    <!-- 프로필·포트폴리오 전용 CSS -->
+    <link th:href="@{/css/profile/portfolio.css}" rel="stylesheet"/>
+</head>
+
+<div layout:fragment="content" class="bg-light portfolio-page">
+    <div class="container py-4">
+        <!-- 헤더: 검색 & 등록 -->
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h2>포트폴리오 탐색</h2>
+            <div>
+                <form class="d-inline me-2" th:action="@{/portfolio}" method="get">
+                    <input class="form-control form-control-sm me-1"
+                           type="search" name="q" placeholder="검색"
+                           th:value="${keyword}"/>
+                    <button class="btn btn-sm btn-light" type="submit">검색</button>
+                </form>
+                <a th:href="@{/portfolio/new}" class="btn btn-sm btn-primary">
+                    새 포트폴리오 등록
+                </a>
+            </div>
+        </div>
+
+        <!-- 카드 그리드 -->
+        <div class="row g-4 row portfolio-list">
+            <div class="col-md-4" th:each="p : ${portfolios}">
+                <a th:href="@{/portfolio/{id}(id=${p.id})}"
+                   class="card-link d-block h-100">
+                    <div class="card h-100 card-hover">
+                        <div class="card-body">
+                            <h5 class="card-title" th:text="${p.title}">제목</h5>
+                            <p class="card-text text-truncate"
+                               th:text="${p.description}">설명…</p>
+                        </div>
+                        <div class="card-footer bg-white text-muted small">
+                            작성자: <span th:text="${p.authorName}">작성자</span><br/>
+                            <small th:text="${#temporals.format(p.createdAt,'yyyy-MM-dd')}">
+                                2025-07-25
+                            </small>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div th:if="${#lists.isEmpty(portfolios)}"
+                 class="col-12 text-center text-muted py-5">
+                등록된 포트폴리오가 없습니다.
+            </div>
+        </div>
+
+        <!-- 페이지네이션 -->
+        <nav th:if="${page.totalPages > 1}"
+             aria-label="페이지 네비게이션"
+             class="mt-4">
+            <ul class="pagination justify-content-center">
+                <li class="page-item"
+                    th:classappend="${page.first} ? ' disabled'">
+                    <a class="page-link"
+                       th:href="@{|/portfolio?page=0&q=${keyword}|}">&laquo;</a>
+                </li>
+                <li class="page-item"
+                    th:each="i : ${#numbers.sequence(0, page.totalPages - 1)}"
+                    th:classappend="${i == page.number} ? ' active'">
+                    <a class="page-link"
+                       th:href="@{|/portfolio?page=${i}&q=${keyword}|}"
+                       th:text="${i + 1}">1</a>
+                </li>
+                <li class="page-item"
+                    th:classappend="${page.last} ? ' disabled'">
+                    <a class="page-link"
+                       th:href="@{|/portfolio?page=${page.totalPages - 1}&q=${keyword}|}">&raquo;</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+
+    <!-- 프로필·포트폴리오 전용 JS -->
+    <script th:src="@{/js/profile/portfolio.js}"></script>
+</div>
+</html>

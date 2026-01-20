@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout-board}">
+
+<head>
+  <title>게시글 상세</title>
+  <meta name="_csrf" th:content="${_csrf.token}" />
+  <meta name="_csrf_header" th:content="${_csrf.headerName}" />
+
+  <th:block layout:fragment="css">
+    <style>
+      .btn-group-top {
+        margin-bottom: 30px;
+      }
+
+      .btn-report {
+        margin-left: 10px;
+      }
+
+      .comment-box {
+        margin-top: 20px;
+      }
+
+      .comment-box .btn {
+        padding: 4px 12px;
+      }
+    </style>
+  </th:block>
+</head>
+
+<body>
+<div layout:fragment="content">
+  <div class="container">
+    <h3 id="boardTitle">제목</h3>
+    <div id="boardMeta" class="text-muted mb-2">
+      작성자 | 작성일 | 조회수
+      <button id="reportBoardBtn" class="btn btn-outline-danger btn-sm btn-report" title="게시글 신고">
+        🚨 신고
+      </button>
+    </div>
+    <hr />
+    <div id="boardContent" style="min-height: 200px; padding: 12px 0;">내용</div>
+    <hr />
+
+    <!-- 버튼 그룹 -->
+    <div class="btn-group-top">
+      <a href="/board" class="btn btn-outline-secondary btn-sm">목록으로</a>
+      <a href="#" class="btn btn-outline-primary btn-sm" id="editBtn">수정</a>
+      <button class="btn btn-outline-danger btn-sm" id="deleteBtn">삭제</button>
+    </div>
+
+    <!-- 댓글 작성 -->
+    <div class="comment-box">
+      <h5 class="mb-3">댓글 작성</h5>
+      <form id="commentForm">
+        <input type="hidden" id="parentId" />
+        <textarea
+                id="commentContent"
+                class="form-control mb-2"
+                rows="3"
+                required
+                placeholder="댓글을 입력하세요"
+        ></textarea>
+        <button type="submit" class="btn btn-sm btn-primary">작성</button>
+      </form>
+    </div>
+
+    <!-- 댓글 목록 -->
+    <div id="commentList" class="mt-4">
+      <h5>댓글 목록</h5>
+    </div>
+  </div>
+</div>
+
+<th:block layout:fragment="script">
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script th:src="@{/js/board/boardDetail.js}"></script>
+</th:block>
+</body>
+</html>
