@@ -17,7 +17,7 @@ function Home() {
         <div style={{
           maxWidth: "1600px",
           margin: "0 auto",
-          height: "80px",
+          height: 80,
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
@@ -28,26 +28,36 @@ function Home() {
               Festory
             </span>
           </div>
+          <input
+            type="text"
+            placeholder="Search for any pages you need"
+            style={{
+              flex: 1,
+              maxWidth: "600px",
+              padding: "10px 16px",
+              marginRight: "20px",
+              borderRadius: "12px",
+              border: "1px solid #e5e7eb",
+              backgroundColor: "#f3f4f6",
+              fontSize: "14px",
+              outline: "none",
+              transition: "all 0.2s",
+            }}
+            onFocus={(e) => {
+              e.target.style.backgroundColor = "#fff";
+              e.target.style.borderColor = "#FF5F33";
+              e.target.style.boxShadow = "0 0 0 3px rgba(255, 95, 51, 0.1)";
+            }}
+            onBlur={(e) => {
+              e.target.style.backgroundColor = "#f3f4f6";
+              e.target.style.borderColor = "#e5e7eb";
+              e.target.style.boxShadow = "none";
+            }}
+          />
           <div style={{ display: "flex", alignItems: "center", gap: "20px" }}>
-            <input
-              type="text"
-              placeholder="Search for any pages you need"
-              style={{
-                display: "none",
-                "@media (minWidth: 768px)": { display: "block" },
-                width: "320px",
-                padding: "8px 16px",
-                paddingLeft: "40px",
-                borderRadius: "9999px",
-                border: "1px solid #e5e7eb",
-                backgroundColor: "#f3f4f6",
-                fontSize: "14px",
-                outline: "none",
-              }}
-            />
             <button style={{
-              width: "40px",
-              height: "40px",
+              width: 40,
+              height: 40,
               borderRadius: "50%",
               border: "none",
               backgroundColor: "transparent",
@@ -70,6 +80,7 @@ function Home() {
                 cursor: "pointer",
                 boxShadow: "0 4px 12px rgba(255, 95, 51, 0.3)",
                 transition: "all 0.2s",
+                whiteSpace: "nowrap",
               }}
               onMouseEnter={(e) => {
                 e.target.style.transform = "translateY(-2px)";
@@ -82,26 +93,7 @@ function Home() {
             >
               로그인
             </button>
-            <div style={{
-              width: "44px",
-              height: "44px",
-              borderRadius: "50%",
-              padding: "4px",
-              background: "linear-gradient(135deg, #FF5F33, #EAB308)",
-            }}>
-              <div style={{
-                width: "100%",
-                height: "100%",
-                borderRadius: "50%",
-                backgroundColor: "white",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                fontSize: "24px",
-              }}>
-                L
-              </div>
-            </div>
+                  height: "40px",
           </div>
         </div>
       </header>
