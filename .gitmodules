@@ -1,0 +1,18 @@
+[submodule "team-fe"]
+	path = team-fe
+	url = git@github.com:songjihoon116/dev-team7.git
+[submodule "dev-team7"]
+	path = dev-team7
+	url = git@github.com:aiegoo/dev-team7.git
+[submodule "AIBE5Project1"]
+	path = AIBE5Project1
+	url = git@github.com:0cha-0cha/AIBE5Project1.git
+[submodule "team-qc"]
+	path = team-qc
+	url = git@github.com:0cha-0cha/AIBE5Project1.git
+[submodule "team-be"]
+	path = team-be
+	url = git@github.com:aiegoo/dev-team7.git
+[submodule "team-ai"]
+	path = team-ai
+	url = git@github.com:yeona-lee-researcher/dev-team7.git
