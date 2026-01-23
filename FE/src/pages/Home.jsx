@@ -53,8 +53,34 @@ function Home() {
               backgroundColor: "transparent",
               cursor: "pointer",
               fontSize: "20px",
+              display: "none",
             }}>
               🔔
+            </button>
+            <button
+              onClick={() => navigate("/login")}
+              style={{
+                padding: "10px 24px",
+                borderRadius: "12px",
+                border: "none",
+                background: "linear-gradient(90deg, #FF5F33 0%, #FF7A4D 100%)",
+                color: "white",
+                fontWeight: 700,
+                fontSize: "14px",
+                cursor: "pointer",
+                boxShadow: "0 4px 12px rgba(255, 95, 51, 0.3)",
+                transition: "all 0.2s",
+              }}
+              onMouseEnter={(e) => {
+                e.target.style.transform = "translateY(-2px)";
+                e.target.style.boxShadow = "0 6px 16px rgba(255, 95, 51, 0.4)";
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.transform = "translateY(0)";
+                e.target.style.boxShadow = "0 4px 12px rgba(255, 95, 51, 0.3)";
+              }}
+            >
+              로그인
             </button>
             <div style={{
               width: "44px",

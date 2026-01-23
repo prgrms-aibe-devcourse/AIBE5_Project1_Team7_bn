@@ -78,24 +78,24 @@ function Login() {
       justifyContent: "center",
       alignItems: "center",
       padding: 16,
-      background: "#f7f7f7",
-      fontFamily: "system-ui, -apple-system, Segoe UI, Roboto, sans-serif",
+      background: "linear-gradient(135deg, #FFEDD5 0%, #FEF3C7 100%)",
+      fontFamily: "'Plus Jakarta Sans', 'Segoe UI', sans-serif",
     },
     card: {
       width: "100%",
       maxWidth: 360,
       background: "#fff",
-      border: "1px solid #e6e6e6",
-      borderRadius: 16,
-      padding: "24px 20px",
-      boxShadow: "0 2px 10px rgba(0,0,0,0.04)",
+      border: "none",
+      borderRadius: 20,
+      padding: "32px 24px 24px",
+      boxShadow: "0 8px 32px rgba(0, 0, 0, 0.08)",
     },
     topRow: {
       display: "flex",
       alignItems: "center",
       justifyContent: "center",
       position: "relative",
-      marginBottom: 12,
+      marginBottom: 16,
     },
     backBtn: {
       position: "absolute",
@@ -103,45 +103,60 @@ function Login() {
       width: 32,
       height: 32,
       borderRadius: "50%",
-      border: "1px solid #e6e6e6",
-      background: "#fff",
+      border: "none",
+      background: "transparent",
       cursor: "pointer",
       display: "flex",
       alignItems: "center",
       justifyContent: "center",
-      fontSize: 16,
+      fontSize: 20,
+      color: "#6b7280",
     },
-    topTitle: { fontWeight: 700, fontSize: 13, color: "#111" },
+    topTitle: { fontWeight: 700, fontSize: 14, color: "#111", letterSpacing: "-0.5px" },
 
     headline: {
       textAlign: "center",
       marginTop: 8,
-      marginBottom: 8,
-      fontSize: 20,
-      fontWeight: 800,
-      color: "#111",
-      lineHeight: 1.3,
+      marginBottom: 4,
+      fontSize: 24,
+      fontWeight: 900,
+      color: "#FF5F33",
+      lineHeight: 1.2,
+      letterSpacing: "-0.5px",
     },
     sub: {
       textAlign: "center",
+      marginBottom: 12,
+      fontSize: 13,
+      color: "#6b7280",
+      lineHeight: 1.4,
+    },
+    subSmall: {
+      textAlign: "center",
       marginBottom: 20,
       fontSize: 12,
-      color: "#888",
+      color: "#9ca3af",
       lineHeight: 1.4,
     },
 
-    label: { fontSize: 12, color: "#111", fontWeight: 700, marginBottom: 8 },
+    label: { fontSize: 13, color: "#374151", fontWeight: 600, marginBottom: 8, display: "block" },
     inputWrap: { marginBottom: 14 },
     input: {
       width: "100%",
       height: 44,
-      borderRadius: 8,
-      border: "1px solid #d9d9d9",
+      borderRadius: 12,
+      border: "1px solid #e5e7eb",
       padding: "0 14px",
       outline: "none",
       fontSize: 13,
       boxSizing: "border-box",
-      transition: "border-color 0.2s",
+      transition: "all 0.2s",
+      backgroundColor: "#f9fafb",
+    },
+    inputFocus: {
+      borderColor: "#FF5F33",
+      backgroundColor: "#fff",
+      boxShadow: "0 0 0 3px rgba(255, 95, 51, 0.1)",
     },
 
     pwRow: { position: "relative" },
@@ -158,12 +173,13 @@ function Login() {
       display: "flex",
       alignItems: "center",
       justifyContent: "center",
+      color: "#9ca3af",
     },
 
     helpText: {
       marginTop: 6,
       fontSize: 11,
-      color: "#3b82f6",
+      color: "#f87171",
       textAlign: "right",
       minHeight: 14,
     },
@@ -171,43 +187,59 @@ function Login() {
     primaryBtn: {
       width: "100%",
       height: 44,
-      borderRadius: 8,
-      border: "1px solid #111",
-      background: "#fff",
+      borderRadius: 12,
+      border: "none",
+      background: "linear-gradient(90deg, #FF5F33 0%, #FF7A4D 100%)",
+      color: "#fff",
       cursor: "pointer",
       fontWeight: 800,
       fontSize: 14,
-      marginTop: 12,
+      marginTop: 16,
       transition: "all 0.2s",
+      boxShadow: "0 4px 12px rgba(255, 95, 51, 0.3)",
+    },
+    primaryBtnHover: {
+      transform: "translateY(-2px)",
+      boxShadow: "0 6px 16px rgba(255, 95, 51, 0.4)",
     },
 
     linkRow: {
       display: "flex",
       justifyContent: "center",
-      gap: 12,
-      marginTop: 14,
+      gap: 16,
+      marginTop: 16,
       fontSize: 12,
-      color: "#888",
+      color: "#9ca3af",
+      alignItems: "center",
     },
     linkBtn: {
       border: "none",
       background: "transparent",
       cursor: "pointer",
-      color: "#888",
+      color: "#9ca3af",
       padding: 0,
       fontSize: 12,
+      transition: "color 0.2s",
+    },
+    linkBtnHover: {
+      color: "#FF5F33",
+    },
+    divider: {
+      width: "1px",
+      height: "16px",
+      backgroundColor: "#e5e7eb",
     },
 
-    divider: {
+    dividerLine: {
       margin: "16px 0 14px",
-      borderTop: "1px solid #eee",
+      borderTop: "1px solid #e5e7eb",
     },
 
     socialBtn: {
       width: "100%",
       height: 44,
-      borderRadius: 8,
-      border: "1px solid #d9d9d9",
+      borderRadius: 12,
+      border: "none",
       background: "#fff",
       cursor: "pointer",
       display: "flex",
@@ -219,18 +251,15 @@ function Login() {
       marginBottom: 10,
       boxSizing: "border-box",
       transition: "all 0.2s",
+      boxShadow: "0 2px 8px rgba(0,0,0,0.06)",
     },
-    iconBox: {
-      width: 18,
-      height: 18,
-      border: "1px solid #bbb",
-      borderRadius: 4,
-      display: "inline-flex",
-      alignItems: "center",
-      justifyContent: "center",
-      fontSize: 10,
-      color: "#555",
-      fontWeight: 800,
+    kakaoBtn: {
+      background: "#FFE812",
+      color: "#333",
+    },
+    naverBtn: {
+      background: "#00C73C",
+      color: "#fff",
     },
     googleWrap: {
       display: "flex",
@@ -256,10 +285,11 @@ function Login() {
           Festory에 <br /> 오신 걸 환영합니다!
         </div>
         <div style={styles.sub}>나만의 축제 여행을 발견하는 가장 쉬운 방법</div>
+        <div style={styles.subSmall}>다양한 축제 정보들을 받아보는 가장 쉬운 방법</div>
 
         {/* 이메일 */}
         <div style={styles.inputWrap}>
-          <div style={styles.label}>아이디(이메일)</div>
+          <label style={styles.label}>이메일(아이디)</label>
           <input
             style={styles.input}
             placeholder="example@festory.com"
@@ -272,7 +302,7 @@ function Login() {
 
         {/* 비밀번호 */}
         <div style={styles.inputWrap}>
-          <div style={styles.label}>비밀번호</div>
+          <label style={styles.label}>비밀번호</label>
           <div style={styles.pwRow}>
             <input
               style={{ ...styles.input, paddingRight: 42 }}
@@ -289,38 +319,62 @@ function Login() {
               aria-label="toggle password"
               title="비밀번호 보기/숨기기"
             >
-              👁
+              {showPw ? "👁" : "👁‍🗨"}
             </button>
           </div>
           <div style={styles.helpText}>{pwError}</div>
         </div>
 
         {/* 로그인 버튼 */}
-        <button style={styles.primaryBtn} onClick={login}>
+        <button 
+          style={styles.primaryBtn} 
+          onClick={login}
+          onMouseEnter={(e) => Object.assign(e.target.style, styles.primaryBtnHover)}
+          onMouseLeave={(e) => Object.assign(e.target.style, { transform: "translateY(0)", boxShadow: "0 4px 12px rgba(255, 95, 51, 0.3)" })}
+        >
           로그인
         </button>
 
         {/* 하단 링크 */}
         <div style={styles.linkRow}>
-          <button style={styles.linkBtn} onClick={() => navigate("/find-id")}>
+          <button 
+            style={styles.linkBtn} 
+            onClick={() => navigate("/find-id")}
+            onMouseEnter={(e) => Object.assign(e.target.style, styles.linkBtnHover)}
+            onMouseLeave={(e) => Object.assign(e.target.style, { color: "#9ca3af" })}
+          >
             아이디 찾기
           </button>
-          <span>|</span>
-          <button style={styles.linkBtn} onClick={() => navigate("/find-password")}>
+          <div style={styles.divider} />
+          <button 
+            style={styles.linkBtn} 
+            onClick={() => navigate("/find-password")}
+            onMouseEnter={(e) => Object.assign(e.target.style, styles.linkBtnHover)}
+            onMouseLeave={(e) => Object.assign(e.target.style, { color: "#9ca3af" })}
+          >
             비밀번호 찾기
           </button>
-          <span>|</span>
-          <button style={styles.linkBtn} onClick={() => navigate("/signup")}>
+          <div style={styles.divider} />
+          <button 
+            style={styles.linkBtn} 
+            onClick={() => navigate("/signup")}
+            onMouseEnter={(e) => Object.assign(e.target.style, styles.linkBtnHover)}
+            onMouseLeave={(e) => Object.assign(e.target.style, { color: "#9ca3af" })}
+          >
             회원가입
           </button>
         </div>
 
-        <div style={styles.divider} />
+        <div style={styles.dividerLine} />
 
         {/* 소셜 로그인 3개 (카카오/구글/네이버) */}
-        <button style={styles.socialBtn} onClick={handleKakaoLogin}>
-          <span style={styles.iconBox}>K</span>
-          카카오 계정으로 계속하기
+        <button 
+          style={{ ...styles.socialBtn, ...styles.kakaoBtn }} 
+          onClick={handleKakaoLogin}
+          onMouseEnter={(e) => e.target.style.opacity = "0.85"}
+          onMouseLeave={(e) => e.target.style.opacity = "1"}
+        >
+          🚀 카카오 계정으로 시작하기
         </button>
 
         {/* ✅ 구글은 실제 API 사용 */}
@@ -333,9 +387,13 @@ function Login() {
         </div>
 
         {/* 네이버는 자리만 */}
-        <button style={{ ...styles.socialBtn, marginTop: 10 }} onClick={handleNaverLogin}>
-          <span style={styles.iconBox}>N</span>
-          네이버 계정으로 계속하기
+        <button 
+          style={{ ...styles.socialBtn, ...styles.naverBtn }} 
+          onClick={handleNaverLogin}
+          onMouseEnter={(e) => e.target.style.opacity = "0.85"}
+          onMouseLeave={(e) => e.target.style.opacity = "1"}
+        >
+          ✓ 네이버 계정으로 시작하기
         </button>
       </div>
     </div>
