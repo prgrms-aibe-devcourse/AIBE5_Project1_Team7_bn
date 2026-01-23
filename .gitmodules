@@ -1,0 +1,3 @@
+[submodule "team-fe"]
+	path = team-fe
+	url = git@github.com:songjihoon116/dev-team7.git
