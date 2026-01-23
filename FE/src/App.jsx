@@ -5,7 +5,7 @@ import Map from "./pages/Map";
 import Calendar from "./pages/Calendar";
 import Signup from "./pages/Signup";
 import Map1 from "./pages/Map1";
-import Map2 from "./pages/Map2";
+import Mapkakao from "./pages/Mapkakao";
 
 
 function App() {
@@ -17,7 +17,7 @@ function App() {
       <Route path="/calendar" element={<Calendar />} />
       <Route path="/signup" element={<Signup />} />
       <Route path="/map1" element={<Map1 />} />
-      <Route path="/map2" element={<Map2 />} />
+      <Route path="/mapkakao" element={<Mapkakao />} />
     </Routes>
   );
 }

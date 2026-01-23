@@ -16,7 +16,7 @@ function Home() {
           <p>환영합니다!</p>
           <button
             onClick={() =>
-              navigate("/map2", {
+              navigate("/map", {
                 state: { festivalId: "12116", radius: 3000 }, 
               })
             }
