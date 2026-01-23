@@ -1,0 +1,12 @@
+[submodule "ui"]
+	path = ui
+	url = git@github.com:yeona-lee-researcher/dev-team7.git
+[submodule "qa"]
+	path = qa
+	url = git@github.com:0cha-0cha/AIBE5Project1.git
+[submodule "fd"]
+	path = fd
+	url = git@github.com:ryu-han-kr/AIBE5_Project1.git
+[submodule "be"]
+	path = be
+	url = git@github.com:aiegoo/dev-team7.git
