@@ -1,0 +1,118 @@
+# === Superproject .gitignore for dev-team7 ===
+# Covers: Frontend (Vite/React), Backend (Spring Boot/Maven), Docker, Python/LLM, general dev
+
+# === Environment & Secrets ===
+.env
+.env.local
+.env.*.local
+*.key
+*.pem
+*.p12
+*.jks
+secrets/
+credentials/
+
+# === Node.js / Frontend (Vite/React) ===
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.pnpm-store/
+dist/
+dist-ssr/
+build/
+.vite/
+.cache/
+*.local
+
+# === Java / Maven / Spring Boot ===
+target/
+*.class
+*.jar
+!gradle-wrapper.jar
+*.war
+*.ear
+*.zip
+*.tar.gz
+*.rar
+.mvn/wrapper/maven-wrapper.jar
+.classpath
+.project
+.settings/
+bin/
+out/
+
+# === Gradle (if used) ===
+.gradle/
+gradle-app.setting
+!gradle-wrapper.jar
+build/
+
+# === Docker ===
+docker-compose.override.yml
+*.log
+.dockerignore.local
+
+# === Python / LLM ===
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+ENV/
+env/
+.venv/
+pip-log.txt
+pip-delete-this-directory.txt
+.pytest_cache/
+.mypy_cache/
+.dmypy.json
+dmypy.json
+*.ipynb_checkpoints/
+*.egg-info/
+dist/
+*.whl
+
+# === IDE / Editor ===
+.idea/
+*.iml
+*.iws
+.vscode/
+!.vscode/extensions.json
+!.vscode/settings.json
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# === OS ===
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# === Logs & Temp ===
+*.log
+*.tmp
+*.temp
+logs/
+tmp/
+
+# === Coverage & Test Reports ===
+coverage/
+.nyc_output/
+*.lcov
+htmlcov/
+.coverage
+.coverage.*
+nosetests.xml
+coverage.xml
+
+# === Misc ===
+*.bak
+*.orig
+*.rej
+*.swp
+.*.swp
