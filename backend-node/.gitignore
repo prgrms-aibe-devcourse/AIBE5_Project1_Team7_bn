@@ -1,0 +1,10 @@
+# runtime artifacts
+.server.pid
+.server.log
+.tmp.server.log
+
+# build outputs
+/dist
+
+# deps
+/node_modules
