@@ -3,6 +3,7 @@ import { useLocation } from "react-router-dom";
 import festivals from "../data/festivals_with_geo.json";
 import { loadGoogleMaps } from "../lib/googleMaps";
 import useStore from "../store/useStore";
+import Header from "../components/Header";
 
 console.log("VITE_GOOGLE_MAPS_KEY =", import.meta.env.VITE_GOOGLE_MAPS_KEY);
 
@@ -360,15 +361,17 @@ export default function Map() {
     : `검색어: ${query}`;
 
   return (
-    <div
-      style={{
-        display: "flex",
-        gap: 12,
-        padding: 12,
-        height: "100vh",
-        boxSizing: "border-box",
-      }}
-    >
+    <>
+      <Header />
+      <div
+        style={{
+          display: "flex",
+          gap: 12,
+          padding: 12,
+          height: "calc(100vh - 64px)",
+          boxSizing: "border-box",
+        }}
+      >
       {/* 왼쪽 리스트 */}
       <div
         style={{
@@ -583,6 +586,7 @@ export default function Map() {
           </a>
         </div>
       </div>
-    </div>
+      </div>
+    </>
   );
 }
