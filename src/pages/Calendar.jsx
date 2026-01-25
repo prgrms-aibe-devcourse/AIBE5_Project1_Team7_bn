@@ -1,13 +1,19 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useRef } from "react";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import festivals from "../data/festivals_with_geo.json";
 import useStore from "../store/useStore";
 
-// ✅ FullCalendar 이벤트 텍스트 중앙정렬
+// ✅ FullCalendar 이벤트 텍스트 중앙정렬 및 스타일 개선
 const calendarStyles = `
+  .fc {
+    font-family: 'Plus Jakarta Sans','Segoe UI',sans-serif;
+  }
+  
   .fc-event-title {
     text-align: center;
     display: flex;
@@ -15,9 +21,71 @@ const calendarStyles = `
     justify-content: center;
     width: 100%;
     height: 100%;
+    font-weight: 600;
   }
+  
   .fc-daygrid-event {
-    padding: 2px 0 !important;
+    padding: 4px 8px !important;
+    border-radius: 6px !important;
+    border: none !important;
+    background: linear-gradient(135deg, rgb(244,133,37) 0%, rgb(255,153,102) 100%) !important;
+    box-shadow: 0 2px 4px rgba(244,133,37,0.2) !important;
+    transition: all 0.2s ease !important;
+  }
+  
+  .fc-daygrid-event:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(244,133,37,0.3) !important;
+  }
+  
+  .fc-col-header-cell {
+    background: #f9fafb !important;
+    font-weight: 700 !important;
+    text-transform: uppercase !important;
+    font-size: 11px !important;
+    letter-spacing: 0.5px !important;
+    color: #6b7280 !important;
+    padding: 12px 0 !important;
+  }
+  
+  .fc-daygrid-day-number {
+    font-weight: 600 !important;
+    color: #111827 !important;
+    padding: 8px !important;
+  }
+  
+  .fc-day-today {
+    background: rgba(244,133,37,0.05) !important;
+  }
+  
+  .fc-day-today .fc-daygrid-day-number {
+    background: rgb(244,133,37) !important;
+    color: white !important;
+    border-radius: 50% !important;
+    width: 32px !important;
+    height: 32px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+  
+  .fc-button {
+    background: linear-gradient(90deg, rgb(244,133,37) 0%, rgb(255,153,102) 100%) !important;
+    border: none !important;
+    border-radius: 8px !important;
+    padding: 8px 16px !important;
+    font-weight: 700 !important;
+    text-transform: capitalize !important;
+    transition: all 0.2s ease !important;
+  }
+  
+  .fc-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(244,133,37,0.3) !important;
+  }
+  
+  .fc-button-active {
+    background: linear-gradient(90deg, rgb(230,120,30) 0%, rgb(240,140,90) 100%) !important;
   }
 `;
 
@@ -61,6 +129,9 @@ function Calendar() {
   const [festivalPSeq, setFestivalPSeq] = useState("");
   const [showFestivalInput, setShowFestivalInput] = useState(false);
 
+  // ✅ 축제 추가 여부 추적 (중복 방지)
+  const festivalAddedRef = useRef(false);
+
   // ---------- GIS init ----------
   useEffect(() => {
     setError("");
@@ -68,15 +139,6 @@ function Calendar() {
     // ✅ zustand store에서 토큰 가져오기
     if (googleAccessToken) {
       setToken(googleAccessToken);
-    }
-
-    // ✅ zustand store에서 selectedFestivalPSeq 읽기 (홈페이지에서 저장한 것)
-    if (selectedFestivalPSeq && googleAccessToken) {
-      // 토큰이 있으면 자동으로 축제 로드
-      setTimeout(() => {
-        loadFestivalAndOpen(selectedFestivalPSeq);
-        clearSelectedFestivalPSeq(); // 로드 후 삭제
-      }, 500);
     }
 
     if (!CLIENT_ID) {
@@ -103,7 +165,7 @@ function Calendar() {
     });
 
     setTokenClient(tc);
-  }, [CLIENT_ID]);
+  }, [CLIENT_ID, googleAccessToken, setGoogleAccessToken]);
 
   // ---------- helpers ----------
   const fmtK = (iso) => {
@@ -115,27 +177,54 @@ function Calendar() {
     }
   };
 
-  // ✅ 축제 날짜 파싱 함수 (예: "2026. 1. 16. ~ 1. 18. | 10:00~17:00")
+  // ✅ 축제 날짜 파싱 함수 (다양한 형식 지원)
   const parseFestivalDate = (dateStr) => {
     try {
-      // "2026. 1. 16. ~ 1. 18." 형태 추출
-      const match = dateStr.match(/(\d{4})\.\s+(\d{1,2})\.\s+(\d{1,2})\.\s*~\s*(\d{1,2})\.\s+(\d{1,2})\./);
-      if (!match) return null;
+      // 패턴 1: "2026. 1. 16. ~ 1. 18." (같은 연도)
+      let match = dateStr.match(/(\d{4})\.\s+(\d{1,2})\.\s+(\d{1,2})\.\s*~\s*(\d{1,2})\.\s+(\d{1,2})\./);
+      if (match) {
+        const year = parseInt(match[1]);
+        const startMonth = parseInt(match[2]);
+        const startDay = parseInt(match[3]);
+        const endMonth = parseInt(match[4]);
+        const endDay = parseInt(match[5]);
 
-      const year = parseInt(match[1]);
-      const startMonth = parseInt(match[2]);
-      const startDay = parseInt(match[3]);
-      const endMonth = parseInt(match[4]);
-      const endDay = parseInt(match[5]);
+        const startDateTime = `${year}-${String(startMonth).padStart(2, '0')}-${String(startDay).padStart(2, '0')}`;
+        const endDateTime = `${year}-${String(endMonth).padStart(2, '0')}-${String(endDay).padStart(2, '0')}`;
 
-      // ✅ 문자열로 직접 생성 (UTC 변환 문제 해결)
-      const startDateTime = `${year}-${String(startMonth).padStart(2, '0')}-${String(startDay).padStart(2, '0')}`;
-      const endDateTime = `${year}-${String(endMonth).padStart(2, '0')}-${String(endDay).padStart(2, '0')}`;
+        return { startDateTime, endDateTime };
+      }
 
-      return {
-        startDateTime,
-        endDateTime,
-      };
+      // 패턴 2: "2025. 11. 29. ~ 2026. 1. 18." (연도가 바뀌는 경우)
+      match = dateStr.match(/(\d{4})\.\s+(\d{1,2})\.\s+(\d{1,2})\.\s*~\s*(\d{4})\.\s+(\d{1,2})\.\s+(\d{1,2})\./);
+      if (match) {
+        const startYear = parseInt(match[1]);
+        const startMonth = parseInt(match[2]);
+        const startDay = parseInt(match[3]);
+        const endYear = parseInt(match[4]);
+        const endMonth = parseInt(match[5]);
+        const endDay = parseInt(match[6]);
+
+        const startDateTime = `${startYear}-${String(startMonth).padStart(2, '0')}-${String(startDay).padStart(2, '0')}`;
+        const endDateTime = `${endYear}-${String(endMonth).padStart(2, '0')}-${String(endDay).padStart(2, '0')}`;
+
+        return { startDateTime, endDateTime };
+      }
+
+      // 패턴 3: "2026. 1. 16." (단일 날짜)
+      match = dateStr.match(/(\d{4})\.\s+(\d{1,2})\.\s+(\d{1,2})\./);
+      if (match) {
+        const year = parseInt(match[1]);
+        const month = parseInt(match[2]);
+        const day = parseInt(match[3]);
+
+        const startDateTime = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+        const endDateTime = startDateTime; // 같은 날
+
+        return { startDateTime, endDateTime };
+      }
+
+      return null;
     } catch {
       return null;
     }
@@ -401,6 +490,37 @@ function Calendar() {
     setRawEvents([]);
   };
 
+  // ✅ pSeq로 축제 정보 로드 및 바로 캘린더에 추가 (모달 없이)
+  const loadFestivalAndAdd = async (pSeq) => {
+    if (!token) return;
+    
+    const festival = festivals.find((f) => String(f.pSeq) === String(pSeq));
+    if (!festival) return;
+
+    const dateInfo = parseFestivalDate(festival.date);
+    if (!dateInfo) return;
+
+    // 바로 Google Calendar에 추가
+    await insertEvent({
+      title: festival.festival_name,
+      description: festival.festival_description,
+      start: dateInfo.startDateTime,
+      end: dateInfo.endDateTime,
+      allDay: true,
+    });
+  };
+
+  // ✅ 홈에서 선택한 축제 자동 추가 (한 번만 실행)
+  useEffect(() => {
+    if (selectedFestivalPSeq && token && !festivalAddedRef.current) {
+      festivalAddedRef.current = true;
+      setTimeout(() => {
+        loadFestivalAndAdd(selectedFestivalPSeq);
+        clearSelectedFestivalPSeq();
+      }, 1000);
+    }
+  }, [selectedFestivalPSeq, token, clearSelectedFestivalPSeq]);
+
   // ---------- upcoming (right panel) ----------
   const upcoming = useMemo(() => {
     return (rawEvents || []).slice(0, 3).map((ev) => {
@@ -636,55 +756,70 @@ function Calendar() {
 
         {/* 오른쪽 패널 */}
         <div style={styles.rightPanel}>
-          <div style={{ fontSize: 14, fontWeight: 700, color: "#111", marginBottom: 16 }}>
-            UPCOMING FESTIVALS
+          <div style={{ fontSize: 16, fontWeight: 700, color: "#111", marginBottom: 20 }}>
+            🎉 UPCOMING FESTIVALS
           </div>
 
           {!token ? (
-            <div style={{ fontSize: 13, color: "#6b7280" }}>
-              로그인하면 다가오는 일정이 표시됩니다.
-            </div>
+            <Card>
+              <CardContent className="pt-6">
+                <p className="text-sm text-muted-foreground text-center">
+                  로그인하면 다가오는 일정이 표시됩니다.
+                </p>
+              </CardContent>
+            </Card>
           ) : loading ? (
-            <div style={{ fontSize: 13, color: "#6b7280" }}>
-              불러오는 중…
-            </div>
+            <Card>
+              <CardContent className="pt-6">
+                <p className="text-sm text-muted-foreground text-center">
+                  불러오는 중…
+                </p>
+              </CardContent>
+            </Card>
           ) : upcoming.length === 0 ? (
-            <div style={{ fontSize: 13, color: "#6b7280" }}>
-              다가오는 일정이 없습니다.
-            </div>
+            <Card>
+              <CardContent className="pt-6">
+                <p className="text-sm text-muted-foreground text-center">
+                  다가오는 일정이 없습니다.
+                </p>
+              </CardContent>
+            </Card>
           ) : (
             upcoming.map((ev, idx) => (
-              <div key={ev.id} style={styles.eventCard}>
-                <div
-                  style={{
-                    ...styles.eventImage,
-                    background: idx === 0 ? "#fff3e0" : idx === 1 ? "#f3e5f5" : "#e0f2f1",
-                  }}
-                >
-                  📌
-                </div>
-                <div style={{ fontSize: 14, fontWeight: 700, color: "#111", marginBottom: 8 }}>
-                  {ev.title}
-                </div>
-                <div style={{ fontSize: 12, color: "#9ca3af", marginBottom: 8 }}>
-                  📅 {ev.date}
-                </div>
-                {ev.location ? (
-                  <div style={{ fontSize: 12, color: "#6b7280", marginBottom: 8 }}>
-                    📍 {ev.location}
+              <Card key={ev.id} className="mb-4">
+                <CardHeader className="pb-3">
+                  <div 
+                    className="w-full h-32 rounded-lg mb-3 flex items-center justify-center text-5xl"
+                    style={{
+                      background: idx === 0 
+                        ? 'linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%)' 
+                        : idx === 1 
+                        ? 'linear-gradient(135deg, #f3e5f5 0%, #e1bee7 100%)' 
+                        : 'linear-gradient(135deg, #e0f2f1 0%, #b2dfdb 100%)',
+                    }}
+                  >
+                    📌
                   </div>
-                ) : null}
-                <div style={{ display: "flex", gap: 8 }}>
-                  <button style={{ ...styles.btn, flex: 1 }}>View Details</button>
-                  <button
-                    style={{ ...styles.btnGhost, padding: "10px 8px" }}
+                  <CardTitle className="text-base">{ev.title}</CardTitle>
+                  <CardDescription className="flex flex-col gap-1">
+                    <span>📅 {ev.date}</span>
+                    {ev.location && <span>📍 {ev.location}</span>}
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="flex gap-2">
+                  <Button className="flex-1" size="sm">
+                    View Details
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
                     onClick={() => deleteEvent(ev.id)}
                     title="삭제"
                   >
                     🗑️
-                  </button>
-                </div>
-              </div>
+                  </Button>
+                </CardContent>
+              </Card>
             ))
           )}
         </div>
