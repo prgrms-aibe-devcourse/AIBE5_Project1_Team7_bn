@@ -93,7 +93,7 @@ function Home() {
             >
               로그인
             </button>
-                  height: "40px",
+                  
           </div>
         </div>
       </header>
@@ -112,9 +112,15 @@ function Home() {
         margin: "0 auto",
       }}>
         {["Home", "Festival List", "Calendar", "Plan & Curation"].map((item) => (
-          <a
+          <button
             key={item}
-            href="#"
+            onClick={() => {
+              if (item === "Calendar") {
+                navigate("/calendar");
+              } else if (item === "Home") {
+                navigate("/");
+              }
+            }}
             style={{
               padding: "16px 0",
               fontSize: "14px",
@@ -123,10 +129,19 @@ function Home() {
               textDecoration: "none",
               borderBottom: item === "Home" ? "3px solid #FF5F33" : "none",
               cursor: "pointer",
+              background: "transparent",
+              border: "none",
+              transition: "all 0.2s",
+            }}
+            onMouseEnter={(e) => {
+              if (item !== "Home") e.target.style.color = "#FF5F33";
+            }}
+            onMouseLeave={(e) => {
+              if (item !== "Home") e.target.style.color = "#6b7280";
             }}
           >
             {item}
-          </a>
+          </button>
         ))}
       </nav>
 
@@ -443,10 +458,11 @@ function Home() {
                 </div>
               </div>
 
-              <a
-                href="#"
+              <button
+                onClick={() => navigate("/calendar")}
                 style={{
                   display: "block",
+                  width: "100%",
                   textAlign: "center",
                   padding: "12px",
                   fontSize: "11px",
@@ -458,12 +474,13 @@ function Home() {
                   letterSpacing: "0.05em",
                   cursor: "pointer",
                   transition: "background 0.2s",
+                  background: "transparent",
                 }}
                 onMouseEnter={(e) => e.target.style.backgroundColor = "rgba(255, 95, 51, 0.05)"}
                 onMouseLeave={(e) => e.target.style.backgroundColor = "transparent"}
               >
                 FULL CALENDAR VIEW
-              </a>
+              </button>
             </div>
           </aside>
         </div>

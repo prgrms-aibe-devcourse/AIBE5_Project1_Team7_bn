@@ -521,17 +521,6 @@ function Signup() {
               />
               여성
             </label>
-            <label style={styles.radioLabel}>
-              <input
-                style={styles.radio}
-                type="radio"
-                name="gender"
-                value="제한없음"
-                checked={formData.gender === "제한없음"}
-                onChange={handleInputChange}
-              />
-              제한 없음
-            </label>
           </div>
         </div>
 

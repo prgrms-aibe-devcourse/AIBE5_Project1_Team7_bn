@@ -4,8 +4,7 @@ import Login from "./pages/Login";
 import Map from "./pages/Map";
 import Calendar from "./pages/Calendar";
 import Signup from "./pages/Signup";
-import Map1 from "./pages/Map1";
-import Mapkakao from "./pages/Mapkakao";
+import OAuthKakaoCallback from "./pages/OAuthKakaoCallback";
 
 
 function App() {
@@ -16,8 +15,7 @@ function App() {
       <Route path="/map" element={<Map />} />
       <Route path="/calendar" element={<Calendar />} />
       <Route path="/signup" element={<Signup />} />
-      <Route path="/map1" element={<Map1 />} />
-      <Route path="/mapkakao" element={<Mapkakao />} />
+      <Route path="/oauth/kakao/callback" element={<OAuthKakaoCallback />} />
     </Routes>
   );
 }
