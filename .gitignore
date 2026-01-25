@@ -1,6 +1,12 @@
 # === Superproject .gitignore for dev-team7 ===
 # Covers: Frontend (Vite/React), Backend (Spring Boot/Maven), Docker, Python/LLM, general dev
 
+# === Branch-independent local services ===
+# These directories persist across branch switches for local development
+frontend-app/
+typesense/
+ai/
+
 # === Environment & Secrets ===
 .env
 .env.local
