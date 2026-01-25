@@ -1,5 +1,23 @@
 # PortPilot Backend — Travel Recommendation + Personal Assistant (FE-friendly)
 
+## Jan 26 Log
+
+**Typesense Search Integration Complete** ✅
+- Dockerized full-text search with 632 Korean festivals indexed
+- Backend API with intelligent chunking, theme inference, and filtering
+- Frontend persona-based category dropdown with instant search
+- UTF-8 encoding fix for Korean data, persistent storage with Docker volumes
+- Branch: `feat/typesense-search`
+
+**Documentation:**
+- [START_SERVICES.md](./START_SERVICES.md) - Docker setup and service startup guide
+- [backend-node/docker-compose.yml](./backend-node/docker-compose.yml) - Unified Typesense + Backend container config
+- [typesense/.env.example](./typesense/.env.example) - Typesense configuration reference
+
+**Data Source:** `ai/reference/festivals_original.csv` (30MB, from Google Drive standardized format)
+
+---
+
 This backend is a **Spring Boot 2.7.x / Java 11 / Maven** application.
 
 The target product direction is a **travel recommendation + personal assistant** experience designed to be FE-friendly:
