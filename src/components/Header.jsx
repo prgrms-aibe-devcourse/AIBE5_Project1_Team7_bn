@@ -5,7 +5,7 @@ function Header() {
   const location = useLocation();
 
   const navItems = [
-    { name: "Home", path: "/" },
+    { name: "Home", path: "/after_home" },
     { name: "Festival List", path: "/festivals" },
     { name: "Calendar", path: "/calendar" },
     { name: "Plan & Curation", path: "/plan" },
@@ -20,7 +20,7 @@ function Header() {
           {/* 좌측: 로고 + 네비게이션 */}
           <div className="flex items-center space-x-8">
             {/* 로고 */}
-            <Link to="/" className="flex items-center space-x-2">
+            <Link to="/after_home" className="flex items-center space-x-2">
               <div className="w-10 h-10 bg-gradient-to-br from-orange-400 to-orange-500 rounded-full flex items-center justify-center text-white text-xl font-bold">
                 🎪
               </div>

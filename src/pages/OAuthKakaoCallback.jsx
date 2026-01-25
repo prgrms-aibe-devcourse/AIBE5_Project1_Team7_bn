@@ -23,7 +23,7 @@ export default function OAuthKakaoCallback() {
 
     // ✅ 이미 성공 처리한 적 있으면 바로 홈으로 (중복 방지)
     if (loginType === "kakao") {
-      navigate("/", { replace: true });
+      navigate("/after_home", { replace: true });
       return;
     }
 
@@ -51,8 +51,8 @@ export default function OAuthKakaoCallback() {
     setKakaoAuthCode(code);
 
     alert("카카오 로그인 성공!");
-    navigate("/", { replace: true });
-  }, [navigate]);
+    navigate("/after_home", { replace: true });
+  }, [navigate, loginType, setLogin, setKakaoAuthCode]);
 
   return <div style={{ padding: 20 }}>카카오 로그인 처리 중...</div>;
 }

@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import festivals from "../data/festivals_with_geo.json";
 import useStore from "../store/useStore";
 
-function Home() {
+function After_Home() {
   const navigate = useNavigate();
   const [pSeqInput, setPSeqInput] = useState("");
 
@@ -44,7 +44,7 @@ function Home() {
           {/* Logo */}
           <div
             style={{ display: "flex", alignItems: "center", gap: 12, cursor: "pointer" }}
-            onClick={() => navigate("/")}
+            onClick={() => navigate("/after_home")}
           >
             <div style={{ fontSize: 28 }}>😊</div>
             <span style={{ fontSize: 24, fontWeight: 900 }}>Festory</span>
@@ -114,7 +114,7 @@ function Home() {
               key={item}
               onClick={() => {
                 if (item === "Calendar") navigate("/calendar");
-                if (item === "Home") navigate("/");
+                if (item === "Home") navigate("/after_home");
               }}
               style={{
                 padding: "16px 0",
@@ -348,4 +348,4 @@ function Home() {
   );
 }
 
-export default Home;
+export default After_Home;
