@@ -4,6 +4,7 @@ import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import festivals from "../data/festivals_with_geo.json";
+import useStore from "../store/useStore";
 
 // ✅ FullCalendar 이벤트 텍스트 중앙정렬
 const calendarStyles = `
@@ -32,7 +33,10 @@ function Calendar() {
   // 가장 무난: calendar.events (이벤트 CRUD)
   const SCOPES = "https://www.googleapis.com/auth/calendar.events";
 
-  const [token, setToken] = useState(null);
+  // ✅ zustand store로 Google 토큰과 축제 pSeq 관리
+  const { googleAccessToken, setGoogleAccessToken, selectedFestivalPSeq, clearSelectedFestivalPSeq } = useStore();
+  
+  const [token, setToken] = useState(googleAccessToken);
   const [tokenClient, setTokenClient] = useState(null);
   const [error, setError] = useState("");
   const [events, setEvents] = useState([]); // FullCalendar용 이벤트 배열
@@ -61,19 +65,17 @@ function Calendar() {
   useEffect(() => {
     setError("");
 
-    // ✅ Login 페이지에서 이미 로그인했으면 sessionStorage에 토큰이 있음
-    const savedToken = sessionStorage.getItem("googleAccessToken");
-    if (savedToken) {
-      setToken(savedToken);
+    // ✅ zustand store에서 토큰 가져오기
+    if (googleAccessToken) {
+      setToken(googleAccessToken);
     }
 
-    // ✅ localStorage에서 selectedFestivalPSeq 읽기 (홈페이지에서 저장한 것)
-    const selectedPSeq = localStorage.getItem("selectedFestivalPSeq");
-    if (selectedPSeq && savedToken) {
+    // ✅ zustand store에서 selectedFestivalPSeq 읽기 (홈페이지에서 저장한 것)
+    if (selectedFestivalPSeq && googleAccessToken) {
       // 토큰이 있으면 자동으로 축제 로드
       setTimeout(() => {
-        loadFestivalAndOpen(selectedPSeq);
-        localStorage.removeItem("selectedFestivalPSeq"); // 로드 후 삭제
+        loadFestivalAndOpen(selectedFestivalPSeq);
+        clearSelectedFestivalPSeq(); // 로드 후 삭제
       }, 500);
     }
 
@@ -91,8 +93,12 @@ function Calendar() {
       client_id: CLIENT_ID,
       scope: SCOPES,
       callback: (resp) => {
-        if (resp?.access_token) setToken(resp.access_token);
-        else setError("토큰 발급에 실패했습니다.");
+        if (resp?.access_token) {
+          setToken(resp.access_token);
+          setGoogleAccessToken(resp.access_token);
+        } else {
+          setError("토큰 발급에 실패했습니다.");
+        }
       },
     });
 

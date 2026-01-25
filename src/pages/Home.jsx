@@ -1,9 +1,12 @@
-import { useNavigate, useState } from "react-router-dom";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import festivals from "../data/festivals_with_geo.json";
+import useStore from "../store/useStore";
 
 function Home() {
   const navigate = useNavigate();
   const [pSeqInput, setPSeqInput] = useState("");
+  const { setSelectedFestivalPSeq } = useStore();
 
   return (
     <div style={{ minHeight: "100vh", backgroundColor: "#f9fafb" }}>
@@ -242,9 +245,9 @@ function Home() {
                   if (e.key === "Enter" && pSeqInput.trim()) {
                     const festival = festivals.find((f) => String(f.pSeq) === String(pSeqInput));
                     if (festival) {
-                      localStorage.setItem("selectedFestivalPSeq", pSeqInput);
+                      setSelectedFestivalPSeq(pSeqInput);
                       setPSeqInput("");
-                      alert("축제가 localStorage에 저장되었습니다! 캘린더에서 확인하세요.");
+                      alert("축제가 저장되었습니다! 캘린더에서 확인하세요.");
                     } else {
                       alert("축제를 찾을 수 없습니다.");
                     }
@@ -272,9 +275,9 @@ function Home() {
                 onClick={() => {
                   const festival = festivals.find((f) => String(f.pSeq) === String(pSeqInput));
                   if (festival) {
-                    localStorage.setItem("selectedFestivalPSeq", pSeqInput);
+                    setSelectedFestivalPSeq(pSeqInput);
                     setPSeqInput("");
-                    alert("축제가 localStorage에 저장되었습니다! 캘린더에서 확인하세요.");
+                    alert("축제가 저장되었습니다! 캘린더에서 확인하세요.");
                   } else {
                     alert("축제를 찾을 수 없습니다.");
                   }

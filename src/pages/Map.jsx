@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useLocation } from "react-router-dom";
 import festivals from "../data/festivals_with_geo.json";
 import { loadGoogleMaps } from "../lib/googleMaps";
+import useStore from "../store/useStore";
 
 console.log("VITE_GOOGLE_MAPS_KEY =", import.meta.env.VITE_GOOGLE_MAPS_KEY);
 
@@ -41,9 +42,10 @@ function priceLevelLabel(priceLevel) {
 
 export default function Map() {
   const { state } = useLocation();
+  const { selectedFestivalPSeq } = useStore();
 
-  // 백엔드(ai)에서 받은 축제 id(pSeq)
-  const festivalId = state?.festivalId;
+  // 백엔드(ai)에서 받은 축제 id(pSeq) 또는 zustand store에서 가져오기
+  const festivalId = state?.festivalId || selectedFestivalPSeq;
 
   // 혹시 안나오면 서울시청 화면 나오게
   const query = state?.query ?? "서울시청";

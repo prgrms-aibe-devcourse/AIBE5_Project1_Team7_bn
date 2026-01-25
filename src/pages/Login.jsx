@@ -1,9 +1,11 @@
 import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useGoogleLogin } from "@react-oauth/google";
+import useStore from "../store/useStore";
 
 function Login() {
   const navigate = useNavigate();
+  const { setLogin, setGoogleAccessToken, user } = useStore();
 
   const [email, setEmail] = useState("");
   const [pw, setPw] = useState("");
@@ -28,11 +30,8 @@ function Login() {
     setTouched({ email: true, pw: true });
     if (!email.trim() || !pw.trim()) return;
 
-    const user = JSON.parse(localStorage.getItem("user"));
-
     if (user && user.id === email && user.pw === pw) {
-      sessionStorage.setItem("loginUser", email);
-      sessionStorage.setItem("loginType", "local");
+      setLogin(email, "local");
       alert("로그인 성공");
       navigate("/", { replace: true });
     } else {
@@ -45,8 +44,8 @@ function Login() {
   const googleLogin = useGoogleLogin({
   scope: "https://www.googleapis.com/auth/calendar.events",
   onSuccess: (tokenResponse) => {
-    sessionStorage.setItem("googleAccessToken", tokenResponse.access_token);
-    sessionStorage.setItem("loginType", "google");
+    setGoogleAccessToken(tokenResponse.access_token);
+    setLogin("google", "google");
     alert("구글 로그인 성공");
     navigate("/", { replace: true });
   },

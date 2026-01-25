@@ -1,8 +1,10 @@
 import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import useStore from "../store/useStore";
 
 function Signup() {
   const navigate = useNavigate();
+  const { setUser } = useStore();
 
   const [formData, setFormData] = useState({
     id: "",
@@ -111,7 +113,7 @@ function Signup() {
       gender: formData.gender,
     };
 
-    localStorage.setItem("user", JSON.stringify(user));
+    setUser(user);
     alert("회원가입 성공");
     navigate("/login");
   };
