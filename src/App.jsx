@@ -6,6 +6,7 @@ import Map from "./pages/Map";
 import Calendar from "./pages/Calendar";
 import Signup from "./pages/Signup";
 import TasteTest from "./pages/TasteTest";
+import Testresult from "./pages/Testresult";
 import OAuthKakaoCallback from "./pages/OAuthKakaoCallback";
 import Mypage from "./pages/Mypage";
 
@@ -22,6 +23,7 @@ function App() {
       <Route path="/signup" element={<Signup />} />
       <Route path="/mypage" element={<Mypage />} />
       <Route path="/tastetest" element={<TasteTest />} />
+      <Route path="/testresult" element={<Testresult />} />
       <Route path="/oauth/kakao/callback" element={<OAuthKakaoCallback />} />
     </Routes>
   );

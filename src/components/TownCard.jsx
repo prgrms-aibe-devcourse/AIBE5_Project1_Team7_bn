@@ -21,7 +21,7 @@ export function TownCard({ town, festival, onClick }) {
   };
 
   return (
-    <button
+    <div
       onClick={onClick}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
@@ -32,6 +32,7 @@ export function TownCard({ town, festival, onClick }) {
         transition-all
         overflow-hidden
         relative
+        cursor-pointer
       "
     >
       {/* 이미지 영역 */}
@@ -79,6 +80,6 @@ export function TownCard({ town, festival, onClick }) {
           {town.description}
         </p>
       </div>
-    </button>
+    </div>
   );
 }
