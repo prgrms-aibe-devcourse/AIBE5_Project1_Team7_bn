@@ -46,6 +46,13 @@ const useStore = create(
       }),
       isLiked: (pSeq) => (state) => state.likedFestivals.some(f => f.pSeq === pSeq),
 
+      // 취향 테스트 답변 저장
+      tasteTestAnswers: [],
+      addTasteTestAnswer: (answer) => set((state) => ({
+        tasteTestAnswers: [...state.tasteTestAnswers, answer]
+      })),
+      clearTasteTestAnswers: () => set({ tasteTestAnswers: [] }),
+
       // 전체 초기화 (로그아웃 시 사용)
       clearAll: () => set({
         user: null,
@@ -55,6 +62,7 @@ const useStore = create(
         kakaoAuthCode: null,
         selectedFestivalPSeq: null,
         likedFestivals: [],
+        tasteTestAnswers: [],
       }),
     }),
     {
@@ -68,6 +76,7 @@ const useStore = create(
         kakaoAuthCode: state.kakaoAuthCode,
         selectedFestivalPSeq: state.selectedFestivalPSeq,
         likedFestivals: state.likedFestivals,
+        tasteTestAnswers: state.tasteTestAnswers,
       }),
     }
   )
