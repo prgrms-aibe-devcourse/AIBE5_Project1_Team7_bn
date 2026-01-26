@@ -69,6 +69,11 @@ const useStore = create(
       })),
       clearTasteTestAnswers: () => set({ tasteTestAnswers: [] }),
 
+      // 취향 테스트 유형 저장 (1: 신체험_탐험가, 2: 열정_파티러버, 3: 감성_아티스트)
+      tasteType: null,
+      setTasteType: (type) => set({ tasteType: type }),
+      clearTasteType: () => set({ tasteType: null }),
+
       // 전체 초기화 (로그아웃 시 사용)
       clearAll: () => set({
         user: null,
@@ -80,6 +85,7 @@ const useStore = create(
         likedFestivals: [],
         savedCalendarFestivals: [],
         tasteTestAnswers: [],
+        tasteType: null,
       }),
     }),
     {
@@ -95,6 +101,7 @@ const useStore = create(
         likedFestivals: state.likedFestivals,
         savedCalendarFestivals: state.savedCalendarFestivals,
         tasteTestAnswers: state.tasteTestAnswers,
+        tasteType: state.tasteType,
       }),
     }
   )

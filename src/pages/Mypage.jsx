@@ -1,13 +1,13 @@
 ﻿import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Header from "../components/Header";
 import useStore from "../store/useStore";
 import { TownCard } from "../components/TownCard";
 
-function Mypage() {
-  const [activeTab, setActiveTab] = useState("myinfo");
+function Mypage() {  const navigate = useNavigate();  const [activeTab, setActiveTab] = useState("myinfo");
   const [isEditing, setIsEditing] = useState(false);
   
-  const { user, loginUser, setUser, likedFestivals } = useStore();
+  const { user, loginUser, setUser, likedFestivals, tasteType, clearTasteTestAnswers, clearTasteType } = useStore();
   
   // 수정 가능한 필드를 위한 state
   const [editedInfo, setEditedInfo] = useState({
@@ -28,6 +28,73 @@ function Mypage() {
     gender: user?.gender || loginUser?.gender || "여성",
     memberType: "PRO MEMBER",
     joinDate: user?.joinDate || loginUser?.joinDate || "2024. 05. 14"
+  };
+
+  // 취향 유형 정보 가져오기
+  const getTasteTypeInfo = () => {
+    if (!tasteType) {
+      return {
+        hashtag: "#Experience_Explorer",
+        title: "경험 중심의 탐험가",
+        titleHighlight: "탐험가",
+        tags: ["#Experience_Explorer", "#신체활동", "#전통감성"],
+        description1: "새로운 경험과 감각적 풍요로움을 추구하는 당신, 단순한 관람보다는 직접 참여하고 몸으로 느끼는 역동적인 축제를 선호하시네요!",
+        description2: "전통적인 가치를 소중히 여기면서도, 새로운 체험을 통해 성취감을 얻는 과정에서 가장 큰 행복을 느끼는 타입입니다. 다가오는 가을, 지역색이 짙은 체험형 전통 축제에 방문해보는 것은 어떨까요?",
+        image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&h=400&fit=crop"
+      };
+    }
+
+    switch(tasteType) {
+      case 1:
+        return {
+          hashtag: "#Experience_Explorer",
+          title: "경험 중심의 탐험가",
+          titleHighlight: "탐험가",
+          tags: ["#Experience_Explorer", "#신체활동", "#전통감성"],
+          description1: `${userInfo.name}님은 단순한 관람보다는 직접 참여하고 몸으로 느끼는 역동적인 축제를 선호하시네요!`,
+          description2: "전통적인 가치를 소중히 여기면서도, 새로운 체험을 통해 성취감을 얻는 과정에서 가장 큰 행복을 느끼는 타입입니다. 다가오는 가을, 지역색이 짙은 체험형 전통 축제에 방문해보는 것은 어떨까요?",
+          image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&h=400&fit=crop"
+        };
+      case 2:
+        return {
+          hashtag: "#Party_Lover",
+          title: "열정 넘치는 파티러버",
+          titleHighlight: "파티러버",
+          tags: ["#Party_Lover", "#신나는음악", "#활기찬분위기"],
+          description1: `${userInfo.name}님은 활기차고 에너지 넘치는 축제를 사랑하는 타입이군요!`,
+          description2: "신나는 음악과 불꽃쇼가 가득한 페스티벌에서 진정한 즐거움을 찾습니다. 밤늦도록 춤추고 노래하며, 함께하는 모든 순간이 특별한 추억이 되는 당신에게 어울리는 축제를 찾아보세요!",
+          image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&h=400&fit=crop"
+        };
+      case 3:
+        return {
+          hashtag: "#감성_아티스트",
+          title: "감성적인 아티스트",
+          titleHighlight: "아티스트",
+          tags: ["#감성_아티스트", "#도시감성", "#예술적영감"],
+          description1: `${userInfo.name}님은 현대적이고 세련된 분위기를 즐기는 감성적인 타입이시네요!`,
+          description2: "도시적 감성과 예술이 어우러진 페스티벌에서 영감을 받습니다. 아름다운 비주얼과 독특한 콘셉트가 있는 축제에서 당신만의 특별한 순간을 만들어보세요!",
+          image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&h=400&fit=crop"
+        };
+      default:
+        return {
+          hashtag: "#Experience_Explorer",
+          title: "경험 중심의 탐험가",
+          titleHighlight: "탐험가",
+          tags: ["#Experience_Explorer", "#신체활동", "#전통감성"],
+          description1: `${userInfo.name}님은 단순한 관람보다는 직접 참여하고 몸으로 느끼는 역동적인 축제를 선호하시네요!`,
+          description2: "전통적인 가치를 소중히 여기면서도, 새로운 체험을 통해 성취감을 얻는 과정에서 가장 큰 행복을 느끼는 타입입니다. 다가오는 가을, 지역색이 짙은 체험형 전통 축제에 방문해보는 것은 어떨까요?",
+          image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&h=400&fit=crop"
+        };
+    }
+  };
+
+  const tasteTypeInfo = getTasteTypeInfo();
+
+  // 취향 테스트 다시 하기
+  const handleRetakeTest = () => {
+    clearTasteTestAnswers();
+    clearTasteType();
+    navigate("/tastetest");
   };
 
   const handleEdit = () => {
@@ -294,45 +361,40 @@ function Mypage() {
             <div className="bg-white rounded-[3rem] shadow-2xl shadow-orange-900/5 overflow-hidden border border-orange-50/50 min-h-[500px] hidden lg:block">
               <div className="flex h-full">
                 <div className="w-[45%] bg-[#fdf8f4] flex items-center justify-center relative p-12">
-                  <div className="relative w-full h-full flex items-center justify-center overflow-hidden rounded-[2rem]">
-                    <div className="absolute inset-4 vintage-map rounded-[2rem] border-4 border-[#d4c3a3] transform -rotate-1 shadow-lg">
-                      <div className="absolute top-4 left-10 w-3 h-3 bg-yellow-200 rounded-full blur-[2px] shadow-[0_0_15px_#fef3c7]"></div>
-                      <div className="absolute top-12 left-20 w-2 h-2 bg-orange-200 rounded-full blur-[1px] shadow-[0_0_10px_#ffedd5]"></div>
-                      <div className="absolute bottom-16 right-12 w-4 h-4 bg-yellow-300 rounded-full blur-[3px] shadow-[0_0_20px_#fde68a]"></div>
+                  <div className="relative w-full h-full flex flex-col items-center justify-center overflow-hidden rounded-[2rem] gap-6">
+                    <div className="w-64 h-64 rounded-full overflow-hidden shadow-2xl">
+                      <img 
+                        src={tasteTypeInfo.image || "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&h=400&fit=crop"}
+                        alt="Profile"
+                        className="w-full h-full object-cover"
+                      />
                     </div>
-                    <div className="relative z-20 transform -rotate-6">
-                      <div className="w-48 h-48 rounded-full bg-gradient-to-br from-yellow-500 via-yellow-200 to-yellow-600 p-2 shadow-2xl compass-glow">
-                        <div className="w-full h-full rounded-full bg-[#fdf8f4] border-4 border-yellow-600/30 flex items-center justify-center relative overflow-hidden">
-                          <div className="relative w-36 h-36 flex items-center justify-center transform rotate-[45deg]">
-                            <div className="w-4 h-24 bg-gradient-to-t from-[#f48525] to-orange-400 rounded-full absolute shadow-lg"></div>
-                            <div className="w-4 h-24 bg-gradient-to-b from-gray-400 to-gray-200 rounded-full absolute translate-y-12 shadow-md"></div>
-                            <div className="w-6 h-6 bg-yellow-600 rounded-full border-2 border-white z-10 shadow-lg"></div>
-                          </div>
-                          <span className="text-yellow-700/20 text-8xl absolute"></span>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="absolute bottom-10 w-full text-center z-30">
-                      <p className="text-orange-900/80 font-black text-2xl tracking-tighter uppercase">#Experience_Explorer</p>
+                    <div className="text-center">
+                      <p className="text-gray-900 text-2xl font-bold mb-1">당신은</p>
+                      <p className="text-[#f48525] text-3xl font-black mb-1">{tasteTypeInfo.hashtag}</p>
+                      <p className="text-gray-900 text-2xl font-bold">유형입니다!</p>
                     </div>
                   </div>
                 </div>
                 <div className="flex-1 p-14 flex flex-col justify-between">
                   <div>
                     <div className="flex flex-wrap gap-2 mb-8">
-                      <span className="px-4 py-1.5 bg-orange-50 text-[#f48525] text-sm font-bold rounded-full">#Experience_Explorer</span>
-                      <span className="px-4 py-1.5 bg-orange-50 text-[#f48525] text-sm font-bold rounded-full">#신체활동</span>
-                      <span className="px-4 py-1.5 bg-orange-50 text-[#f48525] text-sm font-bold rounded-full">#전통감성</span>
+                      {tasteTypeInfo.tags.map((tag, index) => (
+                        <span key={index} className="px-4 py-1.5 bg-orange-50 text-[#f48525] text-sm font-bold rounded-full">{tag}</span>
+                      ))}
                     </div>
                     <h3 className="text-4xl font-black text-[#1c140d] mb-8 leading-tight">
-                      경험 중심의 <span className="text-[#f48525]">탐험가</span>
+                      {tasteTypeInfo.title.split(tasteTypeInfo.titleHighlight)[0]}<span className="text-[#f48525]">{tasteTypeInfo.titleHighlight}</span>
                     </h3>
                     <div className="space-y-6 text-gray-600 text-[15.5px] leading-relaxed font-medium">
-                      <p><span className="text-[#f48525] font-bold">{userInfo.name}</span>님은 단순한 관람보다는 직접 참여하고 몸으로 느끼는 역동적인 축제를 선호하시네요!</p>
-                      <p>전통적인 가치를 소중히 여기면서도, 새로운 체험을 통해 성취감을 얻는 과정에서 가장 큰 행복을 느끼는 타입입니다. 다가오는 가을, 지역색이 짙은 체험형 전통 축제에 방문해보는 것은 어떨까요?</p>
+                      <p>{tasteTypeInfo.description1}</p>
+                      <p>{tasteTypeInfo.description2}</p>
                     </div>
                   </div>
-                  <button className="w-full h-16 vibrant-gradient text-white font-black rounded-2xl text-xl shadow-xl shadow-orange-500/20 hover:shadow-orange-500/40 hover:-translate-y-0.5 transition-all flex items-center justify-center gap-2 mt-6">
+                  <button 
+                    onClick={handleRetakeTest}
+                    className="w-full h-16 vibrant-gradient text-white font-black rounded-2xl text-xl shadow-xl shadow-orange-500/20 hover:shadow-orange-500/40 hover:-translate-y-0.5 transition-all flex items-center justify-center gap-2 mt-6"
+                  >
                      다시 축제취향 설문하기
                   </button>
                 </div>
@@ -340,35 +402,37 @@ function Mypage() {
             </div>
             <div className="bg-white rounded-[3rem] shadow-2xl p-10 lg:hidden mb-12 border border-orange-50/50">
               <div className="flex flex-col gap-10">
-                <div className="w-full aspect-square bg-[#faf3eb] rounded-[2.5rem] flex items-center justify-center relative overflow-hidden">
-                  <div className="absolute inset-4 vintage-map rounded-[2.5rem] transform -rotate-2"></div>
-                  <div className="relative flex flex-col items-center gap-6 z-10">
-                    <div className="w-40 h-40 rounded-full bg-gradient-to-br from-yellow-500 to-yellow-600 p-1.5 shadow-2xl compass-glow">
-                      <div className="w-full h-full rounded-full bg-[#fdf8f4] flex items-center justify-center relative">
-                        <div className="relative w-28 h-28 flex items-center justify-center transform rotate-[45deg]">
-                          <div className="w-3 h-20 bg-[#f48525] rounded-full absolute shadow-md"></div>
-                          <div className="w-3 h-20 bg-gray-300 rounded-full absolute translate-y-10"></div>
-                        </div>
-                        <span className="text-yellow-700/20 text-6xl absolute"></span>
-                      </div>
-                    </div>
-                    <p className="text-orange-800 font-black text-xl tracking-tighter uppercase">EXPLORER</p>
+                <div className="w-full flex flex-col items-center justify-center gap-6 py-8">
+                  <div className="w-56 h-56 rounded-full overflow-hidden shadow-xl">
+                    <img 
+                      src={tasteTypeInfo.image || "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&h=400&fit=crop"}
+                      alt="Profile"
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  <div className="text-center">
+                    <p className="text-gray-900 text-xl font-bold mb-1">당신은</p>
+                    <p className="text-[#f48525] text-2xl font-black mb-1">{tasteTypeInfo.hashtag}</p>
+                    <p className="text-gray-900 text-xl font-bold">유형입니다!</p>
                   </div>
                 </div>
                 <div>
                   <div className="flex flex-wrap gap-2 mb-6">
-                    <span className="px-4 py-1.5 bg-orange-50 text-[#f48525] text-sm font-bold rounded-full">#Experience_Explorer</span>
-                    <span className="px-4 py-1.5 bg-orange-50 text-[#f48525] text-sm font-bold rounded-full">#신체활동</span>
-                    <span className="px-4 py-1.5 bg-orange-50 text-[#f48525] text-sm font-bold rounded-full">#전통감성</span>
+                    {tasteTypeInfo.tags.map((tag, index) => (
+                      <span key={index} className="px-4 py-1.5 bg-orange-50 text-[#f48525] text-sm font-bold rounded-full">{tag}</span>
+                    ))}
                   </div>
                   <h3 className="text-3xl font-black text-[#1c140d] mb-6 leading-tight">
-                    경험 중심의 <span className="text-[#f48525]">탐험가</span>
+                    {tasteTypeInfo.title.split(tasteTypeInfo.titleHighlight)[0]}<span className="text-[#f48525]">{tasteTypeInfo.titleHighlight}</span>
                   </h3>
                   <div className="space-y-4 text-gray-600 text-base leading-relaxed font-medium">
-                    <p><span className="text-[#f48525] font-bold">{userInfo.name}</span>님은 단순한 관람보다는 직접 참여하고 몸으로 느끼는 역동적인 축제를 선호하시네요!</p>
-                    <p>전통적인 가치를 소중히 여기면서도, 새로운 체험을 통해 성취감을 얻는 과정에서 가장 큰 행복을 느끼는 타입입니다.</p>
+                    <p>{tasteTypeInfo.description1}</p>
+                    <p>{tasteTypeInfo.description2}</p>
                   </div>
-                  <button className="w-full h-48 vibrant-gradient text-white font-black rounded-2xl text-xl shadow-xl shadow-orange-500/20 mt-6 flex items-center justify-center gap-2">
+                  <button 
+                    onClick={handleRetakeTest}
+                    className="w-full h-16 vibrant-gradient text-white font-black rounded-2xl text-xl shadow-xl shadow-orange-500/20 mt-6 flex items-center justify-center gap-2"
+                  >
                      다시 축제취향 설문하기
                   </button>
                 </div>

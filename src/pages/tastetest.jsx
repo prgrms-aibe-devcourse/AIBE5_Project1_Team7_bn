@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Header from "../components/Header";
 import useStore from "../store/useStore";
@@ -6,7 +6,13 @@ import useStore from "../store/useStore";
 function TasteTest() {
   const navigate = useNavigate();
   const [currentQuestion, setCurrentQuestion] = useState(0);
-  const { addTasteTestAnswer } = useStore();
+  const { addTasteTestAnswer, clearTasteTestAnswers } = useStore();
+
+  // 테스트 시작 시 기존 답변 초기화
+  useEffect(() => {
+    clearTasteTestAnswers();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // 5개의 질문 정의
   const questions = [

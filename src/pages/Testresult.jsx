@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import Header from "../components/Header";
 import { TownDetailModal } from "../components/TownDetailModal";
@@ -8,14 +8,15 @@ import festivals from "../data/festivals.json";
 
 function Testresult() {
   const navigate = useNavigate();
-  const { tasteTestAnswers, toggleCalendarFestival } = useStore();
+  const { tasteTestAnswers, toggleCalendarFestival, setTasteType } = useStore();
   const [selectedFestival, setSelectedFestival] = useState(null);
   const [mainEventFestival, setMainEventFestival] = useState(null);
 
   // 테스트 결과 분석
-  const getLabelType = () => {
+  const labelResult = useMemo(() => {
     if (!tasteTestAnswers || tasteTestAnswers.length === 0) {
       return {
+        typeNumber: 1,
         type: "#신체험_탐험가",
         description: "새로운 경험과 감각적 풍요로움을 추구하는 당신, 일몰 아래 화려한 퍼포먼스가 어우러진 페스티벌이 가장 완벽한 휴식이 됩니다.",
         image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&h=400&fit=crop"
@@ -26,26 +27,34 @@ function Testresult() {
     
     if (firstAnswer === 1) {
       return {
+        typeNumber: 1,
         type: "#신체험_탐험가",
         description: "새로운 경험과 감각적 풍요로움을 추구하는 당신, 일몰 아래 화려한 퍼포먼스가 어우러진 페스티벌이 가장 완벽한 휴식이 됩니다.",
         image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&h=400&fit=crop"
       };
     } else if (firstAnswer === 2) {
       return {
+        typeNumber: 2,
         type: "#열정_파티러버",
         description: "활기차고 에너지 넘치는 축제를 사랑하는 당신, 신나는 음악과 불꽃쇼가 가득한 페스티벌에서 진정한 즐거움을 찾습니다.",
         image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&h=400&fit=crop"
       };
     } else {
       return {
+        typeNumber: 3,
         type: "#감성_아티스트",
         description: "현대적이고 세련된 분위기를 즐기는 당신, 도시적 감성과 예술이 어우러진 페스티벌에서 영감을 받습니다.",
         image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&h=400&fit=crop"
       };
     }
-  };
+  }, [tasteTestAnswers]);
 
-  const labelResult = getLabelType();
+  // 유형 번호를 로컬 스토리지에 저장
+  useEffect(() => {
+    if (labelResult) {
+      setTasteType(labelResult.typeNumber);
+    }
+  }, [labelResult, setTasteType]);
 
   // 추천 축제 (상위 3개)
   const recommendedFestivals = festivals.slice(0, 3).map((festival, index) => ({
@@ -423,7 +432,8 @@ function Testresult() {
 
                 <h2 style={styles.labelType}>
                   당신은<br />
-                  <span style={{ color: "#f48525" }}>{labelResult.type}</span> 유형입니다!
+                  <span style={{ color: "#f48525" }}>{labelResult.type}</span> 
+                  <br />유형입니다!
                 </h2>
 
                 <p style={styles.labelDescription}>

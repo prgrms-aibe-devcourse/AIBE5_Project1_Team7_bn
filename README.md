@@ -1,5 +1,64 @@
 # Festory FE - 작업 기록
 
+## 📅 2026년 1월 26일
+
+### 🎯 주요 작업 내용
+
+#### 1️⃣ Testresult.jsx - 축제 추천 결과 페이지 UX 개선
+- ✅ **축제 카드 클릭 동작 변경**
+  - 지도 페이지로 이동 → TownDetailModal 팝업으로 변경
+  - 사용자가 페이지를 벗어나지 않고 상세정보 확인 가능
+- ✅ **찜 버튼 표시 개선**
+  - TownCard 컴포넌트 사용으로 하트 찜 버튼 표시
+  - "favorite match" Material Icon 제거
+- ✅ **MAIN EVENT 동적 업데이트**
+  - 축제 카드 클릭 시 선택한 축제의 fstvlNm, rdnmadr 표시
+  - mainEventFestival state 추가로 모달 닫아도 정보 유지
+- ✅ **NEARBY SPOT 지역별 명소 자동 매핑**
+  - ministry_region 기반 19개 지역 명소 데이터 구축
+  - 가장 구체적인 지역명 우선 매칭 (예: "강원 평창" → "평창" 우선)
+  - 평창→대관령 양떼목장, 강릉→경포대, 부산→해운대 등
+
+#### 2️⃣ After_Home.jsx - 취향 테스트 초기화
+- ✅ "추천 계속 보기" 버튼 클릭 시 `clearTasteTestAnswers()` 호출
+- ✅ 매번 새로운 설문조사 시작 가능
+
+#### 3️⃣ Calendar.jsx - 축제 저장 및 관리 기능
+- ✅ **Saved Festivals 저장 기능**
+  - Testresult → "나의 일정으로 저장하기" 버튼으로 축제 저장
+  - Zustand store에 `savedCalendarFestivals` 상태 추가
+  - localStorage에 영구 저장
+- ✅ **Saved Festivals 뷰에 저장된 축제 표시**
+  - savedFestivalEvents useMemo로 별도 관리
+  - FullCalendar에 [...events, ...savedFestivalEvents] 병합
+- ✅ **저장된 축제 삭제 기능**
+  - eventClick에서 `saved-` prefix 감지
+  - 확인 다이얼로그 후 toggleCalendarFestival로 제거
+
+#### 4️⃣ 디자인 및 아이콘 개선
+- ✅ **Material Symbols 폰트 추가**
+  - index.html에 Google Fonts CDN 링크 추가
+  - auto_awesome, calendar_add_on, festival 등 아이콘 정상 표시
+- ✅ **Share My Label 버튼**
+  - share 아이콘 제거, 텍스트만 표시
+
+#### 5️⃣ AI 백엔드 API 스펙 정리
+- ✅ **After_Home.jsx 맞춤 추천 API**
+  - `POST /api/recommendations/user`
+  - 요청: userId, limit
+  - 응답: tags (AI 분석 태그), festivals (추천 축제 목록)
+- ✅ **Testresult.jsx 취향 테스트 결과 API**
+  - `POST /api/recommendations/taste-test`
+  - 요청: answers (5개 질문 답변)
+  - 응답: userType (type, description, image), recommendedFestivals (matchRate 포함)
+
+#### 6️⃣ 버그 수정
+- ✅ useMemo 의존성 배열 경고 수정 (recommendedFestivals 제거)
+- ✅ React Compiler memoization 충돌 해결
+- ✅ 미사용 import 제거 (useMemo)
+
+---
+
 ## 📅 2025년 1월 25일
 
 ### 🎯 주요 작업 내용

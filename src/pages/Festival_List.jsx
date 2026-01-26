@@ -155,9 +155,12 @@ function Festival_List() {
 								<div className="flex items-center gap-2">
 									<span className="text-sm text-gray-500 whitespace-nowrap">Show:</span>
 									<div className="relative">
-										<select className="appearance-none bg-gray-50 border border-gray-200 rounded-lg text-sm font-bold text-[#181411] pl-3 pr-8 py-1 focus:ring-primary focus:border-primary cursor-pointer hover:bg-gray-100 transition-colors">
+										<select 
+											defaultValue="20"
+											className="appearance-none bg-gray-50 border border-gray-200 rounded-lg text-sm font-bold text-[#181411] pl-3 pr-8 py-1 focus:ring-primary focus:border-primary cursor-pointer hover:bg-gray-100 transition-colors"
+										>
 											<option value="10">10</option>
-											<option value="20" selected>20</option>
+											<option value="20">20</option>
 											<option value="50">50</option>
 										</select>
 										<span className="material-symbols-outlined absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none text-[16px]">expand_more</span>
