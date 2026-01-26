@@ -90,7 +90,7 @@ function Mypage() {
       
       <main className="max-w-7xl mx-auto px-6 py-10">
         <div className="max-w-4xl mx-auto">
-          <h2 className="text-4xl font-bold mb-8 text-gray-900">
+          <h2 className="text-4xl font-black mb-8 text-gray-900">
             마이페이지
           </h2>
           
@@ -280,7 +280,7 @@ function Mypage() {
 
         {activeTab === "preference" && (
           <div className="w-full max-w-[1000px]">
-            <div className="bg-white rounded-[3rem] shadow-2xl shadow-orange-900/5 overflow-hidden border border-orange-50/50 aspect-video hidden lg:block">
+            <div className="bg-white rounded-[3rem] shadow-2xl shadow-orange-900/5 overflow-hidden border border-orange-50/50 min-h-[500px] hidden lg:block">
               <div className="flex h-full">
                 <div className="w-[45%] bg-[#fdf8f4] flex items-center justify-center relative p-12">
                   <div className="relative w-full h-full flex items-center justify-center overflow-hidden rounded-[2rem]">
@@ -317,11 +317,11 @@ function Mypage() {
                       경험 중심의 <span className="text-[#f48525]">탐험가</span>
                     </h3>
                     <div className="space-y-6 text-gray-600 text-[15.5px] leading-relaxed font-medium">
-                      <p><span className="text-[#f48525] font-bold">김페스</span>님은 단순한 관람보다는 직접 참여하고 몸으로 느끼는 역동적인 축제를 선호하시네요!</p>
+                      <p><span className="text-[#f48525] font-bold">{userInfo.name}</span>님은 단순한 관람보다는 직접 참여하고 몸으로 느끼는 역동적인 축제를 선호하시네요!</p>
                       <p>전통적인 가치를 소중히 여기면서도, 새로운 체험을 통해 성취감을 얻는 과정에서 가장 큰 행복을 느끼는 타입입니다. 다가오는 가을, 지역색이 짙은 체험형 전통 축제에 방문해보는 것은 어떨까요?</p>
                     </div>
                   </div>
-                  <button className="w-full h-16 vibrant-gradient text-white font-black rounded-2xl text-lg shadow-xl shadow-orange-500/20 hover:shadow-orange-500/40 hover:-translate-y-0.5 transition-all flex items-center justify-center gap-2">
+                  <button className="w-full h-16 vibrant-gradient text-white font-black rounded-2xl text-xl shadow-xl shadow-orange-500/20 hover:shadow-orange-500/40 hover:-translate-y-0.5 transition-all flex items-center justify-center gap-2 mt-6">
                      다시 축제취향 설문하기
                   </button>
                 </div>
@@ -354,10 +354,10 @@ function Mypage() {
                     경험 중심의 <span className="text-[#f48525]">탐험가</span>
                   </h3>
                   <div className="space-y-4 text-gray-600 text-base leading-relaxed font-medium">
-                    <p><span className="text-[#f48525] font-bold">김페스</span>님은 단순한 관람보다는 직접 참여하고 몸으로 느끼는 역동적인 축제를 선호하시네요!</p>
+                    <p><span className="text-[#f48525] font-bold">{userInfo.name}</span>님은 단순한 관람보다는 직접 참여하고 몸으로 느끼는 역동적인 축제를 선호하시네요!</p>
                     <p>전통적인 가치를 소중히 여기면서도, 새로운 체험을 통해 성취감을 얻는 과정에서 가장 큰 행복을 느끼는 타입입니다.</p>
                   </div>
-                  <button className="w-full h-16 vibrant-gradient text-white font-black rounded-2xl text-lg shadow-xl shadow-orange-500/20 mt-10 flex items-center justify-center gap-2">
+                  <button className="w-full h-48 vibrant-gradient text-white font-black rounded-2xl text-xl shadow-xl shadow-orange-500/20 mt-6 flex items-center justify-center gap-2">
                      다시 축제취향 설문하기
                   </button>
                 </div>

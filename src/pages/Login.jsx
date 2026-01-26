@@ -139,8 +139,8 @@ function Login() {
     },
     headlineOrange: {
       color: "rgb(244, 133, 37)",
-      fontSize: 32,
-      fontWeight: 600,
+      fontSize: 40,
+      fontWeight: 700,
     },
     subSmall: {
       textAlign: "center",
