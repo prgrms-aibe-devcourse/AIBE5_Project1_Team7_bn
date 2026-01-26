@@ -28,7 +28,7 @@ function After_Home() {
             marginBottom: 40,
             borderRadius: 32,
             overflow: "hidden",
-            aspectRatio: "16 / 9",
+            aspectRatio: "16 / 6",
             backgroundImage: `linear-gradient(to right, rgba(255,255,255,.95), rgba(255,255,255,.4), rgba(255,255,255,.9)),
               url("https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=1200")`,
             backgroundSize: "cover",

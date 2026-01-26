@@ -8,6 +8,7 @@ import Signup from "./pages/Signup";
 import TasteTest from "./pages/TasteTest";
 import Testresult from "./pages/Testresult";
 import OAuthKakaoCallback from "./pages/OAuthKakaoCallback";
+import Festival_List from "./pages/Festival_List";
 import Mypage from "./pages/Mypage";
 
 
@@ -16,6 +17,7 @@ function App() {
     <Routes>
       <Route path="/" element={<Navigate to="/home" replace />} />
       <Route path="/after_home" element={<After_Home />} />
+      <Route path="/festivals" element={<Festival_List />} />
       <Route path="/home" element={<Home />} />
       <Route path="/login" element={<Login />} />
       <Route path="/map" element={<Map />} />
