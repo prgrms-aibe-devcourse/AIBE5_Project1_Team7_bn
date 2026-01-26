@@ -103,7 +103,7 @@ function Calendar() {
   const SCOPES = "https://www.googleapis.com/auth/calendar.events";
 
   // ✅ zustand store로 Google 토큰과 축제 pSeq 관리
-  const { googleAccessToken, setGoogleAccessToken, selectedFestivalPSeq, clearSelectedFestivalPSeq } = useStore();
+  const { googleAccessToken, setGoogleAccessToken, selectedFestivalPSeq, clearSelectedFestivalPSeq, savedCalendarFestivals, toggleCalendarFestival } = useStore();
   
   const [token, setToken] = useState(googleAccessToken);
   const [tokenClient, setTokenClient] = useState(null);
@@ -680,6 +680,31 @@ function Calendar() {
     }).filter(Boolean);
   }, [activeFilters]);
 
+  // ✅ 저장된 축제를 FullCalendar 이벤트로 변환 (Saved Festivals 뷰용)
+  const savedFestivalEvents = useMemo(() => {
+    if (!savedCalendarFestivals || savedCalendarFestivals.length === 0) {
+      return [];
+    }
+
+    return savedCalendarFestivals.map(festival => {
+      const dateInfo = parseFestivalDate(festival);
+      if (!dateInfo) return null;
+      
+      return {
+        id: `saved-${festival.pSeq}`,
+        title: festival.fstvlNm,
+        start: dateInfo.startDateTime,
+        end: dateInfo.endDateTime,
+        allDay: true,
+        backgroundColor: 'rgb(244,133,37)',
+        borderColor: 'rgb(244,133,37)',
+        extendedProps: {
+          festival: festival
+        }
+      };
+    }).filter(Boolean);
+  }, [savedCalendarFestivals]);
+
   // ---------- styles (기존 유지) ----------
   const styles = {
     container: { display: "flex", flexDirection: "column", minHeight: "calc(100vh - 64px)", background: "#f9fafb", fontFamily: "'Plus Jakarta Sans','Segoe UI',sans-serif" },
@@ -1025,7 +1050,7 @@ function Calendar() {
               height="100%"
               selectable={!!token}
               editable={!!token}
-              events={events}
+              events={[...events, ...savedFestivalEvents]}
               headerToolbar={false}
               datesSet={(info) => {
                 if (!token) return;
@@ -1055,6 +1080,18 @@ function Calendar() {
                 setModalOpen(true);
               }}
               eventClick={(info) => {
+                // ✅ Saved Festival 이벤트인 경우 삭제 처리
+                if (info.event.id.startsWith('saved-')) {
+                  const pSeq = info.event.id.replace('saved-', '');
+                  const festival = savedCalendarFestivals.find(f => String(f.pSeq) === pSeq);
+                  if (festival) {
+                    if (confirm(`"${festival.fstvlNm}"을(를) 저장된 축제에서 제거하시겠습니까?`)) {
+                      toggleCalendarFestival(festival);
+                    }
+                  }
+                  return;
+                }
+
                 if (!token) return;
 
                 setFormData({
