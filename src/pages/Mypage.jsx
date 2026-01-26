@@ -401,9 +401,9 @@ function Mypage() {
                     >
                       <TownCard
                         town={{
-                          name: festival.festival_name,
-                          description: festival.festival_description,
-                          image: festival.image_url || "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f",
+                          name: festival.fstvlNm,
+                          description: festival.ministry_description,
+                          image: festival.ministry_image_url || "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f",
                           id: festival.pSeq,
                         }}
                         festival={festival}

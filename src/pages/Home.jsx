@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import festivals from "../data/festivals_with_geo.json";
+import festivals from "../data/festivals.json";
 import useStore from "../store/useStore";
 import { TownCard } from "../components/TownCard";
 
@@ -342,10 +342,11 @@ function Home() {
                   <TownCard
                     key={festival.pSeq}
                     town={{
-                      name: festival.festival_name,
-                      description: festival.festival_description,
-                      image: festival.image_url || "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=400&h=300&fit=crop",
-                      id: festival.pSeq,
+
+                      name: festival.fstvlNm,
+                      description: festival.ministry_description,
+                      image: festival.ministry_image_url || "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=400&h=300&fit=crop",
+
                     }}
                     festival={festival}
                     onClick={() => {

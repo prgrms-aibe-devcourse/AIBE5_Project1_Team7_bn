@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import festivals from "../data/festivals_with_geo.json";
+import festivals from "../data/festivals.json";
 import useStore from "../store/useStore";
 import Header from "../components/Header";
 import { TownCard } from "../components/TownCard";
@@ -71,7 +71,7 @@ function After_Home() {
             </p>
 
             <button
-              onClick={() => navigate("/map")}
+              onClick={() => navigate("/tastetest")}
               style={{
                 padding: "16px 32px",
                 borderRadius: 12,
@@ -141,10 +141,11 @@ function After_Home() {
                 <TownCard
                   key={f.pSeq}
                   town={{
-                    name: f.festival_name,
-                    description: f.festival_description,
-                    image: f.image_url || "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f",
-                    id: f.pSeq,
+
+                    name: f.fstvlNm,
+                    description: f.ministry_description,
+                    image: f.ministry_image_url || "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f",
+
                   }}
                   festival={f}
                   onClick={() => {

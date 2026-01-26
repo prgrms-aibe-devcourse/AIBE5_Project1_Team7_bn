@@ -12,8 +12,8 @@ export function TownDetailModal({ festival, onClose }) {
         {/* 헤더 이미지 */}
         <div className="relative h-80 overflow-hidden bg-gray-200">
           <img
-            src={festival.image_url}
-            alt={festival.festival_name}
+            src={festival.ministry_image_url}
+            alt={festival.fstvlNm}
             className="h-full w-full object-cover"
           />
           {/* 그라디언트 오버레이 */}
@@ -35,7 +35,7 @@ export function TownDetailModal({ festival, onClose }) {
               {festival.personality || "축제"}
             </span>
             <h2 className="text-4xl font-black text-white leading-tight">
-              {festival.festival_name}
+              {festival.fstvlNm}
             </h2>
           </div>
         </div>
@@ -46,19 +46,19 @@ export function TownDetailModal({ festival, onClose }) {
           <div className="grid grid-cols-2 gap-6 mb-8 pb-8 border-b border-gray-100">
             <div>
               <p className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-2">📅 기간</p>
-              <p className="text-lg font-bold text-gray-900">{festival.date}</p>
+              <p className="text-lg font-bold text-gray-900">{festival.ministry_date}</p>
             </div>
             <div>
               <p className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-2">📍 지역</p>
-              <p className="text-lg font-bold text-gray-900">{festival.region}</p>
+              <p className="text-lg font-bold text-gray-900">{festival.ministry_region}</p>
             </div>
             <div>
               <p className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-2">📌 장소</p>
-              <p className="text-lg font-bold text-gray-900">{festival.location}</p>
+              <p className="text-lg font-bold text-gray-900">{festival.ministry_location}</p>
             </div>
             <div>
               <p className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-2">💰 입장료</p>
-              <p className="text-lg font-bold text-orange-500">{festival.fee}</p>
+              <p className="text-lg font-bold text-orange-500">{festival.ministry_fee}</p>
             </div>
           </div>
 
@@ -66,23 +66,23 @@ export function TownDetailModal({ festival, onClose }) {
           <div className="mb-8">
             <h3 className="text-xl font-black text-gray-900 mb-4">축제 소개</h3>
             <p className="text-gray-700 leading-relaxed text-base">
-              {festival.festival_description}
+              {festival.ministry_description}
             </p>
           </div>
 
           {/* 주최처 정보 */}
-          {festival.institution && (
+          {festival.ministry_institution && (
             <div className="mb-8 bg-linear-to-r from-orange-50 to-yellow-50 p-6 rounded-2xl border border-orange-100">
               <p className="text-sm font-semibold text-gray-600 mb-2">주최 · 주관</p>
-              <p className="font-bold text-gray-900">{festival.institution}</p>
+              <p className="font-bold text-gray-900">{festival.ministry_institution}</p>
             </div>
           )}
 
           {/* 액션 버튼 */}
           <div className="flex gap-4">
-            {festival.festival_site && (
+            {festival.ministry_site && (
               <a
-                href={festival.festival_site}
+                href={festival.ministry_site}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex-1 rounded-xl bg-linear-to-r from-orange-500 to-yellow-500 px-6 py-3 font-bold text-white hover:shadow-lg transition-shadow text-center"
