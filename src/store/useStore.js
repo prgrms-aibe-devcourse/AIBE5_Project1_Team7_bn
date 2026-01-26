@@ -74,6 +74,11 @@ const useStore = create(
       setTasteType: (type) => set({ tasteType: type }),
       clearTasteType: () => set({ tasteType: null }),
 
+      // 선택된 여행 날짜 (Plan&Curation에서 사용)
+      selectedTravelDates: null,
+      setSelectedTravelDates: (dates) => set({ selectedTravelDates: dates }),
+      clearSelectedTravelDates: () => set({ selectedTravelDates: null }),
+
       // 전체 초기화 (로그아웃 시 사용)
       clearAll: () => set({
         user: null,
@@ -86,6 +91,7 @@ const useStore = create(
         savedCalendarFestivals: [],
         tasteTestAnswers: [],
         tasteType: null,
+        selectedTravelDates: null,
       }),
     }),
     {
@@ -102,6 +108,7 @@ const useStore = create(
         savedCalendarFestivals: state.savedCalendarFestivals,
         tasteTestAnswers: state.tasteTestAnswers,
         tasteType: state.tasteType,
+        selectedTravelDates: state.selectedTravelDates,
       }),
     }
   )

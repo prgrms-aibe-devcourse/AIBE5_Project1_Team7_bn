@@ -5,8 +5,6 @@ import { loadGoogleMaps } from "../lib/googleMaps";
 import useStore from "../store/useStore";
 import Header from "../components/Header";
 
-console.log("VITE_GOOGLE_MAPS_KEY =", import.meta.env.VITE_GOOGLE_MAPS_KEY);
-
 // 위도 경도 거리 계산
 function haversineMeters(lat1, lng1, lat2, lng2) {
   const R = 6371000;

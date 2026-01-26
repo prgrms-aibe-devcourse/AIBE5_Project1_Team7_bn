@@ -10,6 +10,8 @@ import Testresult from "./pages/Testresult";
 import OAuthKakaoCallback from "./pages/OAuthKakaoCallback";
 import Festival_List from "./pages/Festival_List";
 import Mypage from "./pages/Mypage";
+import Dateregistration from "./pages/Dateregistration";
+import Plancuration from "./pages/Plancuration";
 
 
 function App() {
@@ -27,6 +29,8 @@ function App() {
       <Route path="/tastetest" element={<TasteTest />} />
       <Route path="/testresult" element={<Testresult />} />
       <Route path="/oauth/kakao/callback" element={<OAuthKakaoCallback />} />
+      <Route path="/dateregistration" element={<Dateregistration />} />
+      <Route path="/Plancuration" element={<Plancuration />} />
     </Routes>
   );
 }

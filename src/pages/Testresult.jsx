@@ -8,7 +8,7 @@ import festivals from "../data/festivals.json";
 
 function Testresult() {
   const navigate = useNavigate();
-  const { tasteTestAnswers, toggleCalendarFestival, setTasteType } = useStore();
+  const { tasteTestAnswers, setTasteType } = useStore();
   const [selectedFestival, setSelectedFestival] = useState(null);
   const [mainEventFestival, setMainEventFestival] = useState(null);
 
@@ -509,14 +509,7 @@ function Testresult() {
                   </h3>
                   <button 
                     style={styles.saveButton}
-                    onClick={() => {
-                      const festivalToSave = mainEventFestival || recommendedFestivals[0];
-                      if (festivalToSave) {
-                        toggleCalendarFestival(festivalToSave);
-                        alert("일정이 캘린더에 저장되었습니다!");
-                        navigate("/calendar");
-                      }
-                    }}
+                    onClick={() => navigate('/dateregistration')}
                     onMouseEnter={(e) => {
                       e.currentTarget.style.transform = "translateY(-2px)";
                       e.currentTarget.style.boxShadow = "0 8px 24px rgba(255, 81, 47, 0.4)";
