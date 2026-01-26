@@ -46,6 +46,22 @@ const useStore = create(
       }),
       isLiked: (pSeq) => (state) => state.likedFestivals.some(f => f.pSeq === pSeq),
 
+      // 캘린더 저장 축제 목록
+      savedCalendarFestivals: [],
+      toggleCalendarFestival: (festival) => set((state) => {
+        const exists = state.savedCalendarFestivals.some(f => f.pSeq === festival.pSeq);
+        if (exists) {
+          return {
+            savedCalendarFestivals: state.savedCalendarFestivals.filter(f => f.pSeq !== festival.pSeq)
+          };
+        } else {
+          return {
+            savedCalendarFestivals: [...state.savedCalendarFestivals, festival]
+          };
+        }
+      }),
+      isCalendarSaved: (pSeq) => (state) => state.savedCalendarFestivals.some(f => f.pSeq === pSeq),
+
       // 취향 테스트 답변 저장
       tasteTestAnswers: [],
       addTasteTestAnswer: (answer) => set((state) => ({
@@ -62,6 +78,7 @@ const useStore = create(
         kakaoAuthCode: null,
         selectedFestivalPSeq: null,
         likedFestivals: [],
+        savedCalendarFestivals: [],
         tasteTestAnswers: [],
       }),
     }),
@@ -76,6 +93,7 @@ const useStore = create(
         kakaoAuthCode: state.kakaoAuthCode,
         selectedFestivalPSeq: state.selectedFestivalPSeq,
         likedFestivals: state.likedFestivals,
+        savedCalendarFestivals: state.savedCalendarFestivals,
         tasteTestAnswers: state.tasteTestAnswers,
       }),
     }
