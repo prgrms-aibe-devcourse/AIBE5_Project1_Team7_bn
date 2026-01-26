@@ -133,18 +133,18 @@ function Signup() {
       display: "flex",
       justifyContent: "center",
       alignItems: "center",
-      padding: 16,
-      background: "#f7f7f7",
-      fontFamily: "system-ui, -apple-system, Segoe UI, Roboto, sans-serif",
+      padding: 20,
+      background: "linear-gradient(135deg, #fff5e6 0%, #ffe5cc 100%)",
+      fontFamily: "'Pretendard', system-ui, -apple-system, sans-serif",
     },
     card: {
       width: "100%",
-      maxWidth: 380,
+      maxWidth: 480,
       background: "#fff",
-      border: "1px solid #e6e6e6",
-      borderRadius: 16,
-      padding: "24px 20px",
-      boxShadow: "0 2px 10px rgba(0,0,0,0.04)",
+      border: "none",
+      borderRadius: 24,
+      padding: "48px 36px",
+      boxShadow: "0 8px 32px rgba(0,0,0,0.1)",
     },
     topRow: {
       display: "flex",
@@ -176,27 +176,33 @@ function Signup() {
     },
     headline: {
       textAlign: "center",
-      marginBottom: 8,
-      fontSize: 20,
+      marginBottom: 12,
+      fontSize: 24,
       fontWeight: 800,
       color: "#111",
+      lineHeight: 1.4,
+    },
+    festoryText: {
+      color: "#ff7733",
+      fontWeight: 900,
+      fontSize: 40,
     },
     sub: {
       textAlign: "center",
-      marginBottom: 20,
-      fontSize: 12,
+      marginBottom: 36,
+      fontSize: 13,
       color: "#888",
     },
-    label: { fontSize: 12, color: "#111", fontWeight: 700, marginBottom: 6 },
-    inputWrap: { marginBottom: 12 },
+    label: { fontSize: 13, color: "#111", fontWeight: 700, marginBottom: 8 },
+    inputWrap: { marginBottom: 20 },
     input: {
       width: "100%",
-      height: 40,
-      borderRadius: 8,
-      border: "1px solid #d9d9d9",
-      padding: "0 12px",
+      height: 48,
+      borderRadius: 12,
+      border: "1px solid #e0e0e0",
+      padding: "0 16px",
       outline: "none",
-      fontSize: 13,
+      fontSize: 14,
       boxSizing: "border-box",
       transition: "border-color 0.2s",
     },
@@ -310,27 +316,39 @@ function Signup() {
     },
     primaryBtn: {
       width: "100%",
-      height: 44,
-      borderRadius: 8,
-      border: "1px solid #111",
-      background: "#111",
+      height: 52,
+      borderRadius: 12,
+      border: "none",
+      background: "linear-gradient(90deg, #ff7733 0%, #ff9955 100%)",
       color: "#fff",
       cursor: "pointer",
       fontWeight: 800,
-      fontSize: 14,
+      fontSize: 16,
       transition: "all 0.2s",
+      marginBottom: 24,
+    },
+    loginLink: {
+      textAlign: "center",
+      fontSize: 13,
+      color: "#666",
+    },
+    loginLinkBtn: {
+      color: "#ff7733",
+      fontWeight: 700,
+      textDecoration: "none",
+      cursor: "pointer",
+      marginLeft: 4,
     },
   };
 
   return (
     <div style={styles.page}>
       <div style={styles.card}>
-        {/* 로고 */}
-        <div style={styles.logoBox}>📍 사이트 이름</div>
-
         {/* 헤드라인 */}
-        <div style={styles.headline}>회원가입</div>
-        <div style={styles.sub}>나만의 축제 여행을 발견하는 가장 쉬운 방법</div>
+        <div style={styles.headline}>
+          <span style={styles.festoryText}>Festory</span>와 함께<br />축제 여행을 시작하세요!
+        </div>
+        <div style={styles.sub}>간편한 가입으로 나만의 축제 일정을 찾아보세요.</div>
 
         {/* 아이디 */}
         <div style={styles.inputWrap}>
@@ -526,16 +544,18 @@ function Signup() {
           </div>
         </div>
 
-        {/* 약관 동의 */}
-        <div style={styles.termsText}>
-          <span style={styles.termsLink}>개인정보 수집 및 이용</span>에 동의하며 <br />
-          <span style={styles.termsLink}>서비스 이용약관</span>에 동의합니다
-        </div>
-
         {/* 회원가입 버튼 */}
         <button style={styles.primaryBtn} onClick={signup}>
-          회원가입
+          회원가입 완료
         </button>
+
+        {/* 로그인 링크 */}
+        <div style={styles.loginLink}>
+          이미 계정이 있으신가요?
+          <span style={styles.loginLinkBtn} onClick={() => navigate("/login")}>
+            로그인하기
+          </span>
+        </div>
       </div>
     </div>
   );
