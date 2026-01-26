@@ -1,5 +1,62 @@
 # Festory FE - 작업 기록
 
+## 📅 2026년 1월 26일
+
+### 🎯 주요 작업 내용
+
+#### 1️⃣ Testresult.jsx - 축제 추천 결과 페이지 UX 개선
+- ✅ **축제 카드 클릭 동작 변경**
+  - 지도 페이지로 이동 → TownDetailModal 팝업으로 변경
+  - 사용자가 페이지를 벗어나지 않고 상세정보 확인 가능
+- ✅ **찜 버튼 표시 개선**
+  - TownCard 컴포넌트 사용으로 하트 찜 버튼 표시
+  - "favorite match" Material Icon 제거
+- ✅ **MAIN EVENT 동적 업데이트**
+  - 축제 카드 클릭 시 선택한 축제의 fstvlNm, rdnmadr 표시
+  - mainEventFestival state 추가로 모달 닫아도 정보 유지
+- ✅ **NEARBY SPOT 지역별 명소 자동 매핑**
+  - ministry_region 기반 19개 지역 명소 데이터 구축
+  - 가장 구체적인 지역명 우선 매칭 (예: "강원 평창" → "평창" 우선)
+  - 평창→대관령 양떼목장, 강릉→경포대, 부산→해운대 등
+
+#### 2️⃣ After_Home.jsx - 취향 테스트 초기화
+- ✅ "추천 계속 보기" 버튼 클릭 시 `clearTasteTestAnswers()` 호출
+- ✅ 매번 새로운 설문조사 시작 가능
+
+#### 3️⃣ Calendar.jsx - 축제 저장 및 관리 기능
+- ✅ **Saved Festivals 저장 기능**
+  - Testresult → "나의 일정으로 저장하기" 버튼으로 축제 저장
+  - Zustand store에 `savedCalendarFestivals` 상태 추가
+  - localStorage에 영구 저장
+- ✅ **Saved Festivals 뷰에 저장된 축제 표시**
+  - savedFestivalEvents useMemo로 별도 관리
+  - FullCalendar에 [...events, ...savedFestivalEvents] 병합
+- ✅ **저장된 축제 삭제 기능**
+  - eventClick에서 `saved-` prefix 감지
+  - 확인 다이얼로그 후 toggleCalendarFestival로 제거
+
+#### 4️⃣ 디자인 및 아이콘 개선
+- ✅ **Material Symbols 폰트 추가**
+  - index.html에 Google Fonts CDN 링크 추가
+  - auto_awesome, calendar_add_on, festival 등 아이콘 정상 표시
+- ✅ **Share My Label 버튼**
+  - share 아이콘 제거, 텍스트만 표시
+
+#### 5️⃣ AI 백엔드 API 스펙 정리
+- ✅ **After_Home.jsx 맞춤 추천 API**
+  - `POST /api/recommendations/user`
+  - 요청: userId, limit
+  - 응답: tags (AI 분석 태그), festivals (추천 축제 목록)
+- ✅ **Testresult.jsx 취향 테스트 결과 API**
+  - `POST /api/recommendations/taste-test`
+  - 요청: answers (5개 질문 답변)
+  - 응답: userType (type, description, image), recommendedFestivals (matchRate 포함)
+
+#### 6️⃣ 버그 수정
+- ✅ useMemo 의존성 배열 경고 수정 (recommendedFestivals 제거)
+- ✅ React Compiler memoization 충돌 해결
+- ✅ 미사용 import 제거 (useMemo)
+
 ## 📅 2025년 1월 25일
 
 ### 🎯 주요 작업 내용
@@ -51,74 +108,6 @@
 - Custom CSS (그라데이션 및 특수 효과)
 
 ---
-
-## 📅 2026년 1월 23일
-
----
-
-## 🎨 작업 완료 사항
-
-### 1️⃣ **Login.jsx** - 로그인 페이지
-#### 디자인 개선
-- ✅ 배경: 따뜻한 그라데이션 (#FFEDD5 → #FEF3C7)
-- ✅ 카드: 흰색 배경, 둥근 모서리(20px), 부드러운 그림자
-- ✅ 헤드라인: 오렌지색 (#FF5F33), 크기 24px, 굵기 900
-- ✅ 폰트: 'Plus Jakarta Sans' 적용으로 현대적 느낌
-
-#### 입력창 개선
-- ✅ 높이: 44px (통일)
-- ✅ 둥근 모서리: 12px
-- ✅ 포커스 시: 테두리 오렌지색, 배경 흰색, 하이라이트 효과
-- ✅ 비밀번호 보기/숨기기 아이콘
-
-#### 버튼 & 상호작용
-- ✅ 로그인 버튼: 그라데이션 배경 (#FF5F33 → #FF7A4D)
-- ✅ 호버 효과: 상승 애니메이션 + 그림자 강화
-- ✅ 소셜 로그인
-  - 카카오: 노란색 (#FFE812)
-  - 네이버: 초록색 (#00C73C)
-  - 구글: 기존 API 사용
-
-#### 레이아웃
-- ✅ 아이디/비밀번호 입력
-- ✅ 아이디 찾기 | 비밀번호 찾기 | 회원가입 (링크 구분자 추가)
-- ✅ 에러 메시지 (빨간색)
-
----
-
-### 2️⃣ **Signup.jsx** - 회원가입 페이지
-#### 전체 구조
-- ✅ 로그인과 동일한 스타일 시스템 적용
-- ✅ 로고 표시 (📍 사이트 이름 - 나중에 PNG 교체 가능)
-- ✅ 제목: "회원가입"
-
-#### 입력 필드
-| 필드 | 설명 |
-|------|------|
-| 아이디 | 6~20자, 중복확인 버튼 포함 |
-| 비밀번호 | 영문+숫자+특수문자 8~20자 |
-| 비밀번호 확인 | 일치 여부 확인 |
-| 이름 | 기본 입력 |
-| 닉네임 | 2~10자 |
-| 전화번호 | 숫자만 입력 |
-| 이메일 | ID @ 도메인(드롭다운) |
-| 생년월일 | 년/월/일 드롭다운 |
-| 성별 | 라디오 버튼 (남성/여성/제한없음) |
-
-#### 유효성 검사
-- ✅ 각 필드별 실시간 검증
-- ✅ 에러 메시지 표시 (빨간색, 11px)
-- ✅ 필수 필드 모두 입력 확인 후 가입
-
-#### 저장
-- ✅ localStorage에 사용자 정보 저장
-- ✅ 성공 시 로그인 페이지로 리다이렉트
-
----
-
-
-
-
 
 ## 📅 2026년 1월 23일
 
