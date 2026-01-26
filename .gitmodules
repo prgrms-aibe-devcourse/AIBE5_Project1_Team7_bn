@@ -10,3 +10,7 @@
 [submodule "AIBE5_Project1"]
 	path = AIBE5_Project1
 	url = git@github.com:ryu-han-kr/AIBE5_Project1.git
+[submodule "typesense-impl"]
+	path = typesense-impl
+	url = git@github.com:aiegoo/dev-team7.git
+	branch = feat/typesense-search
