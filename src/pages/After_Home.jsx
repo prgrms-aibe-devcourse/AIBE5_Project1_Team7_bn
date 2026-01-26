@@ -2,136 +2,19 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import festivals from "../data/festivals_with_geo.json";
 import useStore from "../store/useStore";
+import Header from "../components/Header";
 
 function After_Home() {
   const navigate = useNavigate();
   const [pSeqInput, setPSeqInput] = useState("");
 
   const {
-    isLoggedIn = true,
-    user = {
-      name: "풋사과님",
-      avatarUrl: "https://api.dicebear.com/7.x/thumbs/svg?seed=apple",
-    },
     setSelectedFestivalPSeq,
-    logout,
   } = useStore();
 
   return (
     <div style={{ minHeight: "100vh", backgroundColor: "#f9fafb" }}>
-      {/* ================= HEADER ================= */}
-      <header
-        style={{
-          position: "sticky",
-          top: 0,
-          zIndex: 100,
-          backgroundColor: "white",
-          borderBottom: "1px solid #e5e7eb",
-          padding: "0 20px",
-        }}
-      >
-        <div
-          style={{
-            maxWidth: "1600px",
-            margin: "0 auto",
-            height: 80,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            gap: 24,
-          }}
-        >
-          {/* Logo */}
-          <div
-            style={{ display: "flex", alignItems: "center", gap: 12, cursor: "pointer" }}
-            onClick={() => navigate("/after_home")}
-          >
-            <div style={{ fontSize: 28 }}>😊</div>
-            <span style={{ fontSize: 24, fontWeight: 900 }}>Festory</span>
-          </div>
-
-          {/* Search */}
-          <input
-            placeholder="Search festivals, places, plans…"
-            style={{
-              flex: 1,
-              maxWidth: 600,
-              padding: "10px 16px",
-              borderRadius: 12,
-              border: "1px solid #e5e7eb",
-              backgroundColor: "#f3f4f6",
-              fontSize: 14,
-              outline: "none",
-            }}
-          />
-
-          {/* User */}
-          {isLoggedIn && (
-            <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-              <img
-                src={user.avatarUrl}
-                alt="avatar"
-                style={{ width: 40, height: 40, borderRadius: "50%" }}
-              />
-              <span style={{ fontWeight: 700 }}>{user.name}</span>
-              <button
-                onClick={logout}
-                style={{
-                  border: "none",
-                  background: "transparent",
-                  color: "#6b7280",
-                  cursor: "pointer",
-                }}
-              >
-                로그아웃
-              </button>
-            </div>
-          )}
-        </div>
-      </header>
-
-      {/* ================= NAV ================= */}
-      <nav
-        style={{
-          position: "sticky",
-          top: 80,
-          zIndex: 90,
-          backgroundColor: "white",
-          borderBottom: "1px solid #e5e7eb",
-        }}
-      >
-        <div
-          style={{
-            maxWidth: "1600px",
-            margin: "0 auto",
-            display: "flex",
-            gap: 30,
-            padding: "0 20px",
-          }}
-        >
-          {["Home", "Festival List", "Calendar", "Plan & Curation"].map((item) => (
-            <button
-              key={item}
-              onClick={() => {
-                if (item === "Calendar") navigate("/calendar");
-                if (item === "Home") navigate("/after_home");
-              }}
-              style={{
-                padding: "16px 0",
-                fontWeight: 700,
-                fontSize: 14,
-                background: "transparent",
-                border: "none",
-                cursor: "pointer",
-                color: item === "Home" ? "#FF5F33" : "#6b7280",
-                borderBottom: item === "Home" ? "3px solid #FF5F33" : "none",
-              }}
-            >
-              {item}
-            </button>
-          ))}
-        </div>
-      </nav>
+      <Header />
 
       {/* ================= MAIN ================= */}
       <main style={{ maxWidth: "1600px", margin: "0 auto", padding: "24px 20px" }}>

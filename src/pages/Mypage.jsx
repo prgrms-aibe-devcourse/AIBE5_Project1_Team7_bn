@@ -1,15 +1,74 @@
 ﻿import { useState } from "react";
 import Header from "../components/Header";
+import useStore from "../store/useStore";
 
 function Mypage() {
   const [activeTab, setActiveTab] = useState("myinfo");
+  const [isEditing, setIsEditing] = useState(false);
+  
+  const { user, loginUser, setUser } = useStore();
+  
+  // 수정 가능한 필드를 위한 state
+  const [editedInfo, setEditedInfo] = useState({
+    id: user?.id || loginUser?.id || "",
+    name: user?.name || loginUser?.name || "",
+    nickname: user?.nickname || loginUser?.nickname || "",
+    email: user?.email || loginUser?.email || "",
+    phone: user?.phone || loginUser?.phone || "",
+    gender: user?.gender || loginUser?.gender || "",
+  });
 
   const userInfo = {
-    email: "festory_lover@goldenhour.com",
-    name: "김페스",
-    nickname: "선셋다이어리",
+    id: user?.id || loginUser?.id || "festory_lover",
+    email: user?.email || loginUser?.email || "festory_lover@goldenhour.com",
+    name: user?.name || loginUser?.name || "김페스",
+    nickname: user?.nickname || loginUser?.nickname || "선셋다이어리",
+    phone: user?.phone || loginUser?.phone || "010-1234-5678",
+    gender: user?.gender || loginUser?.gender || "여성",
     memberType: "PRO MEMBER",
-    joinDate: "2024. 05. 14"
+    joinDate: user?.joinDate || loginUser?.joinDate || "2024. 05. 14"
+  };
+
+  const handleEdit = () => {
+    if (isEditing) {
+      // 저장 로직
+      const updatedUser = {
+        ...user,
+        ...editedInfo,
+      };
+      setUser(updatedUser);
+      setIsEditing(false);
+    } else {
+      // 편집 모드로 전환
+      setEditedInfo({
+        id: userInfo.id,
+        name: userInfo.name,
+        nickname: userInfo.nickname,
+        email: userInfo.email,
+        phone: userInfo.phone,
+        gender: userInfo.gender,
+      });
+      setIsEditing(true);
+    }
+  };
+
+  const handleCancel = () => {
+    setIsEditing(false);
+    setEditedInfo({
+      id: userInfo.id,
+      name: userInfo.name,
+      nickname: userInfo.nickname,
+      email: userInfo.email,
+      phone: userInfo.phone,
+      gender: userInfo.gender,
+    });
+  };
+
+  const handleChange = (field, value) => {
+    setEditedInfo(prev => ({
+      ...prev,
+      [field]: value
+    }));
   };
 
   return (
@@ -63,15 +122,55 @@ function Mypage() {
             <div className="bg-white rounded-3xl shadow-md p-16 mb-6">
               <div className="space-y-8">
                 <div className="flex items-start">
-                  <div className="w-44 text-gray-400 text-sm font-medium pt-1">ID / EMAIL</div>
-                  <div className="flex-1 text-gray-900 text-base font-semibold">{userInfo.email}</div>
+                  <div className="w-44 text-gray-400 text-sm font-medium pt-1">아이디</div>
+                  <div className="flex-1">
+                    {isEditing ? (
+                      <input
+                        type="text"
+                        value={editedInfo.id}
+                        onChange={(e) => handleChange('id', e.target.value)}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-900 text-base font-semibold focus:outline-none focus:ring-2 focus:ring-orange-500"
+                      />
+                    ) : (
+                      <div className="text-gray-900 text-base font-semibold">{userInfo.id}</div>
+                    )}
+                  </div>
+                </div>
+                
+                <div className="border-t border-gray-200"></div>
+                
+                <div className="flex items-start">
+                  <div className="w-44 text-gray-400 text-sm font-medium pt-1">이메일</div>
+                  <div className="flex-1">
+                    {isEditing ? (
+                      <input
+                        type="email"
+                        value={editedInfo.email}
+                        onChange={(e) => handleChange('email', e.target.value)}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-900 text-base font-semibold focus:outline-none focus:ring-2 focus:ring-orange-500"
+                      />
+                    ) : (
+                      <div className="text-gray-900 text-base font-semibold">{userInfo.email}</div>
+                    )}
+                  </div>
                 </div>
                 
                 <div className="border-t border-gray-200"></div>
                 
                 <div className="flex items-start">
                   <div className="w-44 text-gray-400 text-sm font-medium pt-1">이름</div>
-                  <div className="flex-1 text-gray-900 text-base font-semibold">{userInfo.name}</div>
+                  <div className="flex-1">
+                    {isEditing ? (
+                      <input
+                        type="text"
+                        value={editedInfo.name}
+                        onChange={(e) => handleChange('name', e.target.value)}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-900 text-base font-semibold focus:outline-none focus:ring-2 focus:ring-orange-500"
+                      />
+                    ) : (
+                      <div className="text-gray-900 text-base font-semibold">{userInfo.name}</div>
+                    )}
+                  </div>
                 </div>
                 
                 <div className="border-t border-gray-200"></div>
@@ -79,10 +178,60 @@ function Mypage() {
                 <div className="flex items-start">
                   <div className="w-44 text-gray-400 text-sm font-medium pt-1">닉네임</div>
                   <div className="flex-1 flex items-center gap-3">
-                    <span className="text-gray-900 text-base font-semibold">{userInfo.nickname}</span>
+                    {isEditing ? (
+                      <input
+                        type="text"
+                        value={editedInfo.nickname}
+                        onChange={(e) => handleChange('nickname', e.target.value)}
+                        className="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-gray-900 text-base font-semibold focus:outline-none focus:ring-2 focus:ring-orange-500"
+                      />
+                    ) : (
+                      <span className="text-gray-900 text-base font-semibold">{userInfo.nickname}</span>
+                    )}
                     <span className="px-3 py-1 bg-orange-100 text-orange-600 text-xs font-bold rounded-full">
                       PRO MEMBER
                     </span>
+                  </div>
+                </div>
+                
+                <div className="border-t border-gray-200"></div>
+                
+                <div className="flex items-start">
+                  <div className="w-44 text-gray-400 text-sm font-medium pt-1">전화번호</div>
+                  <div className="flex-1">
+                    {isEditing ? (
+                      <input
+                        type="tel"
+                        value={editedInfo.phone}
+                        onChange={(e) => handleChange('phone', e.target.value)}
+                        placeholder="010-1234-5678"
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-900 text-base font-semibold focus:outline-none focus:ring-2 focus:ring-orange-500"
+                      />
+                    ) : (
+                      <div className="text-gray-900 text-base font-semibold">{userInfo.phone}</div>
+                    )}
+                  </div>
+                </div>
+                
+                <div className="border-t border-gray-200"></div>
+                
+                <div className="flex items-start">
+                  <div className="w-44 text-gray-400 text-sm font-medium pt-1">성별</div>
+                  <div className="flex-1">
+                    {isEditing ? (
+                      <select
+                        value={editedInfo.gender}
+                        onChange={(e) => handleChange('gender', e.target.value)}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-900 text-base font-semibold focus:outline-none focus:ring-2 focus:ring-orange-500"
+                      >
+                        <option value="">선택해주세요</option>
+                        <option value="남성">남성</option>
+                        <option value="여성">여성</option>
+                        <option value="기타">기타</option>
+                      </select>
+                    ) : (
+                      <div className="text-gray-900 text-base font-semibold">{userInfo.gender}</div>
+                    )}
                   </div>
                 </div>
                 
@@ -94,10 +243,30 @@ function Mypage() {
                 </div>
               </div>
               
-              <div className="mt-14 flex justify-center">
-                <button className="w-full max-w-md h-14 bg-gradient-to-r from-orange-500 to-orange-400 text-white font-bold text-base rounded-full shadow-md hover:shadow-lg transition-all">
-                  내 회원가입 정보 수정
-                </button>
+              <div className="mt-14 flex justify-center gap-4">
+                {isEditing ? (
+                  <>
+                    <button 
+                      onClick={handleCancel}
+                      className="w-full max-w-md h-14 bg-gray-200 text-gray-700 font-bold text-base rounded-full shadow-md hover:shadow-lg transition-all"
+                    >
+                      취소
+                    </button>
+                    <button 
+                      onClick={handleEdit}
+                      className="w-full max-w-md h-14 bg-gradient-to-r from-orange-500 to-orange-400 text-white font-bold text-base rounded-full shadow-md hover:shadow-lg transition-all"
+                    >
+                      저장하기
+                    </button>
+                  </>
+                ) : (
+                  <button 
+                    onClick={handleEdit}
+                    className="w-full max-w-md h-14 bg-gradient-to-r from-orange-500 to-orange-400 text-white font-bold text-base rounded-full shadow-md hover:shadow-lg transition-all"
+                  >
+                    내 회원가입 정보 수정
+                  </button>
+                )}
               </div>
             </div>
             
