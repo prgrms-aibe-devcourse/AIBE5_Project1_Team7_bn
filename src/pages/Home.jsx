@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import festivals from "../data/festivals_with_geo.json";
+import festivals from "../data/festivals.json";
 import useStore from "../store/useStore";
 import { TownCard } from "../components/TownCard";
 

@@ -1,11 +1,11 @@
-import { useEffect, useMemo, useState, useRef } from "react";
+import { useEffect, useMemo, useState, useRef, useCallback } from "react";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import festivals from "../data/festivals_with_geo.json";
+import festivals from "../data/festivals.json";
 import useStore from "../store/useStore";
 import Header from "../components/Header";
 
@@ -190,6 +190,17 @@ function Calendar() {
     setTokenClient(tc);
   }, [CLIENT_ID, googleAccessToken, setGoogleAccessToken]);
 
+  // ✅ 토큰이 없을 때 자동으로 Google 로그인 요청
+  useEffect(() => {
+    if (!token && tokenClient && !loading) {
+      // 페이지 로드 후 0.5초 뒤에 자동으로 로그인 요청
+      const timer = setTimeout(() => {
+        tokenClient.requestAccessToken({ prompt: "" });
+      }, 500);
+      return () => clearTimeout(timer);
+    }
+  }, [token, tokenClient, loading]);
+
   // ---------- helpers ----------
   const fmtK = (iso) => {
     try {
@@ -300,6 +311,20 @@ function Calendar() {
       });
 
       if (!res.ok) {
+        // ✅ 401 에러인 경우 토큰이 만료되었으므로 재로그인 필요
+        if (res.status === 401) {
+          setError("Google 로그인이 만료되었습니다. 다시 로그인해주세요.");
+          setToken(null);
+          setGoogleAccessToken(null);
+          // 자동으로 재로그인 요청
+          if (tokenClient) {
+            setTimeout(() => {
+              tokenClient.requestAccessToken({ prompt: "" });
+            }, 1000);
+          }
+          return;
+        }
+        
         const text = await res.text();
         throw new Error(`events.list 실패 (${res.status}): ${text}`);
       }
@@ -369,6 +394,17 @@ function Calendar() {
       );
 
       if (!res.ok) {
+        if (res.status === 401) {
+          setError("Google 로그인이 만료되었습니다. 다시 로그인해주세요.");
+          setToken(null);
+          setGoogleAccessToken(null);
+          if (tokenClient) {
+            setTimeout(() => {
+              tokenClient.requestAccessToken({ prompt: "" });
+            }, 1000);
+          }
+          return;
+        }
         const text = await res.text();
         throw new Error(`events.insert 실패 (${res.status}): ${text}`);
       }
@@ -404,6 +440,17 @@ function Calendar() {
       );
 
       if (!getRes.ok) {
+        if (getRes.status === 401) {
+          setError("Google 로그인이 만료되었습니다. 다시 로그인해주세요.");
+          setToken(null);
+          setGoogleAccessToken(null);
+          if (tokenClient) {
+            setTimeout(() => {
+              tokenClient.requestAccessToken({ prompt: "" });
+            }, 1000);
+          }
+          return;
+        }
         throw new Error(`이벤트 조회 실패 (${getRes.status})`);
       }
 
@@ -443,6 +490,17 @@ function Calendar() {
       );
 
       if (!updateRes.ok) {
+        if (updateRes.status === 401) {
+          setError("Google 로그인이 만료되었습니다. 다시 로그인해주세요.");
+          setToken(null);
+          setGoogleAccessToken(null);
+          if (tokenClient) {
+            setTimeout(() => {
+              tokenClient.requestAccessToken({ prompt: "" });
+            }, 1000);
+          }
+          return;
+        }
         const text = await updateRes.text();
         throw new Error(`events.update 실패 (${updateRes.status}): ${text}`);
       }
@@ -482,6 +540,17 @@ function Calendar() {
       );
 
       if (!res.ok) {
+        if (res.status === 401) {
+          setError("Google 로그인이 만료되었습니다. 다시 로그인해주세요.");
+          setToken(null);
+          setGoogleAccessToken(null);
+          if (tokenClient) {
+            setTimeout(() => {
+              tokenClient.requestAccessToken({ prompt: "" });
+            }, 1000);
+          }
+          return;
+        }
         const text = await res.text();
         throw new Error(`events.delete 실패 (${res.status}): ${text}`);
       }
@@ -498,7 +567,7 @@ function Calendar() {
   };
 
   // ---------- auth ----------
-  const signIn = () => {
+  const _signIn = () => {
     setError("");
     if (!tokenClient) {
       setError("로그인 준비가 아직 안 됐습니다. 잠시 후 다시 시도하세요.");
@@ -507,14 +576,14 @@ function Calendar() {
     tokenClient.requestAccessToken({ prompt: "" });
   };
 
-  const signOut = () => {
+  const _signOut = () => {
     setToken(null);
     setEvents([]);
     setRawEvents([]);
   };
 
   // ✅ pSeq로 축제 정보 로드 및 바로 캘린더에 추가 (모달 없이)
-  const loadFestivalAndAdd = async (pSeq) => {
+  const loadFestivalAndAdd = useCallback(async (pSeq) => {
     if (!token) return;
     
     const festival = festivals.find((f) => String(f.pSeq) === String(pSeq));
@@ -531,7 +600,8 @@ function Calendar() {
       end: dateInfo.endDateTime,
       allDay: true,
     });
-  };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [token]);
 
   // ✅ 홈에서 선택한 축제 자동 추가 (한 번만 실행)
   useEffect(() => {
@@ -626,37 +696,9 @@ function Calendar() {
       <Header />
       <div style={styles.container}>
         <style>{calendarStyles}</style>
-        {/* 서브 헤더 - 캘린더 타이틀과 액션 버튼 */}
+        {/* 서브 헤더 - 캘린더 타이틀 */}
         <div style={styles.header}>
           <div style={{ fontSize: 18, fontWeight: 600, color: "rgb(244,133,37)" }}>Discovery Calendar</div>
-
-          <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
-            {token ? (
-              <>
-                <button
-                  style={styles.btnGhost}
-                  onClick={() => {
-                    const now = new Date();
-                    const timeMin = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
-                    const timeMax = new Date(now.getFullYear(), now.getMonth() + 2, 0).toISOString();
-                    fetchEvents(timeMin, timeMax);
-                  }}
-                >
-                  새로고침
-                </button>
-                {/* ✅ 축제 pSeq 입력 버튼 */}
-                <button
-                  style={styles.btnGhost}
-                  onClick={() => setShowFestivalInput(!showFestivalInput)}
-                >
-                  🎪 축제 추가
-                </button>
-                <button style={styles.btnGhost} onClick={signOut}>로그아웃</button>
-              </>
-            ) : (
-              <button style={styles.btn} onClick={signIn}>Google로 로그인</button>
-            )}
-          </div>
         </div>
 
       {/* ✅ 축제 pSeq 입력 패널 */}

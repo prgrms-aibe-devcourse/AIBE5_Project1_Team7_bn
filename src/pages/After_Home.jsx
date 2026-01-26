@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import festivals from "../data/festivals_with_geo.json";
+import festivals from "../data/festivals.json";
 import useStore from "../store/useStore";
 import Header from "../components/Header";
 import { TownCard } from "../components/TownCard";
@@ -69,7 +69,7 @@ function After_Home() {
             </p>
 
             <button
-              onClick={() => navigate("/map")}
+              onClick={() => navigate("/tastetest")}
               style={{
                 padding: "16px 32px",
                 borderRadius: 12,

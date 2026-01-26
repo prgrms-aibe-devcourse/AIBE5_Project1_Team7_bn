@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useLocation } from "react-router-dom";
-import festivals from "../data/festivals_with_geo.json";
+import festivals from "../data/festivals.json";
 import { loadGoogleMaps } from "../lib/googleMaps";
 import useStore from "../store/useStore";
 import Header from "../components/Header";
