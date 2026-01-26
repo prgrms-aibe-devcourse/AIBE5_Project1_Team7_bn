@@ -345,7 +345,9 @@ function Home() {
                       name: festival.festival_name,
                       description: festival.festival_description,
                       image: festival.image_url || "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=400&h=300&fit=crop",
+                      id: festival.pSeq,
                     }}
+                    festival={festival}
                     onClick={() => {
                       setSelectedFestivalPSeq(festival.pSeq);
                       navigate("/map");

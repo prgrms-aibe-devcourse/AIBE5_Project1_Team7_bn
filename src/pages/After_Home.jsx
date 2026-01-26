@@ -4,10 +4,12 @@ import festivals from "../data/festivals_with_geo.json";
 import useStore from "../store/useStore";
 import Header from "../components/Header";
 import { TownCard } from "../components/TownCard";
+import { TownDetailModal } from "../components/TownDetailModal";
 
 function After_Home() {
   const navigate = useNavigate();
   const [pSeqInput, setPSeqInput] = useState("");
+  const [selectedFestival, setSelectedFestival] = useState(null);
 
   const {
     setSelectedFestivalPSeq,
@@ -142,10 +144,11 @@ function After_Home() {
                     name: f.festival_name,
                     description: f.festival_description,
                     image: f.image_url || "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f",
+                    id: f.pSeq,
                   }}
+                  festival={f}
                   onClick={() => {
-                    setSelectedFestivalPSeq(f.pSeq);
-                    navigate("/map");
+                    setSelectedFestival(f);
                   }}
                 />
               ))}
@@ -223,6 +226,13 @@ function After_Home() {
           </div>
         </div>
       </footer>
+
+      {selectedFestival && (
+        <TownDetailModal
+          festival={selectedFestival}
+          onClose={() => setSelectedFestival(null)}
+        />
+      )}
     </div>
   );
 }

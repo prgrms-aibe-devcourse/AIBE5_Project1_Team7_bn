@@ -11,7 +11,7 @@ export function TownCard({ town, onClick }) {
       "
     >
       {/* 이미지 영역 */}
-      <div className="aspect-[4/3] overflow-hidden">
+      <div className="aspect-4/2 overflow-hidden">
         <img
           src={town.image}
           alt={town.name}

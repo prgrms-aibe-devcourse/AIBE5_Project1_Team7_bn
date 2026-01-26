@@ -30,6 +30,22 @@ const useStore = create(
       setSelectedFestivalPSeq: (pSeq) => set({ selectedFestivalPSeq: pSeq }),
       clearSelectedFestivalPSeq: () => set({ selectedFestivalPSeq: null }),
 
+      // 찜한 축제 목록
+      likedFestivals: [],
+      toggleLikeFestival: (festival) => set((state) => {
+        const exists = state.likedFestivals.some(f => f.pSeq === festival.pSeq);
+        if (exists) {
+          return {
+            likedFestivals: state.likedFestivals.filter(f => f.pSeq !== festival.pSeq)
+          };
+        } else {
+          return {
+            likedFestivals: [...state.likedFestivals, festival]
+          };
+        }
+      }),
+      isLiked: (pSeq) => (state) => state.likedFestivals.some(f => f.pSeq === pSeq),
+
       // 전체 초기화 (로그아웃 시 사용)
       clearAll: () => set({
         user: null,
@@ -38,6 +54,7 @@ const useStore = create(
         googleAccessToken: null,
         kakaoAuthCode: null,
         selectedFestivalPSeq: null,
+        likedFestivals: [],
       }),
     }),
     {
@@ -50,6 +67,7 @@ const useStore = create(
         googleAccessToken: state.googleAccessToken,
         kakaoAuthCode: state.kakaoAuthCode,
         selectedFestivalPSeq: state.selectedFestivalPSeq,
+        likedFestivals: state.likedFestivals,
       }),
     }
   )

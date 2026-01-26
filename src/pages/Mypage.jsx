@@ -1,12 +1,13 @@
 ﻿import { useState } from "react";
 import Header from "../components/Header";
 import useStore from "../store/useStore";
+import { TownCard } from "../components/TownCard";
 
 function Mypage() {
   const [activeTab, setActiveTab] = useState("myinfo");
   const [isEditing, setIsEditing] = useState(false);
   
-  const { user, loginUser, setUser } = useStore();
+  const { user, loginUser, setUser, likedFestivals } = useStore();
   
   // 수정 가능한 필드를 위한 state
   const [editedInfo, setEditedInfo] = useState({
@@ -114,6 +115,16 @@ function Mypage() {
               }`}
             >
               내 축제 취향
+            </button>
+            <button
+              onClick={() => setActiveTab("liked")}
+              className={`pb-3 text-lg font-semibold transition-all ${
+                activeTab === "liked"
+                  ? "text-orange-500 border-b-4 border-orange-500 -mb-0.5"
+                  : "text-gray-400 hover:text-gray-600"
+              }`}
+            >
+               찜한 축제
             </button>
           </div>
 
@@ -365,6 +376,45 @@ function Mypage() {
             </div>
             <div className="text-center pb-24">
               <p className="text-gray-400 text-sm font-medium">분석 결과가 마음에 드시나요? 친구들에게 내 취향을 공유해보세요.</p>
+            </div>
+          </div>
+        )}
+
+        {activeTab === "liked" && (
+          <div className="mb-24">
+            <div className="bg-white rounded-3xl shadow-md p-8">
+              <h2 className="text-3xl font-black mb-2 text-gray-900"> 찜한 축제</h2>
+              <p className="text-gray-500 mb-8">총 {likedFestivals.length}개의 축제를 찜했어요</p>
+              
+              {likedFestivals.length === 0 ? (
+                <div className="text-center py-16">
+                  <div className="text-5xl mb-4">🎪</div>
+                  <p className="text-gray-400 text-lg">아직 찜한 축제가 없어요</p>
+                  <p className="text-gray-300 text-sm mt-2">축제를 찜하면 여기에 표시됩니다</p>
+                </div>
+              ) : (
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+                  {likedFestivals.map((festival) => (
+                    <div
+                      key={festival.pSeq}
+                      className="rounded-2xl overflow-hidden shadow-md hover:shadow-lg transition-shadow"
+                    >
+                      <TownCard
+                        town={{
+                          name: festival.festival_name,
+                          description: festival.festival_description,
+                          image: festival.image_url || "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f",
+                          id: festival.pSeq,
+                        }}
+                        festival={festival}
+                        onClick={() => {
+                          // 모달 열기 로직 추가 (필요시)
+                        }}
+                      />
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
         )}
