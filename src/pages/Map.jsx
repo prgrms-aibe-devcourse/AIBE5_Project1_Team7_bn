@@ -293,7 +293,7 @@ export default function Map() {
       const lng = Number(selectedFestival.longitude);
 
       if (!Number.isNaN(lat) && !Number.isNaN(lng)) {
-        showCenterAndSearch(lat, lng, selectedFestival.festival_name || query);
+        showCenterAndSearch(lat, lng, selectedFestival.fstvlNm || query);
         return;
       }
     }
@@ -357,7 +357,7 @@ export default function Map() {
   });
 
   const 기준라벨 = selectedFestival
-    ? `축제: ${selectedFestival.festival_name} (pSeq: ${selectedFestival.pSeq})`
+    ? `축제: ${selectedFestival.fstvlNm} (pSeq: ${selectedFestival.pSeq})`
     : `검색어: ${query}`;
 
   return (
