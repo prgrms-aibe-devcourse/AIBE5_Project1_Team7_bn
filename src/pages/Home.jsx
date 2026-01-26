@@ -1,501 +1,222 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import festivals from "../data/festivals.json";
 import useStore from "../store/useStore";
+
+import Header from "../components/Header";
 import { TownCard } from "../components/TownCard";
+import { TownDetailModal } from "../components/TownDetailModal";
 
 function Home() {
   const navigate = useNavigate();
   const [pSeqInput, setPSeqInput] = useState("");
+  const [selectedFestival, setSelectedFestival] = useState(null);
   const { setSelectedFestivalPSeq } = useStore();
 
   return (
     <div style={{ minHeight: "100vh", backgroundColor: "#f9fafb" }}>
-      {/* Header */}
-      <header style={{
-        position: "sticky",
-        top: 0,
-        zIndex: 100,
-        backgroundColor: "white",
-        borderBottom: "1px solid #e5e7eb",
-        padding: "0 20px",
-      }}>
-        <div style={{
-          maxWidth: "1600px",
-          margin: "0 auto",
-          height: 80,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-        }}>
-          <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-            <div style={{ fontSize: "28px" }}>😊</div>
-            <span style={{ fontSize: "24px", fontWeight: 900, letterSpacing: "-0.02em" }}>
-              Festory
-            </span>
-          </div>
-          <input
-            type="text"
-            placeholder="Search for any pages you need"
-            style={{
-              flex: 1,
-              maxWidth: "600px",
-              padding: "10px 16px",
-              marginRight: "20px",
-              borderRadius: "12px",
-              border: "1px solid #e5e7eb",
-              backgroundColor: "#f3f4f6",
-              fontSize: "14px",
-              outline: "none",
-              transition: "all 0.2s",
-            }}
-            onFocus={(e) => {
-              e.target.style.backgroundColor = "#fff";
-              e.target.style.borderColor = "#FF5F33";
-              e.target.style.boxShadow = "0 0 0 3px rgba(255, 95, 51, 0.1)";
-            }}
-            onBlur={(e) => {
-              e.target.style.backgroundColor = "#f3f4f6";
-              e.target.style.borderColor = "#e5e7eb";
-              e.target.style.boxShadow = "none";
-            }}
-          />
-          <div style={{ display: "flex", alignItems: "center", gap: "20px" }}>
-            <button style={{
-              width: 40,
-              height: 40,
-              borderRadius: "50%",
-              border: "none",
-              backgroundColor: "transparent",
-              cursor: "pointer",
-              fontSize: "20px",
-              display: "none",
-            }}>
-              🔔
-            </button>
-            <button
-              onClick={() => navigate("/login")}
+      <Header />
+      <main style={{ maxWidth: "1600px", margin: "0 auto", padding: "24px 20px" }}>
+        {/* HERO 배너 */}
+        <section
+          style={{
+            marginBottom: 40,
+            borderRadius: 32,
+            overflow: "hidden",
+            aspectRatio: "16 / 6",
+            backgroundImage: `linear-gradient(to right, rgba(255,255,255,.95), rgba(255,255,255,.4), rgba(255,255,255,.9)), url('https://images.unsplash.com/photo-1464983953574-0892a716854b?auto=format&fit=crop&w=1200&q=80')`,
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            display: "flex",
+            alignItems: "center",
+            padding: 60,
+          }}
+        >
+          <div style={{ maxWidth: 600 }}>
+            <span
               style={{
-                padding: "10px 24px",
-                borderRadius: "12px",
-                border: "none",
-                background: "linear-gradient(90deg, #FF5F33 0%, #FF7A4D 100%)",
-                color: "white",
+                display: "inline-block",
+                padding: "8px 16px",
+                borderRadius: 999,
+                backgroundColor: "rgba(255,95,51,.1)",
+                color: "#FF5F33",
                 fontWeight: 700,
-                fontSize: "14px",
-                cursor: "pointer",
-                boxShadow: "0 4px 12px rgba(255, 95, 51, 0.3)",
-                transition: "all 0.2s",
-                whiteSpace: "nowrap",
-              }}
-              onMouseEnter={(e) => {
-                e.target.style.transform = "translateY(-2px)";
-                e.target.style.boxShadow = "0 6px 16px rgba(255, 95, 51, 0.4)";
-              }}
-              onMouseLeave={(e) => {
-                e.target.style.transform = "translateY(0)";
-                e.target.style.boxShadow = "0 4px 12px rgba(255, 95, 51, 0.3)";
+                marginBottom: 24,
               }}
             >
-              로그인
-            </button>
-                  
-          </div>
-        </div>
-      </header>
-
-      {/* Navigation */}
-      <nav style={{
-        position: "sticky",
-        top: "80px",
-        zIndex: 90,
-        backgroundColor: "white",
-        borderBottom: "1px solid #e5e7eb",
-        display: "flex",
-        gap: "30px",
-        padding: "0 20px",
-        maxWidth: "1600px",
-        margin: "0 auto",
-      }}>
-        {["Home", "Festival List", "Calendar", "Plan & Curation"].map((item) => (
-          <button
-            key={item}
-            onClick={() => {
-              if (item === "Calendar") {
-                navigate("/calendar");
-              } else if (item === "Home") {
-                navigate("/");
-              } else if (item === "Festival List") {
-                navigate("/mypage");
-              }
-            }}
-            style={{
-              padding: "16px 0",
-              fontSize: "14px",
-              fontWeight: 700,
-              color: item === "Home" ? "#FF5F33" : "#6b7280",
-              textDecoration: "none",
-              borderBottom: item === "Home" ? "3px solid #FF5F33" : "none",
-              cursor: "pointer",
-              background: "transparent",
-              border: "none",
-              transition: "all 0.2s",
-            }}
-            onMouseEnter={(e) => {
-              if (item !== "Home") e.target.style.color = "#FF5F33";
-            }}
-            onMouseLeave={(e) => {
-              if (item !== "Home") e.target.style.color = "#6b7280";
-            }}
-          >
-            {item}
-          </button>
-        ))}
-      </nav>
-
-      {/* Main Content */}
-      <main style={{ maxWidth: "1600px", margin: "0 auto", padding: "24px 20px" }}>
-        {/* Hero Banner */}
-        <div style={{
-          marginBottom: "40px",
-          borderRadius: "32px",
-          overflow: "hidden",
-          aspectRatio: "16/9",
-          backgroundImage: `linear-gradient(to right, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.4) 50%, rgba(255, 255, 255, 0.9) 100%), url("https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=1200&h=675&fit=crop")`,
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-          display: "flex",
-          alignItems: "center",
-          padding: "60px",
-          boxShadow: "0 4px 20px rgba(0,0,0,0.08)",
-        }}>
-          <div style={{ maxWidth: "600px" }}>
-            <div style={{
-              display: "inline-block",
-              padding: "8px 16px",
-              borderRadius: "9999px",
-              backgroundColor: "rgba(255, 95, 51, 0.1)",
-              border: "1px solid rgba(255, 95, 51, 0.2)",
-              marginBottom: "24px",
-            }}>
-              <span style={{
-                fontSize: "11px",
-                fontWeight: 700,
-                color: "#FF5F33",
-                letterSpacing: "0.05em",
-                textTransform: "uppercase",
-              }}>
-                🟠 Welcome Back, User!
-              </span>
-            </div>
-            <h2 style={{
-              fontSize: "56px",
-              fontWeight: 900,
-              marginBottom: "16px",
-              color: "#111827",
-              lineHeight: 1.1,
-            }}>
+              🍏 환영합니다, 풋사과님
+            </span>
+            <h1 style={{ fontSize: 48, fontWeight: 900, lineHeight: 1.1 }}>
               Find your <br />
-              <span style={{
-                background: "linear-gradient(90deg, #FF5F33 0%, #EAB308 100%)",
-                WebkitBackgroundClip: "text",
-                WebkitTextFillColor: "transparent",
-              }}>
+              <span
+                style={{
+                  background: "linear-gradient(90deg,#FF5F33,#EAB308)",
+                  WebkitBackgroundClip: "text",
+                  WebkitTextFillColor: "transparent",
+                }}
+              >
                 Golden Harmony
               </span>
-            </h2>
-            <p style={{
-              fontSize: "16px",
-              color: "#4b5563",
-              marginBottom: "32px",
-              lineHeight: 1.6,
-            }}>
-              We&apos;ve curated festivals that match your love for traditional arts and sunset photography.
+            </h1>
+            <p style={{ color: "#4b5563", margin: "24px 0" }}>
+              축제와 사진의 황금시간을 찾아보세요.<br />
+              AI가 추천하는 맞춤형 축제와 촬영 명소!
             </p>
             <button
-              onClick={() => navigate("/map")}
+              onClick={() => navigate("/tastetest")}
               style={{
                 padding: "16px 32px",
-                borderRadius: "12px",
+                borderRadius: 12,
                 border: "none",
-                background: "linear-gradient(90deg, #FF5F33 0%, #EAB308 100%)",
+                background: "linear-gradient(90deg,#FF5F33,#EAB308)",
                 color: "white",
                 fontWeight: 800,
-                fontSize: "16px",
                 cursor: "pointer",
-                boxShadow: "0 8px 20px rgba(255, 95, 51, 0.3)",
-                transition: "transform 0.2s",
+                fontSize: 18,
               }}
-              onMouseEnter={(e) => e.target.style.transform = "scale(1.05)"}
-              onMouseLeave={(e) => e.target.style.transform = "scale(1)"}
             >
-              Start Recommendation with AI ✨
+              Start Recommendation with AI
             </button>
-
-            {/* ✅ 축제 pSeq 입력 필드 */}
-            <div style={{
-              marginTop: "24px",
-              display: "flex",
-              gap: "8px",
-              alignItems: "center",
-            }}>
+            <div style={{ marginTop: 24, display: "flex", gap: 8 }}>
               <input
-                type="text"
-                placeholder="12116"
                 value={pSeqInput}
                 onChange={(e) => setPSeqInput(e.target.value)}
-                onKeyPress={(e) => {
-                  if (e.key === "Enter" && pSeqInput.trim()) {
-                    const festival = festivals.find((f) => String(f.pSeq) === String(pSeqInput));
-                    if (festival) {
-                      setSelectedFestivalPSeq(pSeqInput);
-                      setPSeqInput("");
-                      alert("축제가 저장되었습니다! 캘린더에서 확인하세요.");
-                    } else {
-                      alert("축제를 찾을 수 없습니다.");
-                    }
-                  }
-                }}
+                placeholder="축제 번호 입력"
                 style={{
                   padding: "12px 16px",
-                  borderRadius: "12px",
-                  border: "1px solid rgba(255, 95, 51, 0.3)",
-                  fontSize: "14px",
-                  outline: "none",
-                  transition: "all 0.2s",
-                  width: "200px",
-                }}
-                onFocus={(e) => {
-                  e.target.style.borderColor = "#FF5F33";
-                  e.target.style.boxShadow = "0 0 0 3px rgba(255,95,51,0.1)";
-                }}
-                onBlur={(e) => {
-                  e.target.style.borderColor = "rgba(255, 95, 51, 0.3)";
-                  e.target.style.boxShadow = "none";
+                  borderRadius: 12,
+                  border: "1px solid #FF5F33",
                 }}
               />
               <button
                 onClick={() => {
-                  const festival = festivals.find((f) => String(f.pSeq) === String(pSeqInput));
-                  if (festival) {
+                  const f = festivals.find((x) => String(x.pSeq) === String(pSeqInput));
+                  if (f) {
                     setSelectedFestivalPSeq(pSeqInput);
+                    alert("캘린더에 저장했어요!");
                     setPSeqInput("");
-                    alert("축제가 저장되었습니다! 캘린더에서 확인하세요.");
                   } else {
-                    alert("축제를 찾을 수 없습니다.");
+                    alert("축제를 찾지 못했어요.");
                   }
                 }}
                 style={{
                   padding: "12px 24px",
-                  borderRadius: "12px",
+                  borderRadius: 12,
                   border: "none",
-                  background: "linear-gradient(90deg, #FF5F33 0%, #FF7A4D 100%)",
+                  background: "#FF5F33",
                   color: "white",
                   fontWeight: 700,
-                  fontSize: "14px",
-                  cursor: "pointer",
-                  transition: "all 0.2s",
-                }}
-                onMouseEnter={(e) => {
-                  e.target.style.transform = "translateY(-2px)";
-                }}
-                onMouseLeave={(e) => {
-                  e.target.style.transform = "translateY(0)";
                 }}
               >
-                🎪 캘린더로
+                캘린더로 🎪
               </button>
             </div>
           </div>
-        </div>
-
-        {/* Content Grid */}
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 320px", gap: "32px" }}>
-          {/* Main Content */}
-          <div>
-            {/* Recommendation Section */}
-            <section style={{ marginBottom: "48px" }}>
-              <div style={{ marginBottom: "24px" }}>
-                <h3 style={{
-                  fontSize: "28px",
-                  fontWeight: 900,
-                  marginBottom: "8px",
-                  color: "#111827",
-                }}>
-                  ✨ Minho님 취향에 딱 맞는 축제예요!
-                </h3>
-                <p style={{
-                  fontSize: "14px",
-                  color: "#6b7280",
-                }}>
-                  AI가 분석한 민호님의 선호 라벨: #전통예술 #야경 #사진명소
-                </p>
-              </div>
-
-              {/* Festival Cards */}
-              <div style={{
-                display: "grid",
-                gridTemplateColumns: "1fr 1fr 1fr",
-                gap: "12px",
-              }}>
-                {festivals.slice(0, 3).map((festival) => (
-                  <TownCard
-                    key={festival.pSeq}
-                    town={{
-                      name: festival.fstvlNm,
-                      description: festival.ministry_description,
-                      image: festival.ministry_image_url || "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=400&h=300&fit=crop",
-                      id: festival.pSeq,
-                    }}
-                    festival={festival}
-                    onClick={() => {
-                      setSelectedFestivalPSeq(festival.pSeq);
-                      navigate("/map");
-                    }}
-                  />
-                ))}
-              </div>
-            </section>
-          </div>
-
-          {/* Sidebar */}
-          <aside>
-            {/* Calendar Widget */}
-            <div style={{
+        </section>
+        {/* GRID */}
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 320px", gap: 15 }}>
+          {/* LEFT - 추천 섹션 */}
+          <section>
+            <h2 style={{ fontSize: 28, fontWeight: 900 }}>
+              ✨ 풋사과님 취향에 딱 맞는 축제
+            </h2>
+            <p style={{ color: "#6b7280", marginBottom: 24 }}>
+              AI 분석 결과: #전통예술 #야경 #사진명소
+            </p>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 12 }}>
+              {festivals.slice(0, 3).map((f) => (
+                <TownCard
+                  key={f.pSeq}
+                  town={{
+                    name: f.fstvlNm,
+                    description: f.ministry_description,
+                    image: f.ministry_image_url || "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f",
+                    id: f.pSeq,
+                  }}
+                  festival={f}
+                  onClick={() => setSelectedFestival(f)}
+                />
+              ))}
+            </div>
+          </section>
+          {/* RIGHT - 캘린더 */}
+          <aside
+            style={{
               backgroundColor: "white",
-              borderRadius: "24px",
-              padding: "24px",
-              boxShadow: "0 2px 10px rgba(0,0,0,0.04)",
-              stickyTop: "140px",
+              borderRadius: 24,
+              padding: 24,
+              height: "fit-content",
               position: "sticky",
-              top: "140px",
-            }}>
-              <div style={{ marginBottom: "24px" }}>
-                <h3 style={{
-                  fontSize: "18px",
-                  fontWeight: 700,
-                  color: "#111827",
-                  marginBottom: "4px",
-                }}>
-                  Golden Calendar
-                </h3>
-                <p style={{
-                  fontSize: "11px",
-                  color: "#d97706",
-                  fontWeight: 700,
-                  letterSpacing: "0.05em",
-                }}>
-                  OCTOBER 2024
-                </p>
-              </div>
-
-              {/* Mini Calendar */}
-              <div style={{
-                display: "grid",
-                gridTemplateColumns: "repeat(7, 1fr)",
-                gap: "8px",
-                marginBottom: "24px",
-              }}>
-                {["S", "M", "T", "W", "T", "F", "S"].map((day) => (
-                  <div
-                    key={day}
-                    style={{
-                      fontSize: "10px",
-                      fontWeight: 700,
-                      textAlign: "center",
-                      color: "#d1d5db",
-                    }}
-                  >
-                    {day}
-                  </div>
-                ))}
-                {[29, 30, 1, 2, 3, 4, 5].map((date, idx) => (
-                  <div
-                    key={idx}
-                    style={{
-                      aspectRatio: "1",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      fontSize: "14px",
-                      fontWeight: date === 3 ? 900 : 500,
-                      backgroundColor: date === 3 ? "#FF5F33" : "transparent",
-                      color: date === 3 ? "white" : date >= 1 && date <= 5 ? "#111827" : "#d1d5db",
-                      borderRadius: "8px",
-                      cursor: "pointer",
-                    }}
-                  >
-                    {date}
-                  </div>
-                ))}
-              </div>
-
-              {/* Event */}
-              <div style={{
-                padding: "12px",
-                borderRadius: "16px",
-                backgroundColor: "#f3f4f6",
-                marginBottom: "16px",
-              }}>
-                <div style={{
-                  display: "flex",
-                  gap: "8px",
-                  alignItems: "flex-start",
-                }}>
-                  <div style={{
-                    width: "8px",
-                    height: "8px",
-                    borderRadius: "50%",
-                    backgroundColor: "#FF5F33",
-                    marginTop: "6px",
-                    flexShrink: 0,
-                  }} />
-                  <div>
-                    <p style={{
-                      fontSize: "12px",
-                      fontWeight: 700,
-                      color: "#111827",
-                      marginBottom: "2px",
-                    }}>
-                      Jinju Lantern Opening
-                    </p>
-                    <p style={{
-                      fontSize: "11px",
-                      color: "#6b7280",
-                    }}>
-                      Oct 3 • Peak Sunset: 17:42
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              <button
-                onClick={() => navigate("/calendar")}
-                style={{
-                  display: "block",
-                  width: "100%",
-                  textAlign: "center",
-                  padding: "12px",
-                  fontSize: "11px",
-                  fontWeight: 700,
-                  color: "#FF5F33",
-                  border: "1px solid rgba(255, 95, 51, 0.2)",
-                  borderRadius: "16px",
-                  textDecoration: "none",
-                  letterSpacing: "0.05em",
-                  cursor: "pointer",
-                  transition: "background 0.2s",
-                  background: "transparent",
-                }}
-                onMouseEnter={(e) => e.target.style.backgroundColor = "rgba(255, 95, 51, 0.05)"}
-                onMouseLeave={(e) => e.target.style.backgroundColor = "transparent"}
-              >
-                FULL CALENDAR VIEW
-              </button>
-            </div>
+              top: 140,
+            }}
+          >
+            <h3 style={{ fontWeight: 800 }}>My Festival Calendar</h3>
+            <p style={{ fontSize: 12, color: "#FF5F33" }}>
+              풋사과님의 저장된 일정
+            </p>
+            <button
+              onClick={() => navigate("/calendar")}
+              style={{
+                marginTop: 16,
+                width: "100%",
+                padding: 12,
+                borderRadius: 16,
+                border: "1px solid #FF5F33",
+                background: "transparent",
+                color: "#FF5F33",
+                fontWeight: 700,
+                cursor: "pointer",
+              }}
+            >
+              전체 캘린더 보기
+            </button>
           </aside>
         </div>
       </main>
+      {/* FOOTER */}
+      <footer
+        style={{
+          marginTop: 80,
+          padding: "40px 20px",
+          borderTop: "1px solid #e5e7eb",
+          backgroundColor: "white",
+        }}
+      >
+        <div
+          style={{
+            maxWidth: "1600px",
+            margin: "0 auto",
+            display: "flex",
+            justifyContent: "space-between",
+          }}
+        >
+          <div>
+            <h4 style={{ fontWeight: 800 }}>Festory</h4>
+            <p style={{ color: "#6b7280", fontSize: 14 }}>
+              Elevating cultural tourism through the lens of aesthetic timing and premium curation. Discover Korea's hidden gems.
+            </p>
+          </div>
+          <div>
+            <p>Explore</p>
+            <p>Tradition</p>
+            <p>Modern</p>
+            <p>Photography</p>
+          </div>
+          <div>
+            <p>Support</p>
+            <p>About Us</p>
+            <p>FAQ</p>
+            <p>Contact</p>
+          </div>
+        </div>
+      </footer>
+      {/* 상세 모달 */}
+      {selectedFestival && (
+        <TownDetailModal
+          festival={selectedFestival}
+          onClose={() => setSelectedFestival(null)}
+        />
+      )}
     </div>
   );
 }

@@ -145,6 +145,7 @@ function After_Home() {
                 <TownCard
                   key={f.pSeq}
                   town={{
+            
                     name: f.fstvlNm,
                     description: f.ministry_description,
                     image: f.ministry_image_url || "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f",
