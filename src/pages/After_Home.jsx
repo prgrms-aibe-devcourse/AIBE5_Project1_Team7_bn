@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import festivals from "../data/festivals_with_geo.json";
 import useStore from "../store/useStore";
 import Header from "../components/Header";
+import { TownCard } from "../components/TownCard";
 
 function After_Home() {
   const navigate = useNavigate();
@@ -123,7 +124,7 @@ function After_Home() {
         </section>
 
         {/* ================= GRID ================= */}
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 320px", gap: 32 }}>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 320px", gap: 15 }}>
           {/* LEFT */}
           <section>
             <h2 style={{ fontSize: 28, fontWeight: 900 }}>
@@ -133,25 +134,20 @@ function After_Home() {
               AI 분석 결과: #전통예술 #야경 #사진명소
             </p>
 
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>
-              {festivals.slice(0, 2).map((f) => (
-                <div
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 12 }}>
+              {festivals.slice(0, 3).map((f) => (
+                <TownCard
                   key={f.pSeq}
-                  style={{
-                    borderRadius: 24,
-                    overflow: "hidden",
-                    cursor: "pointer",
+                  town={{
+                    name: f.festival_name,
+                    description: f.festival_description,
+                    image: f.image_url || "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f",
                   }}
-                >
-                  <img
-                    src={f.image || "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f"}
-                    alt={f.title}
-                    style={{ width: "100%", height: 300, objectFit: "cover" }}
-                  />
-                  <div style={{ padding: 16 }}>
-                    <h4 style={{ fontWeight: 700 }}>{f.title}</h4>
-                  </div>
-                </div>
+                  onClick={() => {
+                    setSelectedFestivalPSeq(f.pSeq);
+                    navigate("/map");
+                  }}
+                />
               ))}
             </div>
           </section>

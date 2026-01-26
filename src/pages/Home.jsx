@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import festivals from "../data/festivals_with_geo.json";
 import useStore from "../store/useStore";
+import { TownCard } from "../components/TownCard";
 
 function Home() {
   const navigate = useNavigate();
@@ -334,96 +335,22 @@ function Home() {
               {/* Festival Cards */}
               <div style={{
                 display: "grid",
-                gridTemplateColumns: "1fr 1fr",
-                gap: "20px",
+                gridTemplateColumns: "1fr 1fr 1fr",
+                gap: "12px",
               }}>
-                {[
-                  {
-                    title: "안동 국제 탈춤 페스티벌",
-                    subtitle: "HERITAGE • MASK DANCE",
-                    match: "98% Match",
-                    tag: "AI Choice",
-                    image: "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=400&h=300&fit=crop",
-                  },
-                  {
-                    title: "서울 빛초롱 축제",
-                    subtitle: "NIGHT LIGHT • PHOTO SPOT",
-                    match: "92% Match",
-                    image: "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=400&h=300&fit=crop",
-                  },
-                ].map((festival, idx) => (
-                  <div
-                    key={idx}
-                    style={{
-                      position: "relative",
-                      borderRadius: "24px",
-                      overflow: "hidden",
-                      cursor: "pointer",
-                      transition: "transform 0.3s",
+                {festivals.slice(0, 3).map((festival) => (
+                  <TownCard
+                    key={festival.pSeq}
+                    town={{
+                      name: festival.festival_name,
+                      description: festival.festival_description,
+                      image: festival.image_url || "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=400&h=300&fit=crop",
                     }}
-                    onMouseEnter={(e) => e.currentTarget.style.transform = "scale(1.02)"}
-                    onMouseLeave={(e) => e.currentTarget.style.transform = "scale(1)"}
-                  >
-                    <img
-                      src={festival.image}
-                      alt={festival.title}
-                      style={{
-                        width: "100%",
-                        height: "300px",
-                        objectFit: "cover",
-                        display: "block",
-                      }}
-                    />
-                    <div style={{
-                      position: "absolute",
-                      inset: 0,
-                      background: "linear-gradient(180deg, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.7) 100%)",
-                    }} />
-                    <div style={{
-                      position: "absolute",
-                      top: "16px",
-                      left: "16px",
-                      display: "flex",
-                      gap: "8px",
-                    }}>
-                      <span style={{
-                        padding: "4px 12px",
-                        borderRadius: "9999px",
-                        backgroundColor: "rgba(255, 255, 255, 0.9)",
-                        color: "#FF5F33",
-                        fontSize: "10px",
-                        fontWeight: 700,
-                      }}>
-                        {festival.match}
-                      </span>
-                      {festival.tag && (
-                        <span style={{
-                          padding: "4px 12px",
-                          borderRadius: "9999px",
-                          backgroundColor: "#FF5F33",
-                          color: "white",
-                          fontSize: "10px",
-                          fontWeight: 700,
-                        }}>
-                          {festival.tag}
-                        </span>
-                      )}
-                    </div>
-                    <div style={{
-                      position: "absolute",
-                      bottom: "16px",
-                      left: "16px",
-                      right: "16px",
-                      color: "white",
-                    }}>
-                      <p style={{ fontSize: "10px", color: "#fca5a5", marginBottom: "4px" }}>
-                        {festival.subtitle}
-                      </p>
-                      <h4 style={{ fontSize: "18px", fontWeight: 700 }}>
-                        {festival.title}
-                      </h4>
-                    </div>
-                  </div>
+                    onClick={() => {
+                      setSelectedFestivalPSeq(festival.pSeq);
+                      navigate("/map");
+                    }}
+                  />
                 ))}
               </div>
             </section>
