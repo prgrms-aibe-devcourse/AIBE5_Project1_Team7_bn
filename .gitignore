@@ -5,7 +5,7 @@
 # These directories persist across branch switches for local development
 frontend-app/
 typesense/
-ai/
+
 
 # === Environment & Secrets ===
 .env
