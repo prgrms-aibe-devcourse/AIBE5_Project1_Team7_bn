@@ -142,11 +142,17 @@ function After_Home() {
                   key={f.pSeq}
                   town={{
 <<<<<<< HEAD
+<<<<<<< HEAD
 
                     name: f.fstvlNm,
                     description: f.ministry_description,
                     image: f.ministry_image_url || "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f",
 
+=======
+                    name: f.fstvlNm,
+                    description: f.ministry_description,
+                    image: f.ministry_image_url || "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f",
+>>>>>>> 721e923216881cc17c35b052d61ffd0a5cea6278
 =======
                     name: f.fstvlNm,
                     description: f.ministry_description,
