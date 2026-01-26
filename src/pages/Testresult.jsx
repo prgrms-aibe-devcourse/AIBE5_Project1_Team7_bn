@@ -10,6 +10,7 @@ function Testresult() {
   const navigate = useNavigate();
   const { tasteTestAnswers } = useStore();
   const [selectedFestival, setSelectedFestival] = useState(null);
+  const [mainEventFestival, setMainEventFestival] = useState(null);
 
   // 테스트 결과 분석
   const getLabelType = () => {
@@ -51,6 +52,50 @@ function Testresult() {
     ...festival,
     matchRate: [98, 92, 87][index] || 85
   }));
+
+  // 지역별 대표 명소 매핑
+  const getNearbySpot = (festival) => {
+    if (!festival) return { name: "석촌호수 두레길", description: "차로 15분 거리 • 산책로 좋기로 유명 산책로" };
+    
+    const region = festival.ministry_region || festival.opar || festival.rdnmadr || "";
+    
+    const spotMap = {
+      "평창": { name: "대관령 양떼목장", description: "차로 20분 거리 • 푸른 초원과 양떼가 있는 목장" },
+      "강릉": { name: "경포대 해변", description: "차로 15분 거리 • 아름다운 동해 일출 명소" },
+      "속초": { name: "속초 해수욕장", description: "도보 10분 거리 • 청정 동해 바다 산책로" },
+      "춘천": { name: "남이섬", description: "차로 25분 거리 • 낭만적인 가로수길 명소" },
+      "화천": { name: "평화의 댐", description: "차로 20분 거리 • 북한강 상류 전망대" },
+      "강원": { name: "대관령 양떼목장", description: "차로 20분 거리 • 푸른 초원과 양떼가 있는 목장" },
+      "송파": { name: "석촌호수 두레길", description: "도보 10분 거리 • 벚꽃과 호수가 아름다운 산책로" },
+      "광진": { name: "한강 뚝섬유원지", description: "차로 10분 거리 • 한강 야경과 자전거 도로" },
+      "서울": { name: "석촌호수 두레길", description: "차로 15분 거리 • 산책로 좋기로 유명 산책로" },
+      "부산": { name: "해운대 해수욕장", description: "차로 15분 거리 • 한국 대표 해변 명소" },
+      "제주": { name: "성산일출봉", description: "차로 30분 거리 • 유네스코 세계자연유산" },
+      "전주": { name: "전주 한옥마을", description: "도보 5분 거리 • 전통 한옥과 먹거리 거리" },
+      "경주": { name: "대릉원", description: "도보 10분 거리 • 신라 왕릉과 고분군" },
+      "인천": { name: "월미도", description: "차로 20분 거리 • 바다와 놀이공원이 있는 섬" },
+      "대전": { name: "대청호 오백리길", description: "차로 25분 거리 • 호수 둘레길 산책로" },
+      "대구": { name: "수성못", description: "차로 15분 거리 • 호수공원과 분수쇼" },
+      "광주": { name: "무등산", description: "차로 30분 거리 • 등산과 자연휴양림" },
+      "울산": { name: "간절곶", description: "차로 20분 거리 • 한국에서 가장 빠른 일출 명소" },
+      "수원": { name: "화성행궁", description: "도보 15분 거리 • 유네스코 세계문화유산" }
+    };
+    
+    // 가장 긴 매칭을 찾기 (더 구체적인 지역 우선)
+    let bestMatch = null;
+    let longestMatchLength = 0;
+    
+    for (const [key, spot] of Object.entries(spotMap)) {
+      if (region.includes(key) && key.length > longestMatchLength) {
+        bestMatch = spot;
+        longestMatchLength = key.length;
+      }
+    }
+    
+    return bestMatch || { name: "주변 관광지", description: "차로 15분 거리 • 지역 대표 명소" };
+  };
+
+  const nearbySpot = getNearbySpot(mainEventFestival || recommendedFestivals[0]);
 
   const styles = {
     container: {
@@ -396,9 +441,6 @@ function Testresult() {
                     e.currentTarget.style.borderColor = "#FFE0B2";
                   }}
                 >
-                  <span className="material-symbols-outlined" style={{ fontSize: "20px" }}>
-                    share
-                  </span>
                   Share My Label
                 </button>
               </div>
@@ -436,7 +478,10 @@ function Testresult() {
                           image: festival.ministry_image_url || "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=400&h=300&fit=crop"
                         }}
                         festival={festival}
-                        onClick={() => setSelectedFestival(festival)}
+                        onClick={() => {
+                          setMainEventFestival(festival);
+                          setSelectedFestival(festival);
+                        }}
                       />
                     </div>
                   ))}
@@ -486,9 +531,9 @@ function Testresult() {
                     </div>
                     <div style={styles.eventContent}>
                       <div style={styles.eventLabel}>MAIN EVENT</div>
-                      <div style={styles.eventTitle}>{recommendedFestivals[0]?.fstvlNm}</div>
+                      <div style={styles.eventTitle}>{mainEventFestival?.fstvlNm || recommendedFestivals[0]?.fstvlNm}</div>
                       <div style={styles.eventDescription}>
-                        올림픽공원 잔디마당 • 오후 1시 시작
+                        {mainEventFestival?.rdnmadr || mainEventFestival?.lnmadr || recommendedFestivals[0]?.rdnmadr || "올림픽공원 잔디마당"} • {mainEventFestival?.fstvlStartDate ? `${mainEventFestival.fstvlStartDate.slice(5).replace('-', '월 ')}일 시작` : "오후 1시 시작"}
                       </div>
                     </div>
                   </div>
@@ -502,9 +547,9 @@ function Testresult() {
                     </div>
                     <div style={styles.eventContent}>
                       <div style={styles.eventLabel}>NEARBY SPOT</div>
-                      <div style={styles.eventTitle}>석촌호수 두레길</div>
+                      <div style={styles.eventTitle}>{nearbySpot.name}</div>
                       <div style={styles.eventDescription}>
-                        차로 15분 거리 • 산책로 좋기로 유명 산책로
+                        {nearbySpot.description}
                       </div>
                     </div>
                   </div>

@@ -13,6 +13,7 @@ function After_Home() {
 
   const {
     setSelectedFestivalPSeq,
+    clearTasteTestAnswers,
   } = useStore();
 
   return (
@@ -71,7 +72,10 @@ function After_Home() {
             </p>
 
             <button
-              onClick={() => navigate("/tastetest")}
+              onClick={() => {
+                clearTasteTestAnswers();
+                navigate("/tastetest");
+              }}
               style={{
                 padding: "16px 32px",
                 borderRadius: 12,
