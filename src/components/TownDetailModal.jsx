@@ -1,4 +1,14 @@
+import { useEffect } from 'react';
+import GoogleMap from './GoogleMap';
+
 export function TownDetailModal({ festival, onClose }) {
+  useEffect(() => {
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, []);
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       {/* 배경 오버레이 */}
@@ -18,7 +28,6 @@ export function TownDetailModal({ festival, onClose }) {
           />
           {/* 그라디언트 오버레이 */}
           <div className="absolute inset-0 bg-linear-to-t from-black/60 via-transparent to-transparent" />
-          
           {/* 닫기 버튼 */}
           <button
             onClick={onClose}
@@ -28,7 +37,6 @@ export function TownDetailModal({ festival, onClose }) {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
             </svg>
           </button>
-
           {/* 축제 이름 오버레이 */}
           <div className="absolute bottom-6 left-6 right-6">
             <span className="inline-block px-4 py-2 rounded-full bg-orange-500/90 text-white text-sm font-bold mb-3">
@@ -69,6 +77,15 @@ export function TownDetailModal({ festival, onClose }) {
               {festival.ministry_description}
             </p>
           </div>
+
+          {/* 위치 지도 */}
+          <GoogleMap
+            latitude={festival.latitude}
+            longitude={festival.longitude}
+            rdnmadr={festival.rdnmadr}
+            lnmadr={festival.lnmadr}
+            apiKey={import.meta.env.VITE_GOOGLE_MAPS_KEY}
+          />
 
           {/* 주최처 정보 */}
           {festival.ministry_institution && (
