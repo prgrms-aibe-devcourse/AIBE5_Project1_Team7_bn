@@ -9,8 +9,12 @@
 	url = git@github.com:0cha-0cha/AIBE5Project1.git
 [submodule "AIBE5_Project1"]
 	path = AIBE5_Project1
-	url = git@github.com:ryu-han-kr/AIBE5_Project1.git
-[submodule "typesense-impl"]
+	url = git@github.com:ryu-han-kr/AIBE5_Project1.git[submodule "ai"]
+        path = ai
+        url = git@github.com:yeona-lee-researcher/dev-team7
+[submodule "design"]
+        path = design
+        url = git@github.com:yeona-lee-researcher/dev-team7.git[submodule "typesense-impl"]
 	path = typesense-impl
 	url = git@github.com:aiegoo/dev-team7.git
 	branch = feat/typesense-search
