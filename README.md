@@ -1,5 +1,57 @@
 # Festory FE - 작업 기록
 
+## 📅 2025년 1월 25일
+
+### 🎯 주요 작업 내용
+
+#### 1️⃣ Calendar.jsx - 위치 필터 버튼 수정
+- ✅ 캘린더 일정 추가/삭제/수정 기능 구현
+- ✅ 좌측 버튼 클릭시 pseq값을 받아서 캘린더에 표시하는 기능 구현(예비)
+
+#### 2️⃣ Mypage.jsx - 마이페이지 생성(초안)
+- ✅ 전체 구조: 두 개의 탭 (My info, 내 축제 취향)
+- ✅ **My info 탭**
+  - 사용자 정보 표시 (이메일, 이름, 닉네임, 가입일)
+  - PRO MEMBER 뱃지 표시
+  - 회원정보 수정 버튼
+  - 회원 탈퇴 링크
+- ✅ **내 축제 취향 탭**
+  - 나침반 디자인의 취향 시각화
+  - Experience Explorer 취향 타입 표시
+  - 해시태그 (#신체활동, #전통감성)
+  - 취향 설명 및 추천 메시지
+  - 재설문 버튼
+  - 모바일/데스크톱 반응형 레이아웃
+- ✅ **챗봇 UI**
+  - 우측 하단 고정 위치
+  - 말풍선 + 원형 버튼
+- ✅ Custom CSS 스타일 적용
+  - vibrant-gradient: 오렌지 그라데이션
+  - compass-glow: 나침반 발광 효과
+  - vintage-map: 빈티지 지도 배경
+
+#### 3️⃣ 라우팅 및 네비게이션 연결
+- ✅ `App.jsx`: /mypage 라우트 추가
+- ✅ `Header.jsx`: "My Page" 메뉴 항목 추가
+- ✅ `Home.jsx`: Festival List 버튼을 /mypage로 연결
+
+#### 4️⃣ 기술적 이슈 해결
+- ✅ HTML → React JSX 변환
+- ✅ 템플릿 리터럴 문법 수정 (백슬래시 → 백틱)
+- ✅ className 동적 바인딩 문법 수정
+- ✅ 미사용 import 제거 (useNavigate)
+- ✅ JSX div 닫는 태그 누락 수정
+- ✅ Tailwind CSS 재설치 및 개발 서버 재시작
+
+#### 5️⃣ 사용 기술 스택
+- React 18+ (useState hooks)
+- React Router (페이지 네비게이션)
+- Tailwind CSS (유틸리티 우선 스타일링)
+- Zustand (상태 관리)
+- Custom CSS (그라데이션 및 특수 효과)
+
+---
+
 ## 📅 2026년 1월 23일
 
 ---

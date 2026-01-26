@@ -9,6 +9,7 @@ function Header() {
     { name: "Festival List", path: "/festivals" },
     { name: "Calendar", path: "/calendar" },
     { name: "Plan & Curation", path: "/plan" },
+    { name: "My Page", path: "/mypage" },
   ];
 
   const isActive = (path) => location.pathname === path;

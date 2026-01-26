@@ -147,6 +147,14 @@ function Calendar() {
   const [currentTitle, setCurrentTitle] = useState("");
   const [festivalCurrentTitle, setFestivalCurrentTitle] = useState("");
 
+  // ✅ 필터 상태
+  const [activeFilters, setActiveFilters] = useState({
+    location: false,
+    region: false,
+    vibe: false,
+    genres: false
+  });
+
   // ---------- GIS init ----------
   useEffect(() => {
     setError("");
@@ -548,7 +556,31 @@ function Calendar() {
 
   // ✅ 축제 데이터를 FullCalendar 이벤트로 변환
   const festivalEvents = useMemo(() => {
-    return festivals.map(festival => {
+    // 필터가 하나라도 활성화되어 있는지 확인
+    const hasActiveFilter = Object.values(activeFilters).some(v => v);
+    
+    // 필터가 활성화되지 않았으면 빈 배열 반환
+    if (!hasActiveFilter) {
+      return [];
+    }
+
+    // 필터에 따라 축제 필터링
+    let filteredFestivals = festivals;
+
+    if (activeFilters.location) {
+      // Location 필터: 특정 pSeq만 표시
+      const locationPSeqs = ["12116", "12038", "12970"];
+      filteredFestivals = filteredFestivals.filter(festival => 
+        locationPSeqs.includes(festival.pSeq)
+      );
+    }
+
+    // 다른 필터들도 추가 가능 (현재는 모든 축제 표시)
+    // if (activeFilters.region) { ... }
+    // if (activeFilters.vibe) { ... }
+    // if (activeFilters.genres) { ... }
+
+    return filteredFestivals.map(festival => {
       const dateInfo = parseFestivalDate(festival.date);
       if (!dateInfo) return null;
       
@@ -565,7 +597,7 @@ function Calendar() {
         }
       };
     }).filter(Boolean);
-  }, []);
+  }, [activeFilters]);
 
   // ---------- styles (기존 유지) ----------
   const styles = {
@@ -700,10 +732,30 @@ function Calendar() {
         </div>
         <div style={styles.sidebarSection}>
           <div style={styles.sidebarTitle}>FILTER SEARCH</div>
-          <button style={styles.sidebarItem}>📍 Location</button>
-          <button style={styles.sidebarItem}>🌍 Region</button>
-          <button style={styles.sidebarItem}>🎨 Vibe</button>
-          <button style={styles.sidebarItem}>🎭 Genres</button>
+          <button 
+            style={{ ...styles.sidebarItem, ...(activeFilters.location ? styles.sidebarItemActive : {}) }}
+            onClick={() => setActiveFilters(prev => ({ ...prev, location: !prev.location }))}
+          >
+            📍 Location
+          </button>
+          <button 
+            style={{ ...styles.sidebarItem, ...(activeFilters.region ? styles.sidebarItemActive : {}) }}
+            onClick={() => setActiveFilters(prev => ({ ...prev, region: !prev.region }))}
+          >
+            🌍 Region
+          </button>
+          <button 
+            style={{ ...styles.sidebarItem, ...(activeFilters.vibe ? styles.sidebarItemActive : {}) }}
+            onClick={() => setActiveFilters(prev => ({ ...prev, vibe: !prev.vibe }))}
+          >
+            🎨 Vibe
+          </button>
+          <button 
+            style={{ ...styles.sidebarItem, ...(activeFilters.genres ? styles.sidebarItemActive : {}) }}
+            onClick={() => setActiveFilters(prev => ({ ...prev, genres: !prev.genres }))}
+          >
+            🎭 Genres
+          </button>
         </div>
       </div>
 

@@ -124,6 +124,8 @@ function Home() {
                 navigate("/calendar");
               } else if (item === "Home") {
                 navigate("/");
+              } else if (item === "Festival List") {
+                navigate("/mypage");
               }
             }}
             style={{
