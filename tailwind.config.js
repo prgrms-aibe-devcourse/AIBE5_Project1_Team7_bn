@@ -54,6 +54,16 @@ export default {
           5: "hsl(var(--chart-5))",
         },
       },
+      fontFamily: {
+        sans: [
+          'Pretendard',
+          'Noto Sans KR',
+          'Apple SD Gothic Neo',
+          'Malgun Gothic',
+          'Segoe UI',
+          'sans-serif',
+        ],
+      },
     },
   },
   plugins: [],

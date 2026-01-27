@@ -1,13 +1,21 @@
 import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import GoogleMap from './GoogleMap';
+import Dateregistration from '@/pages/Dateregistration';
 
 export function TownDetailModal({ festival, onClose }) {
+  const navigate = useNavigate();
+
   useEffect(() => {
     document.body.style.overflow = 'hidden';
     return () => {
       document.body.style.overflow = '';
     };
   }, []);
+
+  const Dast = () => {
+    navigate('../dateregistration');
+  };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
@@ -110,10 +118,17 @@ export function TownDetailModal({ festival, onClose }) {
               </a>
             )}
             <button
+              className="flex-1 rounded-xl border-2 border-gray-300 px-3 py-3 font-bold text-gray-900 hover:border-gray-400 transition-colors order-2"
               onClick={onClose}
-              className="flex-1 rounded-xl border-2 border-gray-300 px-6 py-3 font-bold text-gray-900 hover:border-gray-400 transition-colors"
             >
               닫기
+            </button>
+            {/* 일정 생성하기 버튼: 더 진한 주황+금색 그라데이션 */}
+            <button
+              className="w-1/2 rounded-xl bg-gradient-to-r from-orange-500 via-orange-400 to-yellow-300 px-3 py-3 font-bold text-white shadow-md hover:from-orange-600 hover:to-yellow-400 transition-all order-1"
+              onClick={Dateregistration}
+            >
+              일정 생성하기
             </button>
           </div>
         </div>

@@ -15,8 +15,9 @@ export function TownCard({ town, festival, onClick }) {
 
   const isLiked = likedFestivals.some(f => f.pSeq === festivalData.pSeq);
 
+  // 좋아요 버튼 클릭 시 부모 onClick이 실행되지 않도록 stopPropagation 사용
   const handleLikeClick = (e) => {
-    e.stopPropagation();
+    e.stopPropagation(); // 이게 없으면 좋아요 누를 때도 모달이 뜸
     toggleLikeFestival(festivalData);
   };
 
@@ -34,6 +35,12 @@ export function TownCard({ town, festival, onClick }) {
         relative
         cursor-pointer
       "
+      //호버시 테두리 효과
+      style={isHovered ? {
+        boxShadow: '0 0 0 4px #FFA500, 0 0 0 8px #FFD700', // 주황(오렌지)+금색
+        borderRadius: '1rem',
+        transition: 'box-shadow 0.3s',
+      } : {}}
     >
       {/* 이미지 영역 */}
       <div className="aspect-4/3 overflow-hidden relative">

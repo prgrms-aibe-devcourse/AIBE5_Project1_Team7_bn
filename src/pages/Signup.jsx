@@ -134,7 +134,7 @@ function Signup() {
       justifyContent: "center",
       alignItems: "center",
       padding: 20,
-      background: "linear-gradient(135deg, #fff5e6 0%, #ffe5cc 100%)",
+      background: "linear-gradient(120deg, #FFFBEA 20%, #FFD966 60%, #FFD59E 80%, #FFB300 100%)",
       fontFamily: "'Pretendard', system-ui, -apple-system, sans-serif",
     },
     card: {
