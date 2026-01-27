@@ -29,16 +29,34 @@ const calendarStyles = `
   
   .fc-daygrid-event {
     padding: 4px 8px !important;
-    border-radius: 6px !important;
-    border: none !important;
-    background: linear-gradient(135deg, rgb(244,133,37) 0%, rgb(255,153,102) 100%) !important;
-    box-shadow: 0 2px 4px rgba(244,133,37,0.2) !important;
-    transition: all 0.2s ease !important;
+    border-radius: 8px !important;
+    border: 1px solid rgba(255, 255, 255, 0.4) !important;
+    position: relative !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12), 
+                0 2px 4px rgba(0, 0, 0, 0.08),
+                inset 0 1px 0 rgba(255, 255, 255, 0.5),
+                inset 0 -1px 0 rgba(0, 0, 0, 0.1) !important;
+    transition: all 0.3s ease !important;
+  }
+  
+  .fc-daygrid-event::before {
+    content: '' !important;
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    background: linear-gradient(135deg, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0) 100%) !important;
+    border-radius: 7px !important;
+    pointer-events: none !important;
   }
   
   .fc-daygrid-event:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(244,133,37,0.3) !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.18), 
+                0 3px 8px rgba(0, 0, 0, 0.12),
+                inset 0 1px 0 rgba(255, 255, 255, 0.6),
+                inset 0 -1px 0 rgba(0, 0, 0, 0.15) !important;
   }
   
   .fc-col-header-cell {
@@ -738,9 +756,18 @@ function Calendar() {
       });
     }
 
-    return filteredFestivals.map(festival => {
+    const colors = [
+      { bg: '#f48525', border: '#f48525' }, // 주황색
+      { bg: '#60a5fa', border: '#60a5fa' }, // 하늘색
+      { bg: '#84cc16', border: '#84cc16' }  // 연두색
+    ];
+    
+    return filteredFestivals.map((festival, index) => {
       const dateInfo = parseFestivalDate(festival);
       if (!dateInfo) return null;
+      
+      const colorIndex = index % colors.length;
+      const color = colors[colorIndex];
       
       return {
         id: `festival-${festival.pSeq}`,
@@ -748,8 +775,8 @@ function Calendar() {
         start: dateInfo.startDateTime,
         end: dateInfo.endDateTime,
         allDay: true,
-        backgroundColor: 'rgb(244,133,37)',
-        borderColor: 'rgb(244,133,37)',
+        backgroundColor: color.bg,
+        borderColor: color.border,
         extendedProps: {
           festival: festival
         }
@@ -805,9 +832,18 @@ function Calendar() {
       });
     }
 
-    return filteredSaved.map(festival => {
+    const colors = [
+      { bg: '#f48525', border: '#f48525' }, // 주황색
+      { bg: '#60a5fa', border: '#60a5fa' }, // 하늘색
+      { bg: '#84cc16', border: '#84cc16' }  // 연두색
+    ];
+    
+    return filteredSaved.map((festival, index) => {
       const dateInfo = parseFestivalDate(festival);
       if (!dateInfo) return null;
+      
+      const colorIndex = index % colors.length;
+      const color = colors[colorIndex];
       
       return {
         id: `liked-${festival.pSeq}`,
@@ -815,8 +851,8 @@ function Calendar() {
         start: dateInfo.startDateTime,
         end: dateInfo.endDateTime,
         allDay: true,
-        backgroundColor: '#ef4444', // 빨간색으로 구분
-        borderColor: '#ef4444',
+        backgroundColor: color.bg,
+        borderColor: color.border,
         extendedProps: {
           festival: festival
         }
@@ -928,62 +964,179 @@ function Calendar() {
           </button>
         </div>
         <div style={styles.sidebarSection}>
-          <div style={styles.sidebarTitle}>FILTER SEARCH</div>
+          <div style={{ 
+            fontSize: 11, 
+            fontWeight: 800, 
+            color: '#9ca3af', 
+            textTransform: 'uppercase', 
+            letterSpacing: '1.2px', 
+            marginBottom: 16,
+            paddingLeft: 4
+          }}>
+            🔍 Filter Search
+          </div>
           
           {/* 지역 필터 */}
-          <div style={{ marginBottom: 12 }}>
+          <div style={{ marginBottom: 16 }}>
             <button 
-              style={{ ...styles.sidebarItem, ...(filterSectionsOpen.region ? styles.sidebarItemActive : {}) }}
+              style={{ 
+                width: '100%',
+                padding: '12px 16px',
+                borderRadius: 10,
+                border: 'none',
+                background: filterSectionsOpen.region 
+                  ? 'linear-gradient(135deg, #f48525 0%, #ff9f5a 100%)' 
+                  : '#fff',
+                color: filterSectionsOpen.region ? '#fff' : '#1f2937',
+                fontSize: 14,
+                fontWeight: 700,
+                cursor: 'pointer',
+                textAlign: 'left',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                boxShadow: filterSectionsOpen.region 
+                  ? '0 4px 12px rgba(244, 133, 37, 0.3)' 
+                  : '0 2px 6px rgba(0,0,0,0.06)',
+                transition: 'all 0.3s ease',
+                transform: filterSectionsOpen.region ? 'translateY(-2px)' : 'translateY(0)'
+              }}
               onClick={() => setFilterSectionsOpen(prev => ({ ...prev, region: !prev.region }))}
             >
-              📍 지역 {activeFilters.regions.length > 0 && `(${activeFilters.regions.length})`}
+              <span style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <span style={{ fontSize: 18 }}>📍</span>
+                지역
+                {activeFilters.regions.length > 0 && (
+                  <span style={{ 
+                    background: filterSectionsOpen.region ? 'rgba(255,255,255,0.3)' : '#fef3e8',
+                    color: filterSectionsOpen.region ? '#fff' : '#f48525',
+                    padding: '2px 8px',
+                    borderRadius: 12,
+                    fontSize: 11,
+                    fontWeight: 700
+                  }}>
+                    {activeFilters.regions.length}
+                  </span>
+                )}
+              </span>
+              <span style={{ fontSize: 12, opacity: 0.7 }}>
+                {filterSectionsOpen.region ? '▲' : '▼'}
+              </span>
             </button>
             {filterSectionsOpen.region && (
-              <div style={{ padding: '8px 12px', backgroundColor: '#f9fafb', borderRadius: 8, marginTop: 8 }}>
-                {['서울', '부산', '대구', '인천', '광주', '대전', '울산', '세종', '경기', '강원', '충북', '충남', '전북', '전남', '경북', '경남', '제주'].map(region => (
-                  <button
-                    key={region}
-                    onClick={() => {
-                      setActiveFilters(prev => ({
-                        ...prev,
-                        regions: prev.regions.includes(region)
-                          ? prev.regions.filter(r => r !== region)
-                          : [...prev.regions, region]
-                      }));
-                    }}
-                    style={{
-                      display: 'block',
-                      width: '100%',
-                      padding: '8px 12px',
-                      margin: '4px 0',
-                      border: 'none',
-                      borderRadius: 6,
-                      backgroundColor: activeFilters.regions.includes(region) ? '#f48525' : 'white',
-                      color: activeFilters.regions.includes(region) ? 'white' : '#374151',
-                      fontSize: 13,
-                      fontWeight: 600,
-                      cursor: 'pointer',
-                      textAlign: 'left',
-                      transition: 'all 0.2s'
-                    }}
-                  >
-                    {region}
-                  </button>
-                ))}
+              <div style={{ 
+                marginTop: 8,
+                padding: '12px',
+                backgroundColor: '#f9fafb',
+                borderRadius: 10,
+                border: '1px solid #e5e7eb',
+                maxHeight: 240,
+                overflowY: 'auto',
+                scrollbarWidth: 'thin',
+                scrollbarColor: '#cbd5e1 #f1f5f9'
+              }}>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+                  {['서울', '부산', '대구', '인천', '광주', '대전', '울산', '세종', '경기', '강원', '충북', '충남', '전북', '전남', '경북', '경남', '제주'].map(region => (
+                    <button
+                      key={region}
+                      onClick={() => {
+                        setActiveFilters(prev => ({
+                          ...prev,
+                          regions: prev.regions.includes(region)
+                            ? prev.regions.filter(r => r !== region)
+                            : [...prev.regions, region]
+                        }));
+                      }}
+                      style={{
+                        padding: '6px 12px',
+                        border: 'none',
+                        borderRadius: 6,
+                        backgroundColor: activeFilters.regions.includes(region) ? '#f48525' : 'white',
+                        color: activeFilters.regions.includes(region) ? 'white' : '#4b5563',
+                        fontSize: 12,
+                        fontWeight: 600,
+                        cursor: 'pointer',
+                        transition: 'all 0.2s',
+                        boxShadow: activeFilters.regions.includes(region) 
+                          ? '0 2px 6px rgba(244, 133, 37, 0.3)' 
+                          : '0 1px 3px rgba(0,0,0,0.1)'
+                      }}
+                      onMouseEnter={(e) => {
+                        if (!activeFilters.regions.includes(region)) {
+                          e.target.style.backgroundColor = '#fef3e8';
+                          e.target.style.transform = 'translateY(-1px)';
+                        }
+                      }}
+                      onMouseLeave={(e) => {
+                        if (!activeFilters.regions.includes(region)) {
+                          e.target.style.backgroundColor = 'white';
+                          e.target.style.transform = 'translateY(0)';
+                        }
+                      }}
+                    >
+                      {region}
+                    </button>
+                  ))}
+                </div>
               </div>
             )}
           </div>
 
           {/* 기간 필터 */}
-          <div style={{ marginBottom: 12 }}>
+          <div style={{ marginBottom: 16 }}>
             <button 
-              style={{ ...styles.sidebarItem, ...(filterSectionsOpen.duration ? styles.sidebarItemActive : {}) }}
+              style={{ 
+                width: '100%',
+                padding: '12px 16px',
+                borderRadius: 10,
+                border: 'none',
+                background: filterSectionsOpen.duration 
+                  ? 'linear-gradient(135deg, #60a5fa 0%, #93c5fd 100%)' 
+                  : '#fff',
+                color: filterSectionsOpen.duration ? '#fff' : '#1f2937',
+                fontSize: 14,
+                fontWeight: 700,
+                cursor: 'pointer',
+                textAlign: 'left',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                boxShadow: filterSectionsOpen.duration 
+                  ? '0 4px 12px rgba(96, 165, 250, 0.3)' 
+                  : '0 2px 6px rgba(0,0,0,0.06)',
+                transition: 'all 0.3s ease',
+                transform: filterSectionsOpen.duration ? 'translateY(-2px)' : 'translateY(0)'
+              }}
               onClick={() => setFilterSectionsOpen(prev => ({ ...prev, duration: !prev.duration }))}
             >
-              ⏱️ 기간 {activeFilters.duration && `(${activeFilters.duration})`}
+              <span style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <span style={{ fontSize: 18 }}>⏱️</span>
+                기간
+                {activeFilters.duration && (
+                  <span style={{ 
+                    background: filterSectionsOpen.duration ? 'rgba(255,255,255,0.3)' : '#eff6ff',
+                    color: filterSectionsOpen.duration ? '#fff' : '#60a5fa',
+                    padding: '2px 8px',
+                    borderRadius: 12,
+                    fontSize: 11,
+                    fontWeight: 700
+                  }}>
+                    ✓
+                  </span>
+                )}
+              </span>
+              <span style={{ fontSize: 12, opacity: 0.7 }}>
+                {filterSectionsOpen.duration ? '▲' : '▼'}
+              </span>
             </button>
             {filterSectionsOpen.duration && (
-              <div style={{ padding: '8px 12px', backgroundColor: '#f9fafb', borderRadius: 8, marginTop: 8 }}>
+              <div style={{ 
+                marginTop: 8,
+                padding: '8px',
+                backgroundColor: '#f9fafb',
+                borderRadius: 10,
+                border: '1px solid #e5e7eb'
+              }}>
                 {['당일', '단기(2~3일)', '장기(3~5일)'].map(duration => (
                   <button
                     key={duration}
@@ -994,22 +1147,38 @@ function Calendar() {
                       }));
                     }}
                     style={{
-                      display: 'block',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
                       width: '100%',
-                      padding: '8px 12px',
+                      padding: '10px 12px',
                       margin: '4px 0',
                       border: 'none',
-                      borderRadius: 6,
-                      backgroundColor: activeFilters.duration === duration ? '#f48525' : 'white',
-                      color: activeFilters.duration === duration ? 'white' : '#374151',
+                      borderRadius: 8,
+                      backgroundColor: activeFilters.duration === duration ? '#60a5fa' : 'white',
+                      color: activeFilters.duration === duration ? 'white' : '#4b5563',
                       fontSize: 13,
                       fontWeight: 600,
                       cursor: 'pointer',
                       textAlign: 'left',
-                      transition: 'all 0.2s'
+                      transition: 'all 0.2s',
+                      boxShadow: activeFilters.duration === duration 
+                        ? '0 2px 6px rgba(96, 165, 250, 0.3)' 
+                        : '0 1px 2px rgba(0,0,0,0.05)'
+                    }}
+                    onMouseEnter={(e) => {
+                      if (activeFilters.duration !== duration) {
+                        e.target.style.backgroundColor = '#eff6ff';
+                      }
+                    }}
+                    onMouseLeave={(e) => {
+                      if (activeFilters.duration !== duration) {
+                        e.target.style.backgroundColor = 'white';
+                      }
                     }}
                   >
                     {duration}
+                    {activeFilters.duration === duration && <span>✓</span>}
                   </button>
                 ))}
               </div>
@@ -1017,15 +1186,60 @@ function Calendar() {
           </div>
 
           {/* 유료/무료 필터 */}
-          <div style={{ marginBottom: 12 }}>
+          <div style={{ marginBottom: 16 }}>
             <button 
-              style={{ ...styles.sidebarItem, ...(filterSectionsOpen.price ? styles.sidebarItemActive : {}) }}
+              style={{ 
+                width: '100%',
+                padding: '12px 16px',
+                borderRadius: 10,
+                border: 'none',
+                background: filterSectionsOpen.price 
+                  ? 'linear-gradient(135deg, #84cc16 0%, #a3e635 100%)' 
+                  : '#fff',
+                color: filterSectionsOpen.price ? '#fff' : '#1f2937',
+                fontSize: 14,
+                fontWeight: 700,
+                cursor: 'pointer',
+                textAlign: 'left',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                boxShadow: filterSectionsOpen.price 
+                  ? '0 4px 12px rgba(132, 204, 22, 0.3)' 
+                  : '0 2px 6px rgba(0,0,0,0.06)',
+                transition: 'all 0.3s ease',
+                transform: filterSectionsOpen.price ? 'translateY(-2px)' : 'translateY(0)'
+              }}
               onClick={() => setFilterSectionsOpen(prev => ({ ...prev, price: !prev.price }))}
             >
-              💰 가격 {activeFilters.isFree !== null && (activeFilters.isFree ? '(무료)' : '(유료)')}
+              <span style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <span style={{ fontSize: 18 }}>💰</span>
+                가격
+                {activeFilters.isFree !== null && (
+                  <span style={{ 
+                    background: filterSectionsOpen.price ? 'rgba(255,255,255,0.3)' : '#f7fee7',
+                    color: filterSectionsOpen.price ? '#fff' : '#84cc16',
+                    padding: '2px 8px',
+                    borderRadius: 12,
+                    fontSize: 11,
+                    fontWeight: 700
+                  }}>
+                    {activeFilters.isFree ? '무료' : '유료'}
+                  </span>
+                )}
+              </span>
+              <span style={{ fontSize: 12, opacity: 0.7 }}>
+                {filterSectionsOpen.price ? '▲' : '▼'}
+              </span>
             </button>
             {filterSectionsOpen.price && (
-              <div style={{ padding: '8px 12px', backgroundColor: '#f9fafb', borderRadius: 8, marginTop: 8 }}>
+              <div style={{ 
+                marginTop: 8,
+                padding: '8px',
+                backgroundColor: '#f9fafb',
+                borderRadius: 10,
+                border: '1px solid #e5e7eb'
+              }}>
                 {[{ label: '무료', value: true }, { label: '유료', value: false }].map(({ label, value }) => (
                   <button
                     key={label}
@@ -1036,22 +1250,38 @@ function Calendar() {
                       }));
                     }}
                     style={{
-                      display: 'block',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
                       width: '100%',
-                      padding: '8px 12px',
+                      padding: '10px 12px',
                       margin: '4px 0',
                       border: 'none',
-                      borderRadius: 6,
-                      backgroundColor: activeFilters.isFree === value ? '#f48525' : 'white',
-                      color: activeFilters.isFree === value ? 'white' : '#374151',
+                      borderRadius: 8,
+                      backgroundColor: activeFilters.isFree === value ? '#84cc16' : 'white',
+                      color: activeFilters.isFree === value ? 'white' : '#4b5563',
                       fontSize: 13,
                       fontWeight: 600,
                       cursor: 'pointer',
                       textAlign: 'left',
-                      transition: 'all 0.2s'
+                      transition: 'all 0.2s',
+                      boxShadow: activeFilters.isFree === value 
+                        ? '0 2px 6px rgba(132, 204, 22, 0.3)' 
+                        : '0 1px 2px rgba(0,0,0,0.05)'
+                    }}
+                    onMouseEnter={(e) => {
+                      if (activeFilters.isFree !== value) {
+                        e.target.style.backgroundColor = '#f7fee7';
+                      }
+                    }}
+                    onMouseLeave={(e) => {
+                      if (activeFilters.isFree !== value) {
+                        e.target.style.backgroundColor = 'white';
+                      }
                     }}
                   >
                     {label}
+                    {activeFilters.isFree === value && <span>✓</span>}
                   </button>
                 ))}
               </div>
@@ -1060,7 +1290,28 @@ function Calendar() {
 
           {/* 주말 포함 필터 */}
           <button 
-            style={{ ...styles.sidebarItem, ...(activeFilters.includesWeekend ? styles.sidebarItemActive : {}) }}
+            style={{ 
+              width: '100%',
+              padding: '12px 16px',
+              borderRadius: 10,
+              border: 'none',
+              background: activeFilters.includesWeekend 
+                ? 'linear-gradient(135deg, #a78bfa 0%, #c4b5fd 100%)' 
+                : '#fff',
+              color: activeFilters.includesWeekend ? '#fff' : '#1f2937',
+              fontSize: 14,
+              fontWeight: 700,
+              cursor: 'pointer',
+              textAlign: 'left',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              boxShadow: activeFilters.includesWeekend 
+                ? '0 4px 12px rgba(167, 139, 250, 0.3)' 
+                : '0 2px 6px rgba(0,0,0,0.06)',
+              transition: 'all 0.3s ease',
+              transform: activeFilters.includesWeekend ? 'translateY(-2px)' : 'translateY(0)'
+            }}
             onClick={() => {
               setActiveFilters(prev => {
                 const newState = { ...prev, includesWeekend: !prev.includesWeekend };
@@ -1068,7 +1319,18 @@ function Calendar() {
               });
             }}
           >
-            📅 주말 포함 {activeFilters.includesWeekend && '✓'}
+            <span style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <span style={{ fontSize: 18 }}>📅</span>
+              주말 포함
+            </span>
+            <span style={{ 
+              background: activeFilters.includesWeekend ? 'rgba(255,255,255,0.3)' : 'transparent',
+              padding: '2px 8px',
+              borderRadius: 12,
+              fontSize: 16
+            }}>
+              {activeFilters.includesWeekend ? '✓' : ''}
+            </span>
           </button>
         </div>
       </div>
