@@ -8,7 +8,7 @@ function Header() {
     { name: "Home", path: "/after_home" },
     { name: "Festival List", path: "/festivals" },
     { name: "Calendar", path: "/calendar" },
-    { name: "Plan & Curation", path: "/plan" },
+    { name: "Plan & Curation", path: "/plancuration" },
     { name: "My Page", path: "/mypage" },
   ];
 

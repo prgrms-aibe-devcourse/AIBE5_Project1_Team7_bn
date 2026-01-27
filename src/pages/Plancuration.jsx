@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import Header from "../components/Header";
 import useStore from "../store/useStore";
@@ -106,16 +106,41 @@ const recommendedContents = [
 
 function Plancuration() {
   const navigate = useNavigate();
-  const selectedTravelDates = useStore((state) => state.selectedTravelDates);
+  const trips = useStore((state) => state.trips);
+  const currentTripId = useStore((state) => state.currentTripId);
+  const setCurrentTrip = useStore((state) => state.setCurrentTrip);
+  const deleteTrip = useStore((state) => state.deleteTrip);
   const [currentDayIndex, setCurrentDayIndex] = useState(0);
   const [showChatBubble, setShowChatBubble] = useState(true);
+  const [showTripDropdown, setShowTripDropdown] = useState(false);
+  const dropdownRef = useRef(null);
+
+  // 현재 선택된 trip 가져오기
+  const currentTrip = trips.find(trip => trip.id === currentTripId);
+
+  // 드롭다운 외부 클릭 시 닫기
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setShowTripDropdown(false);
+      }
+    };
+
+    if (showTripDropdown) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showTripDropdown]);
 
   // 선택된 날짜 범위에서 날짜 배열 생성
   const getDatesArray = () => {
-    if (!selectedTravelDates) return [];
+    if (!currentTrip) return [];
     
-    const [startYear, startMonth, startDay] = selectedTravelDates.start.split('-').map(Number);
-    const [endYear, endMonth, endDay] = selectedTravelDates.end.split('-').map(Number);
+    const [startYear, startMonth, startDay] = currentTrip.start.split('-').map(Number);
+    const [endYear, endMonth, endDay] = currentTrip.end.split('-').map(Number);
     
     const startDate = new Date(startYear, startMonth - 1, startDay);
     const endDate = new Date(endYear, endMonth - 1, endDay);
@@ -160,6 +185,84 @@ function Plancuration() {
       
       {/* Header */}
       <Header />
+
+      {/* Top Buttons */}
+      <div className="w-full max-w-[1600px] mx-auto px-6 pt-6 pb-2">
+        <div className="flex items-center gap-3">
+          {/* Trip Selector Dropdown */}
+          <div className="relative" ref={dropdownRef}>
+            <button 
+              onClick={() => setShowTripDropdown(!showTripDropdown)}
+              className="flex items-center gap-2 px-4 py-2 bg-white border-2 border-primary rounded-full text-sm font-bold text-primary shadow-sm hover:bg-primary hover:text-white transition-all"
+            >
+              <span className="text-xl">🏠</span>
+              {currentTrip ? currentTrip.name : '일정 선택'}
+              <span className="material-symbols-outlined text-lg">
+                {showTripDropdown ? 'expand_less' : 'expand_more'}
+              </span>
+            </button>
+            
+            {/* Dropdown Menu */}
+            {showTripDropdown && trips.length > 0 && (
+              <div className="absolute top-full left-0 mt-2 bg-white border-2 border-gray-200 rounded-2xl shadow-xl z-50 p-4 min-w-[400px]">
+                <div className="flex gap-3 overflow-x-auto pb-2">
+                  {trips.map((trip) => (
+                    <div
+                      key={trip.id}
+                      className={`relative flex-shrink-0 w-48 p-4 rounded-xl border-2 transition-all cursor-pointer ${
+                        currentTripId === trip.id 
+                          ? 'bg-orange-50 border-primary' 
+                          : 'bg-white border-gray-200 hover:border-orange-300'
+                      }`}
+                      onClick={() => {
+                        setCurrentTrip(trip.id);
+                        setShowTripDropdown(false);
+                        setCurrentDayIndex(0);
+                      }}
+                    >
+                      {/* 삭제 버튼 */}
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          if (window.confirm(`"${trip.name}" 일정을 삭제하시겠습니까?`)) {
+                            deleteTrip(trip.id);
+                            if (currentTripId === trip.id && trips.length > 1) {
+                              const remainingTrips = trips.filter(t => t.id !== trip.id);
+                              if (remainingTrips.length > 0) {
+                                setCurrentTrip(remainingTrips[0].id);
+                              }
+                            }
+                          }
+                        }}
+                        className="absolute top-2 right-2 w-6 h-6 flex items-center justify-center rounded-full bg-gray-200 hover:bg-red-500 hover:text-white transition-all z-10"
+                      >
+                        <span className="material-symbols-outlined text-sm">close</span>
+                      </button>
+
+                      <div className="font-bold text-gray-900 mb-2 pr-6">{trip.name}</div>
+                      <div className="text-xs text-gray-500">{trip.display}</div>
+                      
+                      {currentTripId === trip.id && (
+                        <div className="absolute bottom-2 right-2">
+                          <span className="material-symbols-outlined text-primary text-lg">check_circle</span>
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+          
+          <button 
+            onClick={() => navigate('/dateregistration')}
+            className="flex items-center gap-2 px-4 py-2 bg-white border-2 border-gray-200 rounded-full text-sm font-bold text-gray-700 hover:border-primary hover:text-primary transition-all"
+          >
+            <span className="material-symbols-outlined text-lg">add</span>
+            New Trip
+          </button>
+        </div>
+      </div>
 
       {/* Main Content */}
       <main className="flex-1 w-full max-w-[1600px] mx-auto px-6 py-8">

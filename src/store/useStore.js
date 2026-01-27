@@ -79,6 +79,25 @@ const useStore = create(
       setSelectedTravelDates: (dates) => set({ selectedTravelDates: dates }),
       clearSelectedTravelDates: () => set({ selectedTravelDates: null }),
 
+      // 여행 일정 목록 (여러 개의 trip 관리)
+      trips: [],
+      currentTripId: null,
+      addTrip: (trip) => set((state) => ({
+        trips: [...state.trips, { ...trip, id: Date.now() }],
+        currentTripId: trip.id || Date.now()
+      })),
+      updateTrip: (tripId, updatedTrip) => set((state) => ({
+        trips: state.trips.map(trip => 
+          trip.id === tripId ? { ...trip, ...updatedTrip } : trip
+        )
+      })),
+      deleteTrip: (tripId) => set((state) => ({
+        trips: state.trips.filter(trip => trip.id !== tripId),
+        currentTripId: state.currentTripId === tripId ? (state.trips[0]?.id || null) : state.currentTripId
+      })),
+      setCurrentTrip: (tripId) => set({ currentTripId: tripId }),
+      getCurrentTrip: () => (state) => state.trips.find(trip => trip.id === state.currentTripId),
+
       // 전체 초기화 (로그아웃 시 사용)
       clearAll: () => set({
         user: null,
@@ -92,6 +111,8 @@ const useStore = create(
         tasteTestAnswers: [],
         tasteType: null,
         selectedTravelDates: null,
+        trips: [],
+        currentTripId: null,
       }),
     }),
     {
@@ -109,6 +130,8 @@ const useStore = create(
         tasteTestAnswers: state.tasteTestAnswers,
         tasteType: state.tasteType,
         selectedTravelDates: state.selectedTravelDates,
+        trips: state.trips,
+        currentTripId: state.currentTripId,
       }),
     }
   )

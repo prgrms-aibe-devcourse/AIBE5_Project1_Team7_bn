@@ -135,7 +135,10 @@ function Dateregistration() {
   const navigate = useNavigate();
   const calendarRef = useRef(null);
   const [selectedDates, setSelectedDates] = useState(null);
+  const [tripName, setTripName] = useState("");
   const setSelectedTravelDates = useStore((state) => state.setSelectedTravelDates);
+  const addTrip = useStore((state) => state.addTrip);
+  const setCurrentTrip = useStore((state) => state.setCurrentTrip);
 
   // 날짜 선택 핸들러
   const handleDateSelect = (selectInfo) => {
@@ -227,17 +230,41 @@ function Dateregistration() {
         <div className="max-w-[1440px] mx-auto w-full flex-1 flex flex-col min-h-0">
           {/* Header Section */}
           <section className="flex items-center justify-between mb-8 shrink-0">
-            <div>
+            <div className="flex-1">
               <h2 className="text-gray-900 dark:text-white text-3xl font-bold leading-tight tracking-tight">
                 여행일정 등록
               </h2>
               <p className="text-gray-500 dark:text-gray-400 text-base font-normal mt-1">
                 일정에 따른 날씨예보, 여행 정보를 알려드립니다.
               </p>
+              
+              {/* 여행 이름 입력 */}
+              <div className="mt-4 flex items-center gap-3">
+                <input 
+                  type="text"
+                  value={tripName}
+                  onChange={(e) => setTripName(e.target.value)}
+                  placeholder="여행 이름을 입력하세요 (예: 보성여행길라잡이)"
+                  className="px-4 py-2 border-2 border-gray-300 rounded-lg text-base focus:outline-none focus:border-orange-500 transition-colors flex-1 max-w-md"
+                />
+              </div>
             </div>
-            {selectedDates && (
+            {selectedDates && tripName && (
               <button 
-                onClick={() => navigate('/plancuration')}
+                onClick={() => {
+                  const newTrip = {
+                    id: Date.now(),
+                    name: tripName,
+                    start: selectedDates.start,
+                    end: selectedDates.end,
+                    display: selectedDates.display,
+                    createdAt: new Date().toISOString()
+                  };
+                  addTrip(newTrip);
+                  setCurrentTrip(newTrip.id);
+                  setSelectedTravelDates(selectedDates);
+                  navigate('/plancuration');
+                }}
                 className="px-8 py-3 bg-gradient-to-r from-orange-500 to-orange-400 text-white rounded-xl font-bold text-base shadow-lg hover:shadow-orange-200/50 transition-all flex items-center gap-2"
               >
                 <span>{selectedDates.display} / 등록완료</span>

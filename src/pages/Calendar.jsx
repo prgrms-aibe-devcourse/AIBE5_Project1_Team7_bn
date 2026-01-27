@@ -152,7 +152,7 @@ function Calendar() {
   // ✅ 필터 상태
   const [activeFilters, setActiveFilters] = useState({
     regions: [], // 선택된 지역들
-    duration: null, // '당일', '단기', '장기'
+    duration: null, // '당일', '단기(2~3일)', '장기(3~5일)'
     isFree: null, // true(무료), false(유료), null(전체)
     includesWeekend: false // 주말 포함 여부
   });
@@ -679,8 +679,8 @@ function Calendar() {
         const diffDays = Math.ceil((end - start) / (1000 * 60 * 60 * 24));
         
         if (activeFilters.duration === '당일') return diffDays <= 1;
-        if (activeFilters.duration === '단기') return diffDays > 1 && diffDays <= 7;
-        if (activeFilters.duration === '장기') return diffDays > 7;
+        if (activeFilters.duration === '단기(2~3일)') return diffDays >= 2 && diffDays <= 3;
+        if (activeFilters.duration === '장기(3~5일)') return diffDays >= 3 && diffDays <= 5;
         return true;
       });
     }
@@ -984,7 +984,7 @@ function Calendar() {
             </button>
             {filterSectionsOpen.duration && (
               <div style={{ padding: '8px 12px', backgroundColor: '#f9fafb', borderRadius: 8, marginTop: 8 }}>
-                {['당일', '단기', '장기'].map(duration => (
+                {['당일', '단기(2~3일)', '장기(3~5일)'].map(duration => (
                   <button
                     key={duration}
                     onClick={() => {
