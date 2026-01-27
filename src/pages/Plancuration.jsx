@@ -954,7 +954,7 @@ function Plancuration() {
                             className={`w-full py-3 rounded-xl text-sm font-bold transition-all flex items-center justify-center gap-2 ${
                               isAlreadyAdded
                                 ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                                : 'bg-[#FF5F33] text-white hover:bg-[#E55528]'
+                                : 'bg-[#FF8C66] text-white hover:bg-[#FF7A4D]'
                             }`}
                           >
                             <span className="material-symbols-outlined text-lg">

@@ -2,6 +2,7 @@ import { Link, useLocation } from "react-router-dom";
 import { Bell, User } from "lucide-react";
 import useStore from "../store/useStore";
 import { useState, useEffect, useRef } from "react";
+import home_logo from "../assets/home_logo.png";
 
 function Header() {
   const location = useLocation();
@@ -88,12 +89,11 @@ function Header() {
           <div className="flex items-center space-x-8">
             {/* 로고 */}
             <Link to="/after_home" className="flex items-center space-x-2">
-              <div className="w-10 h-10 bg-linear-to-br from-orange-400 to-orange-500 rounded-full flex items-center justify-center text-white text-xl font-bold">
-                🎪
-              </div>
-              <span className="text-2xl font-bold text-gray-900">
-                Festory
-              </span>
+              <img
+                src={home_logo}
+                alt="Festory Logo"
+                className="h-12 w-auto object-contain"
+              />
             </Link>
 
             {/* 네비게이션 */}
