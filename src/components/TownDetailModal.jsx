@@ -26,9 +26,9 @@ export function TownDetailModal({ festival, onClose }) {
       />
 
       {/* 모달 본체 */}
-      <div className="relative z-10 w-full max-w-3xl overflow-hidden rounded-3xl bg-white shadow-2xl">
+      <div className="relative z-10 w-full max-w-3xl max-h-[90vh] overflow-hidden rounded-3xl bg-white shadow-2xl flex flex-col">
         {/* 헤더 이미지 */}
-        <div className="relative h-80 overflow-hidden bg-gray-200">
+        <div className="relative h-80 overflow-hidden bg-gray-200 flex-shrink-0">
           <img
             src={festival.ministry_image_url}
             alt={festival.fstvlNm}
@@ -56,8 +56,8 @@ export function TownDetailModal({ festival, onClose }) {
           </div>
         </div>
 
-        {/* 내용 영역 */}
-        <div className="p-8">
+        {/* 내용 영역 - 스크롤 가능 */}
+        <div className="overflow-y-auto flex-1 p-8">
           {/* 기본 정보 그리드 */}
           <div className="grid grid-cols-2 gap-6 mb-8 pb-8 border-b border-gray-100">
             <div>
@@ -126,7 +126,7 @@ export function TownDetailModal({ festival, onClose }) {
             {/* 일정 생성하기 버튼: 더 진한 주황+금색 그라데이션 */}
             <button
               className="w-1/2 rounded-xl bg-gradient-to-r from-orange-500 via-orange-400 to-yellow-300 px-3 py-3 font-bold text-white shadow-md hover:from-orange-600 hover:to-yellow-400 transition-all order-1"
-              onClick={Dateregistration}
+              onClick={Dast}
             >
               일정 생성하기
             </button>

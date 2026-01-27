@@ -10,7 +10,6 @@ import WeatherWidget from "../components/WeatherWidget";
 
 function After_Home() {
   const navigate = useNavigate();
-  const [pSeqInput, setPSeqInput] = useState("");
   const [selectedFestival, setSelectedFestival] = useState(null);
   const [isLoading, setIsLoading] = useState(() => {
     // 1/3 확률로 로딩 화면 표시 결정 (초기값으로만 계산)
@@ -18,7 +17,6 @@ function After_Home() {
   });
 
   const {
-    setSelectedFestivalPSeq,
     clearTasteTestAnswers,
   } = useStore();
 
@@ -109,44 +107,6 @@ function After_Home() {
             >
               추천 계속 보기 ✨
             </button>
-
-            {/* pSeq Quick Save */}
-            <div style={{ marginTop: 24, display: "flex", gap: 8 }}>
-              <input
-                value={pSeqInput}
-                onChange={(e) => setPSeqInput(e.target.value)}
-                placeholder="축제 번호 입력"
-                style={{
-                  padding: "12px 16px",
-                  borderRadius: 12,
-                  border: "1px solid #FF5F33",
-                }}
-              />
-              <button
-                onClick={() => {
-                  const f = festivals.find(
-                    (x) => String(x.pSeq) === String(pSeqInput)
-                  );
-                  if (f) {
-                    setSelectedFestivalPSeq(pSeqInput);
-                    alert("캘린더에 저장했어요!");
-                    setPSeqInput("");
-                  } else {
-                    alert("축제를 찾지 못했어요.");
-                  }
-                }}
-                style={{
-                  padding: "12px 24px",
-                  borderRadius: 12,
-                  border: "none",
-                  background: "#FF5F33",
-                  color: "white",
-                  fontWeight: 700,
-                }}
-              >
-                캘린더로 🎪
-              </button>
-            </div>
           </div>
         </section>
 

@@ -273,43 +273,50 @@ function Dateregistration() {
                 />
               </div>
             </div>
-            {selectedDates && tripName && (
-              <button 
-                onClick={() => {
-                  if (editingTripId) {
-                    // 편집 모드: 기존 trip 업데이트
-                    updateTrip(editingTripId, {
-                      name: tripName,
-                      start: selectedDates.start,
-                      end: selectedDates.end,
-                      display: selectedDates.display,
-                      updatedAt: new Date().toISOString()
-                    });
-                    setSelectedTravelDates(selectedDates);
-                    setEditingTripId(null); // 편집 모드 해제
-                    navigate('/plancuration');
-                  } else {
-                    // 새 일정 추가 모드
-                    const newTrip = {
-                      id: Date.now(),
-                      name: tripName,
-                      start: selectedDates.start,
-                      end: selectedDates.end,
-                      display: selectedDates.display,
-                      createdAt: new Date().toISOString()
-                    };
-                    addTrip(newTrip);
-                    setCurrentTrip(newTrip.id);
-                    setSelectedTravelDates(selectedDates);
-                    navigate('/plancuration');
-                  }
-                }}
-                className="px-8 py-3 bg-gradient-to-r from-orange-500 to-orange-400 text-white rounded-xl font-bold text-base shadow-lg hover:shadow-orange-200/50 transition-all flex items-center gap-2"
-              >
-                <span>{selectedDates.display} / {editingTripId ? '수정완료' : '등록완료'}</span>
-                <span className="material-symbols-outlined text-lg">check_circle</span>
-              </button>
-            )}
+            <button 
+              onClick={() => {
+                if (!selectedDates || !tripName) return; // 비활성화 상태일 때 클릭 무시
+                
+                if (editingTripId) {
+                  // 편집 모드: 기존 trip 업데이트
+                  updateTrip(editingTripId, {
+                    name: tripName,
+                    start: selectedDates.start,
+                    end: selectedDates.end,
+                    display: selectedDates.display,
+                    updatedAt: new Date().toISOString()
+                  });
+                  setSelectedTravelDates(selectedDates);
+                  setEditingTripId(null); // 편집 모드 해제
+                  navigate('/plancuration');
+                } else {
+                  // 새 일정 추가 모드
+                  const newTrip = {
+                    id: Date.now(),
+                    name: tripName,
+                    start: selectedDates.start,
+                    end: selectedDates.end,
+                    display: selectedDates.display,
+                    createdAt: new Date().toISOString()
+                  };
+                  addTrip(newTrip);
+                  setCurrentTrip(newTrip.id);
+                  setSelectedTravelDates(selectedDates);
+                  navigate('/plancuration');
+                }
+              }}
+              disabled={!selectedDates || !tripName}
+              className={`px-8 py-3 rounded-xl font-bold text-base shadow-lg transition-all flex items-center gap-2 ${
+                selectedDates && tripName
+                  ? 'bg-gradient-to-r from-orange-500 to-orange-400 text-white hover:shadow-orange-200/50 cursor-pointer'
+                  : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+              }`}
+            >
+              <span>
+                {selectedDates ? selectedDates.display : '날짜를 선택하세요'} / {editingTripId ? '수정완료' : '등록완료'}
+              </span>
+              <span className="material-symbols-outlined text-lg">check_circle</span>
+            </button>
           </section>
 
           {/* Calendar Scroll Container */}

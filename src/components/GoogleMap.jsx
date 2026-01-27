@@ -18,9 +18,9 @@ export default function GoogleMap({ latitude, longitude, rdnmadr, lnmadr, apiKey
         const map = new google.maps.Map(mapRef.current, {
           zoom: 16,
           center: latitude && longitude ? { lat: latitude, lng: longitude } : { lat: 37.5665, lng: 126.9780 },
-          disableDefaultUI: true,
-          gestureHandling: "none",
-          clickableIcons: false,
+          disableDefaultUI: false,
+          gestureHandling: "auto",
+          clickableIcons: true,
         });
         
         if (google.maps.Marker) {
@@ -55,7 +55,7 @@ export default function GoogleMap({ latitude, longitude, rdnmadr, lnmadr, apiKey
 
   // 지도 위에 오버레이로 라벨 추가
   return (
-    <div style={{ position: "relative", width: "100%", height: 120, borderRadius: 12, overflow: "hidden", margin: "24px 0", boxShadow: "0 1px 4px 0 rgba(60,64,67,.15)" }}>
+    <div style={{ position: "relative", width: "100%", height: 450, borderRadius: 12, overflow: "hidden", margin: "24px 0", boxShadow: "0 1px 4px 0 rgba(60,64,67,.15)" }}>
       <div ref={mapRef} style={{ width: "100%", height: "100%" }} />
       <div style={{
         position: "absolute",
