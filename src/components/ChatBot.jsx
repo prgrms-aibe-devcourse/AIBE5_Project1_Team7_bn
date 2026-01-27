@@ -1,8 +1,18 @@
 import { useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import chatBotImage from '../assets/chatBot.png';
 
 export default function ChatBot() {
   const [isOpen, setIsOpen] = useState(false);
+  const location = useLocation();
+
+  // 챗봇을 숨길 페이지 목록
+  const hiddenPages = ['/loading', '/login', '/signup'];
+  
+  // 현재 페이지가 숨김 목록에 있으면 렌더링하지 않음
+  if (hiddenPages.includes(location.pathname)) {
+    return null;
+  }
 
   const handleChatBotClick = () => {
     // 챗봇 연결 로직 (나중에 실제 챗봇 URL로 변경 가능)

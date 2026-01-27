@@ -402,13 +402,6 @@ function Dateregistration() {
           </div>
         </div>
       </main>
-
-      {/* Floating Button */}
-      <div className="fixed bottom-8 right-8 z-40">
-        <button className="w-20 h-20 rounded-full bg-gradient-to-tr from-orange-500 to-yellow-400 shadow-2xl flex items-center justify-center text-white border-4 border-white dark:border-gray-800 hover:scale-105 transition-transform">
-          <span className="material-symbols-outlined text-5xl">face_6</span>
-        </button>
-      </div>
     </div>
   );
 }

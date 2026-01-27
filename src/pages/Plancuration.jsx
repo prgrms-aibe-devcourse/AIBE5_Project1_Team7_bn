@@ -830,7 +830,8 @@ function Plancuration() {
                       setModalTab('my');
                     }
                   }}
-                  className="w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:border-primary focus:outline-none transition-all"
+                  className="w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:border-primary focus:outline-none transition-all text-gray-900"
+                  style={{ color: '#111827', backgroundColor: '#ffffff' }}
                 />
               </div>
 
@@ -841,11 +842,8 @@ function Plancuration() {
                     setModalTab('ai');
                     setSearchQuery('');
                   }}
-                  className={`flex-1 py-3 px-4 rounded-xl font-bold transition-all flex items-center justify-center ${
-                    modalTab === 'ai'
-                      ? 'bg-primary text-white shadow-lg'
-                      : 'bg-gray-100 text-gray-900 hover:bg-gray-200'
-                  }`}
+                  className="flex-1 py-3 px-4 rounded-xl font-bold flex items-center justify-center bg-gray-100 text-gray-900"
+                  style={modalTab === 'ai' ? { boxShadow: '0 0 0 2px #FF5F33' } : {}}
                 >
                   <span className="material-symbols-outlined text-xl mr-2">auto_awesome</span>
                   <span className="text-base">AI 추천</span>
@@ -855,11 +853,8 @@ function Plancuration() {
                     setModalTab('my');
                     setSearchQuery('');
                   }}
-                  className={`flex-1 py-3 px-4 rounded-xl font-bold transition-all flex items-center justify-center ${
-                    modalTab === 'my'
-                      ? 'bg-primary text-white shadow-lg'
-                      : 'bg-gray-100 text-gray-900 hover:bg-gray-200'
-                  }`}
+                  className="flex-1 py-3 px-4 rounded-xl font-bold flex items-center justify-center bg-gray-100 text-gray-900"
+                  style={modalTab === 'my' ? { boxShadow: '0 0 0 2px #FF5F33' } : {}}
                 >
                   <span className="material-symbols-outlined text-xl mr-2">favorite</span>
                   <span className="text-base">내 축제</span>
@@ -959,7 +954,7 @@ function Plancuration() {
                             className={`w-full py-3 rounded-xl text-sm font-bold transition-all flex items-center justify-center gap-2 ${
                               isAlreadyAdded
                                 ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                                : 'bg-primary text-white hover:bg-orange-600'
+                                : 'bg-[#FF5F33] text-white hover:bg-[#E55528]'
                             }`}
                           >
                             <span className="material-symbols-outlined text-lg">

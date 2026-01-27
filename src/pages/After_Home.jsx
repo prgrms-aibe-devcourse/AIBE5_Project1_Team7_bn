@@ -142,9 +142,10 @@ function After_Home() {
                 color: "white",
                 fontWeight: 800,
                 cursor: "pointer",
+                fontSize: 18,
               }}
             >
-              추천 계속 보기 ✨
+              Start Recommendation with AI
             </button>
           </div>
         </section>
