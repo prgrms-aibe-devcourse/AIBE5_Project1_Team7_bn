@@ -63,7 +63,7 @@ function Home() {
               AI가 추천하는 맞춤형 축제와 촬영 명소!
             </p>
             <button
-              onClick={() => navigate("/tastetest")}
+              onClick={() => navigate("/login")}
               style={{
                 padding: "16px 32px",
                 borderRadius: 12,

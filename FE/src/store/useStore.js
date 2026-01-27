@@ -139,6 +139,7 @@ const useStore = create(
         trips: [],
         currentTripId: null,
         editingTripId: null,
+        tripSchedules: {},
       }),
     }),
     {
@@ -159,6 +160,7 @@ const useStore = create(
         trips: state.trips,
         currentTripId: state.currentTripId,
         editingTripId: state.editingTripId,
+        tripSchedules: state.tripSchedules, // 일정별 축제 목록 저장
       }),
     }
   )

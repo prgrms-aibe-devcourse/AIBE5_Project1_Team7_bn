@@ -91,7 +91,7 @@ function Login() {
       justifyContent: "center",
       alignItems: "center",
       padding: 8,
-      background: "linear-gradient(135deg, #FFEDD5 0%, #FEF3C7 100%)",
+      background: "linear-gradient(120deg, #FFFBEA 20%, #FFD966 60%, #FFD59E 80%, #FFB300 100%)", // 왼쪽위 밝은색, 오른쪽아래 진한 유자색
       fontFamily: "'Plus Jakarta Sans', 'Segoe UI', sans-serif",
     },
     card: {

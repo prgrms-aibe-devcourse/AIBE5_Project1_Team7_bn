@@ -5,7 +5,7 @@ const KEY = import.meta.env.VITE_GOOGLE_MAPS_KEY;
 
 let loadingPromise = null;
 
-export function loadGoogleMaps({ libraries = [] } = {}) {
+export function loadGoogleMaps({ libraries = ['places'] } = {}) {
   if (!KEY) {
     return Promise.reject(new Error("VITE_GOOGLE_MAPS_KEY가 없습니다."));
   }
@@ -16,7 +16,9 @@ export function loadGoogleMaps({ libraries = [] } = {}) {
   // 이미 로딩 중이면 그 Promise 재사용
   if (loadingPromise) return loadingPromise;
 
-  const libParam = libraries.length ? `&libraries=${libraries.join(",")}` : "";
+  // places 라이브러리를 기본으로 포함
+  const allLibraries = [...new Set([...libraries, 'places'])];
+  const libParam = allLibraries.length ? `&libraries=${allLibraries.join(",")}` : "";
 
   loadingPromise = new Promise((resolve, reject) => {
     const existing = document.getElementById("google-maps-script");

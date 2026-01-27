@@ -1,12 +1,10 @@
-
-
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import festivals from "../data/festivals.json";
 import Header from "../components/Header";
 import { TownCard } from "../components/TownCard";
 import { TownDetailModal } from "../components/TownDetailModal";
 import { useNavigate } from "react-router-dom";
-
+import Loading from "./Loading";
 
 function Festival_List() {
 	const [selectedFestival, setSelectedFestival] = useState(null);
@@ -14,7 +12,21 @@ function Festival_List() {
 	const [theme, setTheme] = useState("");
 	const [date, setDate] = useState("");
 	const [region, setRegion] = useState("");
+	const [isLoading, setIsLoading] = useState(true);
 	const navigate = useNavigate();
+
+	useEffect(() => {
+		// 페이지 로딩 시뮬레이션
+		const timer = setTimeout(() => {
+			setIsLoading(false);
+		}, 3000);
+
+		return () => clearTimeout(timer);
+	}, []);
+
+	if (isLoading) {
+		return <Loading />;
+	}
 
 	// 필터링 예시 (실제 옵션은 필요에 따라 구현)
 	const filtered = festivals.filter(f => {
@@ -33,7 +45,7 @@ function Festival_List() {
 				<aside className="col-span-12 lg:col-span-3 space-y-6">
 					<div className="bg-[#FFFBF6] rounded-xl p-5 border border-[#e6dfdb] sticky top-36">
 						<h3 className="font-bold text-lg mb-4 text-[#181411]">Filters</h3>
-						<div className="space-y-4">
+						<div className="space-y-">
 							<div className="space-y-2">
 								<label className="text-xs font-bold text-gray-500 uppercase tracking-wide">Keyword</label>
 								<div className="flex w-full items-center rounded-lg bg-white border border-[#e6dfdb] h-10 px-3 overflow-hidden focus-within:ring-1 focus-within:ring-primary focus-within:border-primary">
@@ -88,7 +100,14 @@ function Festival_List() {
 								</div>
 							</div>
 							<div className="pt-2">
-								<button className="w-full bg-primary hover:bg-orange-600 text-white font-bold h-10 rounded-lg shadow-md active:scale-[0.98] transition-all flex items-center justify-center gap-2 text-sm">
+								// 필터 적용 버튼
+								<button
+									className="w-full font-bold h-10 rounded-lg shadow-md active:scale-[0.98] transition-all flex items-center justify-center gap-2 text-sm text-white"
+									style={{
+										background: 'linear-gradient(90deg, #FFA500 0%, #FFD700 100%)',
+										border: 'none',
+									}}
+								>
 									Apply Filters
 								</button>
 							</div>
@@ -117,31 +136,23 @@ function Festival_List() {
 						</div>
 						<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
 							{filtered.slice(0, 2).map(f => (
-								<div key={f.pSeq} className="bg-white rounded-xl overflow-hidden shadow-sm border border-[#e6dfdb] hover:shadow-md transition-shadow group cursor-pointer" onClick={() => setSelectedFestival(f)}>
-									<div className="h-48 relative overflow-hidden">
-										<img alt={f.fstvlNm} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" src={f.ministry_image_url || "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f"} />
-										<div className="absolute top-3 right-3 bg-secondary text-white text-xs font-bold px-2.5 py-1 rounded-full flex items-center gap-1 shadow-sm">
-											<span className="material-symbols-outlined text-[14px]">star</span> AI Pick
-										</div>
-									</div>
-									<div className="p-4">
-										<h4 className="font-bold text-[#181411] text-lg mb-1 group-hover:text-primary transition-colors">{f.fstvlNm}</h4>
-										<p className="text-sm text-gray-500 mb-4 h-10 line-clamp-2">{f.ministry_description}</p>
-										<div className="flex justify-between items-center">
-											<span className="text-xs font-medium bg-gray-100 px-2.5 py-1.5 rounded text-gray-600">{f.ministry_date || 'Oct 10-31'}</span>
-											<button className="size-8 rounded-full bg-primary/10 text-primary flex items-center justify-center group-hover:bg-primary group-hover:text-white transition-all">
-												<span className="material-symbols-outlined text-[18px]">arrow_forward</span>
-											</button>
-										</div>
-									</div>
-								</div>
+								<TownCard
+									key={f.pSeq}
+									town={{
+										id: f.pSeq,
+										name: f.fstvlNm,
+										image: f.ministry_image_url,
+										description: f.ministry_description
+									}}
+									onClick={() => setSelectedFestival(f)}
+								/>
 							))}
-							<div className="bg-white rounded-xl overflow-hidden shadow-sm border border-[#e6dfdb] hover:shadow-md transition-shadow group cursor-pointer flex flex-col justify-center items-center p-8 text-center border-dashed">
-								<div className="size-16 bg-gray-100 rounded-full flex items-center justify-center mb-4 group-hover:bg-primary/10 transition-colors">
-									<span className="material-symbols-outlined text-gray-400 text-3xl group-hover:text-primary">add</span>
+							<div className="bg-white rounded-xl overflow-hidden shadow-sm border border-[#e6dfdb] hover:shadow-md transition-shadow group cursor-pointer flex flex-col justify-center items-center p-4 text-center border-dashed min-h-[180px] max-w-[220px] mx-auto">
+								<div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mb-2 group-hover:bg-primary/10 transition-colors">
+									<span className="material-symbols-outlined text-gray-400 text-2xl group-hover:text-primary">add</span>
 								</div>
-								<h4 className="font-bold text-[#181411] text-lg">More Recommendations</h4>
-								<p className="text-sm text-gray-500 mt-2">See more personalized picks</p>
+								<h4 className="font-bold text-[#181411] text-base">More Recommendations</h4>
+								<p className="text-xs text-gray-500 mt-1">See more personalized picks</p>
 							</div>
 						</div>
 					</section>
@@ -175,47 +186,28 @@ function Festival_List() {
 								</div>
 							</div>
 						</div>
-						<div className="flex flex-col gap-6">
-							{filtered.slice(2, 8).map(f => (
-								<article key={f.pSeq} className="bg-white rounded-2xl overflow-hidden shadow-soft border border-[#e6dfdb] flex flex-row group hover:shadow-lg transition-shadow duration-300 h-64 cursor-pointer" onClick={() => setSelectedFestival(f)}>
-									<div className="relative w-[360px] shrink-0 overflow-hidden">
-										<img alt={f.fstvlNm} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" src={f.ministry_image_url || "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f"} />
-										<div className="absolute top-4 left-4 bg-black/70 backdrop-blur-md text-white text-sm font-bold px-3 py-1 rounded-full border border-white/20">D-5</div>
+						// 전체 축제 카드 그리드
+						<div className="flex flex-wrap gap-4">
+							{filtered.slice(2, 10).length > 0 ? (
+								filtered.slice(2, 10).map(f => (
+									<div key={f.pSeq} className="max-w-sm w-full">
+										<TownCard
+											town={{
+												id: f.pSeq,
+												name: f.fstvlNm,
+												image: f.ministry_image_url,
+												description: f.ministry_description
+											}}
+											onClick={() => setSelectedFestival(f)}
+										/>
 									</div>
-									<div className="p-6 flex flex-col justify-between flex-1 relative">
-										<div>
-											<div className="flex justify-between items-start mb-2">
-												<div className="flex gap-2 mb-2">
-													<span className="px-2 py-0.5 bg-secondary/10 text-secondary text-xs font-bold rounded">Spectacular</span>
-													<span className="px-2 py-0.5 bg-gray-100 text-gray-500 text-xs font-bold rounded">Night View</span>
-												</div>
-												<button className="text-gray-300 hover:text-red-500 transition-colors bg-gray-50 p-2 rounded-full hover:bg-red-50"><span className="material-symbols-outlined filled">favorite</span></button>
-											</div>
-											<h3 className="text-2xl font-bold text-[#181411] mb-2 group-hover:text-primary transition-colors">{f.fstvlNm}</h3>
-											<p className="text-gray-500 line-clamp-2 mb-4 leading-relaxed">{f.ministry_description}</p>
-											<div className="flex gap-6 mt-2">
-												<div className="flex items-center gap-2 text-sm text-gray-700">
-													<span className="material-symbols-outlined text-primary text-[20px]">calendar_today</span>
-													<span className="font-medium">{f.ministry_date || 'Nov 04, 2023'}</span>
-												</div>
-												<div className="flex items-center gap-2 text-sm text-gray-700">
-													<span className="material-symbols-outlined text-primary text-[20px]">location_on</span>
-													<span>{f.ministry_region || 'Gwangalli Beach, Busan'}</span>
-												</div>
-											</div>
-										</div>
-										<div className="flex items-center justify-between pt-4 border-t border-gray-100 mt-auto">
-											<div className="flex items-center gap-1.5 text-gray-400 font-medium text-sm">
-												<span className="material-symbols-outlined text-[18px]">visibility</span>
-												<span>12.5k views</span>
-											</div>
-											<button className="text-white font-bold text-sm px-6 py-2.5 bg-primary rounded-lg hover:bg-orange-600 transition-colors shadow-sm hover:shadow-md">
-												View Details
-											</button>
-										</div>
-									</div>
-								</article>
-							))}
+								))
+							) : (
+								<div className="text-center text-gray-400 py-12 text-lg font-semibold w-full">
+									표시할 축제가 없습니다.<br />
+									(데이터가 없거나, 필터 조건에 맞는 축제가 없습니다.)
+								</div>
+							)}
 						</div>
 					</section>
 				</main>

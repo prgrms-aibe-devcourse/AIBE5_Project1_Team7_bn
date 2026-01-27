@@ -11,6 +11,7 @@ function Testresult() {
   const { tasteTestAnswers, setTasteType } = useStore();
   const [selectedFestival, setSelectedFestival] = useState(null);
   const [mainEventFestival, setMainEventFestival] = useState(null);
+  const [showScheduleOptions, setShowScheduleOptions] = useState(false);
 
   // 테스트 결과 분석
   const labelResult = useMemo(() => {
@@ -507,23 +508,110 @@ function Testresult() {
                     </span>
                     Your Perfect Itinerary
                   </h3>
-                  <button 
-                    style={styles.saveButton}
-                    onClick={() => navigate('/dateregistration')}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.transform = "translateY(-2px)";
-                      e.currentTarget.style.boxShadow = "0 8px 24px rgba(255, 81, 47, 0.4)";
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.transform = "translateY(0)";
-                      e.currentTarget.style.boxShadow = "0 4px 16px rgba(255, 81, 47, 0.3)";
-                    }}
-                  >
-                    <span className="material-symbols-outlined" style={{ fontSize: "20px" }}>
-                      calendar_add_on
-                    </span>
-                    나의 일정으로 저장하기
-                  </button>
+                  <div style={{ position: 'relative', display: 'inline-block' }}>
+                    <button 
+                      style={styles.saveButton}
+                      onClick={() => setShowScheduleOptions(!showScheduleOptions)}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.transform = "translateY(-2px)";
+                        e.currentTarget.style.boxShadow = "0 8px 24px rgba(255, 81, 47, 0.4)";
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.transform = "translateY(0)";
+                        e.currentTarget.style.boxShadow = "0 4px 16px rgba(255, 81, 47, 0.3)";
+                      }}
+                    >
+                      <span className="material-symbols-outlined" style={{ fontSize: "20px" }}>
+                        calendar_add_on
+                      </span>
+                      나의 일정으로 저장하기
+                    </button>
+
+                    {/* 드롭다운 메뉴 */}
+                    {showScheduleOptions && (
+                      <div style={{
+                        position: 'absolute',
+                        top: '100%',
+                        left: 0,
+                        right: 0,
+                        marginTop: '8px',
+                        backgroundColor: 'white',
+                        borderRadius: '16px',
+                        boxShadow: '0 8px 24px rgba(0, 0, 0, 0.15)',
+                        overflow: 'hidden',
+                        zIndex: 10,
+                        minWidth: '280px'
+                      }}>
+                        <button
+                          onClick={() => {
+                            setShowScheduleOptions(false);
+                            navigate('/dateregistration');
+                          }}
+                          style={{
+                            width: '100%',
+                            padding: '16px 20px',
+                            border: 'none',
+                            backgroundColor: 'white',
+                            textAlign: 'left',
+                            cursor: 'pointer',
+                            fontSize: '15px',
+                            fontWeight: '600',
+                            color: '#1f2937',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '12px',
+                            transition: 'background-color 0.2s'
+                          }}
+                          onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#fef3f2'}
+                          onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'white'}
+                        >
+                          <span className="material-symbols-outlined" style={{ fontSize: '24px', color: '#ff512f' }}>
+                            add_circle
+                          </span>
+                          <div>
+                            <div style={{ marginBottom: '2px' }}>새로운 일정 만들기!</div>
+                            <div style={{ fontSize: '12px', color: '#6b7280', fontWeight: '400' }}>
+                              새로운 여행 계획 시작
+                            </div>
+                          </div>
+                        </button>
+                        <div style={{ height: '1px', backgroundColor: '#f3f4f6', margin: '0 12px' }}></div>
+                        <button
+                          onClick={() => {
+                            setShowScheduleOptions(false);
+                            navigate('/plancuration');
+                          }}
+                          style={{
+                            width: '100%',
+                            padding: '16px 20px',
+                            border: 'none',
+                            backgroundColor: 'white',
+                            textAlign: 'left',
+                            cursor: 'pointer',
+                            fontSize: '15px',
+                            fontWeight: '600',
+                            color: '#1f2937',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '12px',
+                            transition: 'background-color 0.2s'
+                          }}
+                          onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#fef3f2'}
+                          onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'white'}
+                        >
+                          <span className="material-symbols-outlined" style={{ fontSize: '24px', color: '#ff512f' }}>
+                            event_available
+                          </span>
+                          <div>
+                            <div style={{ marginBottom: '2px' }}>기존 일정에 추가하기!</div>
+                            <div style={{ fontSize: '12px', color: '#6b7280', fontWeight: '400' }}>
+                              이미 만든 일정에 축제 추가
+                            </div>
+                          </div>
+                        </button>
+                      </div>
+                    )}
+                  </div>
                 </div>
 
                 <div style={styles.eventsContainer}>
