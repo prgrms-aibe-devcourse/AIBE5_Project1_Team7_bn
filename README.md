@@ -1,5 +1,16 @@
 # PortPilot Backend — Travel Recommendation + Personal Assistant (FE-friendly)
 
+## Jan 27 Log
+
+**Pet Festival Search Fix & Frontend Comparison** ✅
+- Fixed CSV loader to use `ministry_description` field for actual festival descriptions (was using URL field)
+- Re-indexed Typesense: 803 chunks from 749 festivals, pet festival search ("반려동물") now returns 10 results
+- Created SOURCE_OF_TRUTH.md documenting all canonical data sources and API specs
+- Set up dual frontend comparison: `frontend-app` (port 5173) vs FE submodule (port 5174)
+- Branch: `feat/typesense-search` | Submodule branch: `tmp-compare`
+
+---
+
 ## Jan 26 Log
 
 **Typesense Search Integration Complete** ✅
