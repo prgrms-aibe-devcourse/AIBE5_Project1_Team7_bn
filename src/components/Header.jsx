@@ -13,6 +13,7 @@ function Header() {
     { name: "Festival List", path: "/festivals" },
     { name: "Calendar", path: "/calendar" },
     { name: "Plan & Curation", path: "/plancuration" },
+    { name: "Review", path: "/review" },
     { name: "My Page", path: "/mypage" },
   ];
 

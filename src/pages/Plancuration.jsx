@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import Header from "../components/Header";
 import { TownDetailModal } from "../components/TownDetailModal";
-import GoogleMap from "../components/GoogleMap";
+import PlanGoogleMap from "../components/PlanGoogleMap";
 import useStore from "../store/useStore";
 import festivalsData from "../data/festivals.json";
 
@@ -84,179 +84,6 @@ const customStyles = `
 const getRecommendedFestivals = () => {
   return festivalsData.filter(festival => [4, 5, 6].includes(festival.pSeq));
 };
-
-// 여러 축제를 지도에 표시하는 컴포넌트
-function PlanGoogleMap({ festivals }) {
-  const mapRef = useRef(null);
-  const markersRef = useRef([]);
-
-  useEffect(() => {
-    async function initMap() {
-      if (!mapRef.current || !festivals || festivals.length === 0) return;
-
-      try {
-        const { loadGoogleMaps } = await import('../lib/googleMaps');
-        const google = await loadGoogleMaps();
-        
-        if (!mapRef.current) return;
-
-        // 지도 중심 계산 (첫 번째 축제의 위치 또는 서울 중심)
-        let centerLat = 37.5665;
-        let centerLng = 126.9780;
-        
-        const firstFestival = festivals[0];
-        if (firstFestival.latitude && firstFestival.longitude) {
-          centerLat = firstFestival.latitude;
-          centerLng = firstFestival.longitude;
-        }
-
-        const map = new google.maps.Map(mapRef.current, {
-          zoom: 12,
-          center: { lat: centerLat, lng: centerLng },
-          styles: [
-            {
-              featureType: "poi",
-              elementType: "labels",
-              stylers: [{ visibility: "off" }]
-            }
-          ]
-        });
-
-        // 기존 마커 제거
-        markersRef.current.forEach(marker => marker.setMap(null));
-        markersRef.current = [];
-
-        // 각 축제에 대한 마커 추가
-        const bounds = new google.maps.LatLngBounds();
-        let hasValidLocation = false;
-
-        for (let i = 0; i < festivals.length; i++) {
-          const festival = festivals[i];
-          
-          if (festival.latitude && festival.longitude) {
-            const position = { lat: festival.latitude, lng: festival.longitude };
-            
-            const marker = new google.maps.Marker({
-              position,
-              map,
-              title: festival.fstvlNm,
-              label: {
-                text: `${i + 1}`,
-                color: 'white',
-                fontSize: '14px',
-                fontWeight: 'bold'
-              },
-              icon: {
-                path: google.maps.SymbolPath.CIRCLE,
-                scale: 20,
-                fillColor: '#FF6B35',
-                fillOpacity: 1,
-                strokeColor: '#ffffff',
-                strokeWeight: 3
-              }
-            });
-
-            const infoWindow = new google.maps.InfoWindow({
-              content: `
-                <div style="padding: 8px; min-width: 200px;">
-                  <h3 style="margin: 0 0 8px 0; font-size: 16px; font-weight: bold; color: #1a1a1a;">
-                    ${festival.fstvlNm}
-                  </h3>
-                  <p style="margin: 4px 0; font-size: 13px; color: #666;">
-                    📍 ${festival.rdnmadr || festival.opar || '위치 정보 없음'}
-                  </p>
-                  <p style="margin: 4px 0; font-size: 13px; color: #666;">
-                    📅 ${festival.fstvlStartDate || ''} ~ ${festival.fstvlEndDate || ''}
-                  </p>
-                </div>
-              `
-            });
-
-            marker.addListener('click', () => {
-              infoWindow.open(map, marker);
-            });
-
-            markersRef.current.push(marker);
-            bounds.extend(position);
-            hasValidLocation = true;
-          } else if (festival.rdnmadr || festival.lnmadr) {
-            // 주소로 지오코딩
-            const geocoder = new google.maps.Geocoder();
-            geocoder.geocode({ address: festival.rdnmadr || festival.lnmadr }, (results, status) => {
-              if (status === 'OK' && results[0]) {
-                const position = results[0].geometry.location;
-                
-                const marker = new google.maps.Marker({
-                  position,
-                  map,
-                  title: festival.fstvlNm,
-                  label: {
-                    text: `${i + 1}`,
-                    color: 'white',
-                    fontSize: '14px',
-                    fontWeight: 'bold'
-                  },
-                  icon: {
-                    path: google.maps.SymbolPath.CIRCLE,
-                    scale: 20,
-                    fillColor: '#FF6B35',
-                    fillOpacity: 1,
-                    strokeColor: '#ffffff',
-                    strokeWeight: 3
-                  }
-                });
-
-                const infoWindow = new google.maps.InfoWindow({
-                  content: `
-                    <div style="padding: 8px; min-width: 200px;">
-                      <h3 style="margin: 0 0 8px 0; font-size: 16px; font-weight: bold; color: #1a1a1a;">
-                        ${festival.fstvlNm}
-                      </h3>
-                      <p style="margin: 4px 0; font-size: 13px; color: #666;">
-                        📍 ${festival.rdnmadr || festival.opar || '위치 정보 없음'}
-                      </p>
-                      <p style="margin: 4px 0; font-size: 13px; color: #666;">
-                        📅 ${festival.fstvlStartDate || ''} ~ ${festival.fstvlEndDate || ''}
-                      </p>
-                    </div>
-                  `
-                });
-
-                marker.addListener('click', () => {
-                  infoWindow.open(map, marker);
-                });
-
-                markersRef.current.push(marker);
-                bounds.extend(position);
-              }
-            });
-            hasValidLocation = true;
-          }
-        }
-
-        // 모든 마커가 보이도록 지도 범위 조정
-        if (hasValidLocation && markersRef.current.length > 1) {
-          map.fitBounds(bounds);
-          
-          // 줌 레벨이 너무 높으면 조정
-          const listener = google.maps.event.addListener(map, "idle", function() {
-            if (map.getZoom() > 15) map.setZoom(15);
-            google.maps.event.removeListener(listener);
-          });
-        }
-
-      } catch (error) {
-        console.error('Google Maps 로드 실패:', error);
-      }
-    }
-
-    initMap();
-  }, [festivals]);
-
-  return (
-    <div ref={mapRef} style={{ width: '100%', height: '100%', borderRadius: '40px' }} />
-  );
-}
 
 function Plancuration() {
   const navigate = useNavigate();
@@ -366,6 +193,35 @@ function Plancuration() {
     } else {
       return likedFestivals;
     }
+  };
+
+  // 장소를 일정에 추가하는 함수
+  const handleAddPlace = (placeData) => {
+    if (!currentTripId) {
+      alert('먼저 일정을 선택해주세요.');
+      return;
+    }
+
+    // 장소 데이터를 축제 형식으로 변환
+    const placeAsFestival = {
+      pSeq: `place_${placeData.placeId}`,
+      fstvlNm: placeData.name,
+      opar: placeData.address,
+      rdnmadr: placeData.address,
+      latitude: placeData.location.lat,
+      longitude: placeData.location.lng,
+      ministry_description: `${placeData.typeLabel} - 평점: ${placeData.rating || '없음'}`,
+      ministry_region: placeData.typeLabel,
+      ministry_image_url: placeData.photoUrl, // Google Places 사진 URL
+      fstvlStartDate: currentTrip?.start || '',
+      fstvlEndDate: currentTrip?.end || '',
+      isPlace: true, // 장소임을 표시
+      placeType: placeData.type,
+      placeId: placeData.placeId // Google Place ID 저장
+    };
+
+    addFestivalToSchedule(currentTripId, currentDayIndex, placeAsFestival);
+    alert(`"${placeData.name}"이(가) 일정에 추가되었습니다.`);
   };
 
   return (
@@ -513,15 +369,19 @@ function Plancuration() {
                     <div className="flex justify-between items-start mb-4">
                       <div className="flex-1">
                         <span className="text-primary text-xs font-black uppercase tracking-widest block mb-1">
-                          축제 일정
+                          {festival.isPlace ? festival.ministry_region : '축제 일정'}
                         </span>
                         <h4 className="text-2xl font-black text-gray-900 mb-2">{festival.fstvlNm}</h4>
                         <div className="flex items-center gap-2 text-sm text-gray-600">
-                          <span className="material-symbols-outlined text-lg">calendar_today</span>
+                          <span className="material-symbols-outlined text-lg">
+                            {festival.isPlace ? 'location_on' : 'calendar_today'}
+                          </span>
                           <span className="font-semibold">
-                            {festival.fstvlStartDate && festival.fstvlEndDate
-                              ? `${festival.fstvlStartDate} ~ ${festival.fstvlEndDate}`
-                              : festival.ministry_date || '날짜 정보 없음'}
+                            {festival.isPlace 
+                              ? (festival.opar || festival.rdnmadr || '위치 정보 없음')
+                              : (festival.fstvlStartDate && festival.fstvlEndDate
+                                ? `${festival.fstvlStartDate} ~ ${festival.fstvlEndDate}`
+                                : festival.ministry_date || '날짜 정보 없음')}
                           </span>
                         </div>
                       </div>
@@ -546,15 +406,35 @@ function Plancuration() {
                       />
                     ) : (
                       <div className="w-full aspect-video rounded-2xl bg-gradient-to-br from-orange-100 to-orange-50 mb-5 ring-1 ring-black/5 flex items-center justify-center">
-                        <span className="material-symbols-outlined text-orange-300 text-6xl">festival</span>
+                        {festival.isPlace ? (
+                          <span style={{ fontSize: '80px' }}>
+                            {festival.placeType === 'lodging' && '🏨'}
+                            {festival.placeType === 'restaurant' && '🍽️'}
+                            {festival.placeType === 'cafe' && '☕'}
+                          </span>
+                        ) : (
+                          <span className="material-symbols-outlined text-orange-300 text-6xl">festival</span>
+                        )}
                       </div>
                     )}
                     <button 
-                      onClick={() => setSelectedFestival(festival)}
+                      onClick={() => {
+                        if (festival.isPlace && festival.placeId) {
+                          // 장소인 경우 Google Maps 페이지로 이동
+                          const placeIdWithoutPrefix = festival.placeId.replace('place_', '');
+                          const googleMapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(festival.fstvlNm)}&query_place_id=${placeIdWithoutPrefix}`;
+                          window.open(googleMapsUrl, '_blank');
+                        } else {
+                          // 축제인 경우 상세 모달 열기
+                          setSelectedFestival(festival);
+                        }
+                      }}
                       className="w-full py-3.5 bg-white border-2 border-primary/10 text-primary rounded-2xl text-sm font-bold flex items-center justify-center gap-2 hover:bg-primary hover:text-white transition-all"
                     >
-                      <span className="material-symbols-outlined text-lg">info</span>
-                      축제 상세보기
+                      <span className="material-symbols-outlined text-lg">
+                        {festival.isPlace ? 'open_in_new' : 'info'}
+                      </span>
+                      {festival.isPlace ? '장소 상세보기' : '축제 상세보기'}
                     </button>
                   </div>
                 </div>
@@ -580,7 +460,10 @@ function Plancuration() {
           <div className="lg:w-1/2">
             <div className="sticky top-40 w-full h-[calc(100vh-320px)] min-h-[500px] bg-white rounded-[40px] shadow-2xl overflow-hidden border border-gray-200 relative">
               {currentDayFestivals.length > 0 ? (
-                <PlanGoogleMap festivals={currentDayFestivals} />
+                <PlanGoogleMap 
+                  festivals={currentDayFestivals} 
+                  onAddPlace={handleAddPlace}
+                />
               ) : (
                 <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-orange-50 to-white">
                   <span className="material-symbols-outlined text-orange-200 text-8xl mb-4">map</span>

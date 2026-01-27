@@ -12,6 +12,7 @@ import Festival_List from "./pages/Festival_List";
 import Mypage from "./pages/Mypage";
 import Dateregistration from "./pages/Dateregistration";
 import Plancuration from "./pages/Plancuration";
+import Review from "./pages/Review";
 
 
 function App() {
@@ -31,6 +32,7 @@ function App() {
       <Route path="/oauth/kakao/callback" element={<OAuthKakaoCallback />} />
       <Route path="/dateregistration" element={<Dateregistration />} />
       <Route path="/Plancuration" element={<Plancuration />} />
+      <Route path="/review" element={<Review />} />
     </Routes>
   );
 }
