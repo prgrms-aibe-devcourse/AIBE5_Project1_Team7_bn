@@ -1,4 +1,5 @@
-import { Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route, Navigate, useLocation } from "react-router-dom";
+import LandingPage from "./pages/LandingPage";
 import After_Home from "./pages/After_Home";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
@@ -18,10 +19,13 @@ import ChatBot from "./components/ChatBot";
 
 
 function App() {
+  const location = useLocation();
+  const isLandingPage = location.pathname === "/";
+
   return (
     <>
       <Routes>
-        <Route path="/" element={<Navigate to="/home" replace />} />
+        <Route path="/" element={<LandingPage />} />
         <Route path="/after_home" element={<After_Home />} />
         <Route path="/festivals" element={<Festival_List />} />
         <Route path="/home" element={<Home />} />
@@ -38,7 +42,7 @@ function App() {
         <Route path="/review" element={<Review />} />
         <Route path="/loading" element={<Loading />} />
       </Routes>
-      <ChatBot />
+      {!isLandingPage && <ChatBot />}
     </>
   );
 }
