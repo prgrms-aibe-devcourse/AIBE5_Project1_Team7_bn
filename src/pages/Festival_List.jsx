@@ -1,7 +1,4 @@
-<<<<<<< HEAD
 
-=======
->>>>>>> 32e92aeb68067d3a2e2606de26a1cea2c564a582
 import React, { useState, useEffect } from "react";
 import festivals from "../data/festivals.json";
 import Header from "../components/Header";
@@ -9,10 +6,7 @@ import { TownCard } from "../components/TownCard";
 import { TownDetailModal } from "../components/TownDetailModal";
 import { useNavigate } from "react-router-dom";
 import Loading from "./Loading";
-<<<<<<< HEAD
 import "./Festival_List.css";
-=======
->>>>>>> 32e92aeb68067d3a2e2606de26a1cea2c564a582
 
 function Festival_List() {
 	const [selectedFestival, setSelectedFestival] = useState(null);
