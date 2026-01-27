@@ -13,6 +13,7 @@ import Mypage from "./pages/Mypage";
 import Dateregistration from "./pages/Dateregistration";
 import Plancuration from "./pages/Plancuration";
 import Review from "./pages/Review";
+import Loading from "./pages/Loading";
 
 
 function App() {
@@ -33,6 +34,7 @@ function App() {
       <Route path="/dateregistration" element={<Dateregistration />} />
       <Route path="/Plancuration" element={<Plancuration />} />
       <Route path="/review" element={<Review />} />
+      <Route path="/loading" element={<Loading />} />
     </Routes>
   );
 }

@@ -1,11 +1,12 @@
 
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import festivals from "../data/festivals.json";
 import Header from "../components/Header";
 import { TownCard } from "../components/TownCard";
 import { TownDetailModal } from "../components/TownDetailModal";
 import { useNavigate } from "react-router-dom";
+import Loading from "./Loading";
 
 
 function Festival_List() {
@@ -14,7 +15,21 @@ function Festival_List() {
 	const [theme, setTheme] = useState("");
 	const [date, setDate] = useState("");
 	const [region, setRegion] = useState("");
+	const [isLoading, setIsLoading] = useState(true);
 	const navigate = useNavigate();
+
+	useEffect(() => {
+		// 페이지 로딩 시뮬레이션
+		const timer = setTimeout(() => {
+			setIsLoading(false);
+		}, 3000);
+
+		return () => clearTimeout(timer);
+	}, []);
+
+	if (isLoading) {
+		return <Loading />;
+	}
 
 	// 필터링 예시 (실제 옵션은 필요에 따라 구현)
 	const filtered = festivals.filter(f => {
