@@ -57,6 +57,8 @@
 - ✅ React Compiler memoization 충돌 해결
 - ✅ 미사용 import 제거 (useMemo)
 
+---
+
 ## 📅 2025년 1월 25일
 
 ### 🎯 주요 작업 내용

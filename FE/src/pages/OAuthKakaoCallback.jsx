@@ -1,9 +1,11 @@
 import { useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
+import useStore from "../store/useStore";
 
 export default function OAuthKakaoCallback() {
   const navigate = useNavigate();
   const handledRef = useRef(false);
+  const { setLogin, setKakaoAuthCode, loginType } = useStore();
 
   useEffect(() => {
     // ✅ StrictMode(dev)에서 useEffect 2번 실행되는 것 방지
@@ -20,8 +22,8 @@ export default function OAuthKakaoCallback() {
     console.log({ code, error, errorDescription });
 
     // ✅ 이미 성공 처리한 적 있으면 바로 홈으로 (중복 방지)
-    if (sessionStorage.getItem("loginType") === "kakao") {
-      navigate("/", { replace: true });
+    if (loginType === "kakao") {
+      navigate("/after_home", { replace: true });
       return;
     }
 
@@ -45,13 +47,12 @@ export default function OAuthKakaoCallback() {
     }
 
     // ✅ FE만 단계: 성공 처리
-    sessionStorage.setItem("loginUser", "kakao");
-    sessionStorage.setItem("loginType", "kakao");
-    sessionStorage.setItem("kakaoAuthCode", code);
+    setLogin("kakao", "kakao");
+    setKakaoAuthCode(code);
 
     alert("카카오 로그인 성공!");
-    navigate("/", { replace: true });
-  }, [navigate]);
+    navigate("/after_home", { replace: true });
+  }, [navigate, loginType, setLogin, setKakaoAuthCode]);
 
   return <div style={{ padding: 20 }}>카카오 로그인 처리 중...</div>;
 }

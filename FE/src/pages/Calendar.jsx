@@ -1,12 +1,22 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useRef, useCallback } from "react";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
-import festivals from "../data/festivals_with_geo.json";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import festivals from "../data/festivals.json";
+import useStore from "../store/useStore";
+import Header from "../components/Header";
+import { TownCard } from "../components/TownCard";
+import { TownDetailModal } from "../components/TownDetailModal";
 
-// ✅ FullCalendar 이벤트 텍스트 중앙정렬
+// ✅ FullCalendar 이벤트 텍스트 중앙정렬 및 스타일 개선
 const calendarStyles = `
+  .fc {
+    font-family: 'Plus Jakarta Sans','Segoe UI',sans-serif;
+  }
+  
   .fc-event-title {
     text-align: center;
     display: flex;
@@ -14,9 +24,71 @@ const calendarStyles = `
     justify-content: center;
     width: 100%;
     height: 100%;
+    font-weight: 600;
   }
+  
   .fc-daygrid-event {
-    padding: 2px 0 !important;
+    padding: 4px 8px !important;
+    border-radius: 6px !important;
+    border: none !important;
+    background: linear-gradient(135deg, rgb(244,133,37) 0%, rgb(255,153,102) 100%) !important;
+    box-shadow: 0 2px 4px rgba(244,133,37,0.2) !important;
+    transition: all 0.2s ease !important;
+  }
+  
+  .fc-daygrid-event:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(244,133,37,0.3) !important;
+  }
+  
+  .fc-col-header-cell {
+    background: #f9fafb !important;
+    font-weight: 700 !important;
+    text-transform: uppercase !important;
+    font-size: 11px !important;
+    letter-spacing: 0.5px !important;
+    color: #6b7280 !important;
+    padding: 12px 0 !important;
+  }
+  
+  .fc-daygrid-day-number {
+    font-weight: 600 !important;
+    color: #111827 !important;
+    padding: 8px !important;
+  }
+  
+  .fc-day-today {
+    background: rgba(244,133,37,0.05) !important;
+  }
+  
+  .fc-day-today .fc-daygrid-day-number {
+    background: rgb(244,133,37) !important;
+    color: white !important;
+    border-radius: 50% !important;
+    width: 32px !important;
+    height: 32px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+  
+  .fc-button {
+    background: linear-gradient(90deg, rgb(244,133,37) 0%, rgb(255,153,102) 100%) !important;
+    border: none !important;
+    border-radius: 8px !important;
+    padding: 8px 16px !important;
+    font-weight: 700 !important;
+    text-transform: capitalize !important;
+    transition: all 0.2s ease !important;
+  }
+  
+  .fc-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(244,133,37,0.3) !important;
+  }
+  
+  .fc-button-active {
+    background: linear-gradient(90deg, rgb(230,120,30) 0%, rgb(240,140,90) 100%) !important;
   }
 `;
 
@@ -32,14 +104,17 @@ function Calendar() {
   // 가장 무난: calendar.events (이벤트 CRUD)
   const SCOPES = "https://www.googleapis.com/auth/calendar.events";
 
-  const [token, setToken] = useState(null);
+  // ✅ zustand store로 Google 토큰과 축제 pSeq 관리
+  const { googleAccessToken, setGoogleAccessToken, selectedFestivalPSeq, clearSelectedFestivalPSeq, savedCalendarFestivals, toggleCalendarFestival, likedFestivals } = useStore();
+  
+  const [token, setToken] = useState(googleAccessToken);
   const [tokenClient, setTokenClient] = useState(null);
   const [error, setError] = useState("");
   const [events, setEvents] = useState([]); // FullCalendar용 이벤트 배열
   const [loading, setLoading] = useState(false);
 
   // 오른쪽 "Upcoming" 패널용 원본(구글 이벤트)
-  const [rawEvents, setRawEvents] = useState([]);
+  // const [rawEvents, setRawEvents] = useState([]); // ✅ 이제 likedFestivals를 사용하므로 제거
 
   // ✅ 모달 상태 관리
   const [modalOpen, setModalOpen] = useState(false);
@@ -57,14 +132,46 @@ function Calendar() {
   const [festivalPSeq, setFestivalPSeq] = useState("");
   const [showFestivalInput, setShowFestivalInput] = useState(false);
 
+  // ✅ 축제 추가 여부 추적 (중복 방지)
+  const festivalAddedRef = useRef(false);
+
+  // ✅ 뷰 전환: 'calendar' | 'saved'
+  const [activeView, setActiveView] = useState('calendar');
+
+  // ✅ 축제 상세정보 모달
+  const [selectedFestival, setSelectedFestival] = useState(null);
+  const [festivalDetailOpen, setFestivalDetailOpen] = useState(false);
+
+  // ✅ FullCalendar ref
+  const calendarRef = useRef(null); // My Festival Calendar용
+  const festivalCalendarRef = useRef(null); // Festival Calendar용
+  const [currentView, setCurrentView] = useState("dayGridMonth");
+  const [currentTitle, setCurrentTitle] = useState("");
+  const [festivalCurrentTitle, setFestivalCurrentTitle] = useState("");
+
+  // ✅ 필터 상태
+  const [activeFilters, setActiveFilters] = useState({
+    regions: [], // 선택된 지역들
+    duration: null, // '당일', '단기(2~3일)', '장기(3~5일)'
+    isFree: null, // true(무료), false(유료), null(전체)
+    includesWeekend: false // 주말 포함 여부
+  });
+
+  // 필터 섹션 열림/닫힘 상태
+  const [filterSectionsOpen, setFilterSectionsOpen] = useState({
+    region: false,
+    duration: false,
+    price: false,
+    weekend: false
+  });
+
   // ---------- GIS init ----------
   useEffect(() => {
     setError("");
 
-    // ✅ Login 페이지에서 이미 로그인했으면 sessionStorage에 토큰이 있음
-    const savedToken = sessionStorage.getItem("googleAccessToken");
-    if (savedToken) {
-      setToken(savedToken);
+    // ✅ zustand store에서 토큰 가져오기
+    if (googleAccessToken) {
+      setToken(googleAccessToken);
     }
 
     if (!CLIENT_ID) {
@@ -81,45 +188,116 @@ function Calendar() {
       client_id: CLIENT_ID,
       scope: SCOPES,
       callback: (resp) => {
-        if (resp?.access_token) setToken(resp.access_token);
-        else setError("토큰 발급에 실패했습니다.");
+        if (resp?.access_token) {
+          setToken(resp.access_token);
+          setGoogleAccessToken(resp.access_token);
+        } else {
+          setError("토큰 발급에 실패했습니다.");
+        }
       },
     });
 
     setTokenClient(tc);
-  }, [CLIENT_ID]);
+  }, [CLIENT_ID, googleAccessToken, setGoogleAccessToken]);
+
+  // ✅ 토큰이 없을 때 자동으로 Google 로그인 요청
+  useEffect(() => {
+    if (!token && tokenClient && !loading) {
+      // 페이지 로드 후 0.5초 뒤에 자동으로 로그인 요청
+      const timer = setTimeout(() => {
+        tokenClient.requestAccessToken({ prompt: "" });
+      }, 500);
+      return () => clearTimeout(timer);
+    }
+  }, [token, tokenClient, loading]);
 
   // ---------- helpers ----------
-  const fmtK = (iso) => {
+  // const fmtK = (iso) => { // ✅ 이제 사용하지 않음
+  //   try {
+  //     const d = new Date(iso);
+  //     return d.toLocaleString("ko-KR", { month: "short", day: "2-digit" });
+  //   } catch {
+  //     return "";
+  //   }
+  // };
+
+  // ✅ 축제 날짜 파싱 함수 - fstvlStartDate와 fstvlEndDate 사용
+  const parseFestivalDate = (festival) => {
     try {
-      const d = new Date(iso);
-      return d.toLocaleString("ko-KR", { month: "short", day: "2-digit" });
-    } catch {
-      return "";
-    }
-  };
+      // fstvlStartDate와 fstvlEndDate가 있으면 직접 사용
+      if (festival.fstvlStartDate) {
+        const startDateTime = festival.fstvlStartDate; // 이미 "YYYY-MM-DD" 형식
+        let endDateTime = festival.fstvlEndDate || festival.fstvlStartDate;
+        
+        // ✅ FullCalendar allDay 이벤트는 end가 exclusive이므로 +1일 필요
+        const endDate = new Date(endDateTime);
+        endDate.setDate(endDate.getDate() + 1);
+        endDateTime = endDate.toISOString().split('T')[0];
+        
+        return { startDateTime, endDateTime };
+      }
 
-  // ✅ 축제 날짜 파싱 함수 (예: "2026. 1. 16. ~ 1. 18. | 10:00~17:00")
-  const parseFestivalDate = (dateStr) => {
-    try {
-      // "2026. 1. 16. ~ 1. 18." 형태 추출
-      const match = dateStr.match(/(\d{4})\.\s+(\d{1,2})\.\s+(\d{1,2})\.\s*~\s*(\d{1,2})\.\s+(\d{1,2})\./);
-      if (!match) return null;
+      // 없으면 ministry_date 파싱 (fallback)
+      const dateStr = festival.ministry_date;
+      if (!dateStr) return null;
 
-      const year = parseInt(match[1]);
-      const startMonth = parseInt(match[2]);
-      const startDay = parseInt(match[3]);
-      const endMonth = parseInt(match[4]);
-      const endDay = parseInt(match[5]);
+      // 패턴 1: "2026. 1. 16. ~ 1. 18." (같은 연도)
+      let match = dateStr.match(/(\d{4})\.\s+(\d{1,2})\.\s+(\d{1,2})\.\s*~\s*(\d{1,2})\.\s+(\d{1,2})\./);
+      if (match) {
+        const year = parseInt(match[1]);
+        const startMonth = parseInt(match[2]);
+        const startDay = parseInt(match[3]);
+        const endMonth = parseInt(match[4]);
+        const endDay = parseInt(match[5]);
 
-      // ✅ 문자열로 직접 생성 (UTC 변환 문제 해결)
-      const startDateTime = `${year}-${String(startMonth).padStart(2, '0')}-${String(startDay).padStart(2, '0')}`;
-      const endDateTime = `${year}-${String(endMonth).padStart(2, '0')}-${String(endDay).padStart(2, '0')}`;
+        const startDateTime = `${year}-${String(startMonth).padStart(2, '0')}-${String(startDay).padStart(2, '0')}`;
+        
+        // ✅ FullCalendar allDay 이벤트는 end가 exclusive이므로 +1일 필요
+        const endDate = new Date(year, endMonth - 1, endDay);
+        endDate.setDate(endDate.getDate() + 1);
+        const endDateTime = `${endDate.getFullYear()}-${String(endDate.getMonth() + 1).padStart(2, '0')}-${String(endDate.getDate()).padStart(2, '0')}`;
 
-      return {
-        startDateTime,
-        endDateTime,
-      };
+        return { startDateTime, endDateTime };
+      }
+
+      // 패턴 2: "2025. 11. 29. ~ 2026. 1. 18." (연도가 바뀌는 경우)
+      match = dateStr.match(/(\d{4})\.\s+(\d{1,2})\.\s+(\d{1,2})\.\s*~\s*(\d{4})\.\s+(\d{1,2})\.\s+(\d{1,2})\./);
+      if (match) {
+        const startYear = parseInt(match[1]);
+        const startMonth = parseInt(match[2]);
+        const startDay = parseInt(match[3]);
+        const endYear = parseInt(match[4]);
+        const endMonth = parseInt(match[5]);
+        const endDay = parseInt(match[6]);
+
+        const startDateTime = `${startYear}-${String(startMonth).padStart(2, '0')}-${String(startDay).padStart(2, '0')}`;
+        
+        // ✅ FullCalendar allDay 이벤트는 end가 exclusive이므로 +1일 필요
+        const endDate = new Date(endYear, endMonth - 1, endDay);
+        endDate.setDate(endDate.getDate() + 1);
+        const endDateTime = `${endDate.getFullYear()}-${String(endDate.getMonth() + 1).padStart(2, '0')}-${String(endDate.getDate()).padStart(2, '0')}`;
+
+        return { startDateTime, endDateTime };
+      }
+
+      // 패턴 3: "2026. 1. 16." (단일 날짜)
+      match = dateStr.match(/(\d{4})\.\s+(\d{1,2})\.\s+(\d{1,2})\./);
+      if (match) {
+        const year = parseInt(match[1]);
+        const month = parseInt(match[2]);
+        const day = parseInt(match[3]);
+
+        const startDateTime = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+        
+        // ✅ FullCalendar allDay 이벤트는 end가 exclusive이므로 +1일 필요
+        const endDate = new Date(year, month - 1, day);
+        endDate.setDate(endDate.getDate() + 1);
+        const endDateTime = `${endDate.getFullYear()}-${String(endDate.getMonth() + 1).padStart(2, '0')}-${String(endDate.getDate()).padStart(2, '0')}`;
+
+        return { startDateTime, endDateTime };
+      }
+
+      return null;
     } catch {
       return null;
     }
@@ -133,7 +311,7 @@ function Calendar() {
       return;
     }
 
-    const dateInfo = parseFestivalDate(festival.date);
+    const dateInfo = parseFestivalDate(festival);
     if (!dateInfo) {
       alert("축제 날짜를 파싱할 수 없습니다.");
       return;
@@ -141,8 +319,8 @@ function Calendar() {
 
     setFormData({
       id: null,
-      title: festival.festival_name,
-      description: festival.festival_description,
+      title: festival.fstvlNm,
+      description: festival.ministry_description,
       startDateTime: dateInfo.startDateTime,
       endDateTime: dateInfo.endDateTime,
       allDay: true,
@@ -172,13 +350,27 @@ function Calendar() {
       });
 
       if (!res.ok) {
+        // ✅ 401 에러인 경우 토큰이 만료되었으므로 재로그인 필요
+        if (res.status === 401) {
+          setError("Google 로그인이 만료되었습니다. 다시 로그인해주세요.");
+          setToken(null);
+          setGoogleAccessToken(null);
+          // 자동으로 재로그인 요청
+          if (tokenClient) {
+            setTimeout(() => {
+              tokenClient.requestAccessToken({ prompt: "" });
+            }, 1000);
+          }
+          return;
+        }
+        
         const text = await res.text();
         throw new Error(`events.list 실패 (${res.status}): ${text}`);
       }
 
       const data = await res.json();
       const items = data.items || [];
-      setRawEvents(items);
+      // setRawEvents(items); // ✅ 이제 likedFestivals를 사용하므로 필요없음
 
       // FullCalendar 형식으로 변환
       const fc = items.map((ev) => ({
@@ -241,6 +433,17 @@ function Calendar() {
       );
 
       if (!res.ok) {
+        if (res.status === 401) {
+          setError("Google 로그인이 만료되었습니다. 다시 로그인해주세요.");
+          setToken(null);
+          setGoogleAccessToken(null);
+          if (tokenClient) {
+            setTimeout(() => {
+              tokenClient.requestAccessToken({ prompt: "" });
+            }, 1000);
+          }
+          return;
+        }
         const text = await res.text();
         throw new Error(`events.insert 실패 (${res.status}): ${text}`);
       }
@@ -276,6 +479,17 @@ function Calendar() {
       );
 
       if (!getRes.ok) {
+        if (getRes.status === 401) {
+          setError("Google 로그인이 만료되었습니다. 다시 로그인해주세요.");
+          setToken(null);
+          setGoogleAccessToken(null);
+          if (tokenClient) {
+            setTimeout(() => {
+              tokenClient.requestAccessToken({ prompt: "" });
+            }, 1000);
+          }
+          return;
+        }
         throw new Error(`이벤트 조회 실패 (${getRes.status})`);
       }
 
@@ -315,6 +529,17 @@ function Calendar() {
       );
 
       if (!updateRes.ok) {
+        if (updateRes.status === 401) {
+          setError("Google 로그인이 만료되었습니다. 다시 로그인해주세요.");
+          setToken(null);
+          setGoogleAccessToken(null);
+          if (tokenClient) {
+            setTimeout(() => {
+              tokenClient.requestAccessToken({ prompt: "" });
+            }, 1000);
+          }
+          return;
+        }
         const text = await updateRes.text();
         throw new Error(`events.update 실패 (${updateRes.status}): ${text}`);
       }
@@ -354,6 +579,17 @@ function Calendar() {
       );
 
       if (!res.ok) {
+        if (res.status === 401) {
+          setError("Google 로그인이 만료되었습니다. 다시 로그인해주세요.");
+          setToken(null);
+          setGoogleAccessToken(null);
+          if (tokenClient) {
+            setTimeout(() => {
+              tokenClient.requestAccessToken({ prompt: "" });
+            }, 1000);
+          }
+          return;
+        }
         const text = await res.text();
         throw new Error(`events.delete 실패 (${res.status}): ${text}`);
       }
@@ -370,7 +606,7 @@ function Calendar() {
   };
 
   // ---------- auth ----------
-  const signIn = () => {
+  const _signIn = () => {
     setError("");
     if (!tokenClient) {
       setError("로그인 준비가 아직 안 됐습니다. 잠시 후 다시 시도하세요.");
@@ -379,28 +615,221 @@ function Calendar() {
     tokenClient.requestAccessToken({ prompt: "" });
   };
 
-  const signOut = () => {
+  const _signOut = () => {
     setToken(null);
     setEvents([]);
-    setRawEvents([]);
+    // setRawEvents([]); // ✅ 이제 likedFestivals를 사용하므로 필요없음
   };
 
-  // ---------- upcoming (right panel) ----------
-  const upcoming = useMemo(() => {
-    return (rawEvents || []).slice(0, 3).map((ev) => {
-      const s = ev.start?.dateTime || ev.start?.date;
-      const e = ev.end?.dateTime || ev.end?.date;
-      const range = s ? `${fmtK(s)}${e ? ` ~ ${fmtK(e)}` : ""}` : "날짜 정보 없음";
-      return { id: ev.id, title: ev.summary || "(제목 없음)", date: range, location: ev.location || "" };
+  // ✅ pSeq로 축제 정보 로드 및 바로 캘린더에 추가 (모달 없이)
+  const loadFestivalAndAdd = useCallback(async (pSeq) => {
+    if (!token) return;
+    
+    const festival = festivals.find((f) => String(f.pSeq) === String(pSeq));
+    if (!festival) return;
+
+    const dateInfo = parseFestivalDate(festival);
+    if (!dateInfo) return;
+
+    // 바로 Google Calendar에 추가
+    await insertEvent({
+      title: festival.fstvlNm,
+      description: festival.ministry_description,
+      start: dateInfo.startDateTime,
+      end: dateInfo.endDateTime,
+      allDay: true,
     });
-  }, [rawEvents]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [token]);
+
+  // ✅ 홈에서 선택한 축제 자동 추가 (한 번만 실행)
+  useEffect(() => {
+    if (selectedFestivalPSeq && token && !festivalAddedRef.current) {
+      festivalAddedRef.current = true;
+      setTimeout(() => {
+        loadFestivalAndAdd(selectedFestivalPSeq);
+        clearSelectedFestivalPSeq();
+      }, 1000);
+    }
+  }, [selectedFestivalPSeq, token, clearSelectedFestivalPSeq, loadFestivalAndAdd]);
+
+  // ---------- upcoming (right panel) ----------
+  // ✅ 이제 likedFestivals를 사용하므로 제거됨
+
+  // ✅ 축제 데이터를 FullCalendar 이벤트로 변환
+  const festivalEvents = useMemo(() => {
+    let filteredFestivals = festivals;
+
+    // 지역 필터
+    if (activeFilters.regions.length > 0) {
+      filteredFestivals = filteredFestivals.filter(festival => {
+        const location = festival.ministry_region || festival.opar || festival.rdnmadr || "";
+        return activeFilters.regions.some(region => location.includes(region));
+      });
+    }
+
+    // 기간 필터
+    if (activeFilters.duration) {
+      filteredFestivals = filteredFestivals.filter(festival => {
+        const dateInfo = parseFestivalDate(festival);
+        if (!dateInfo) return false;
+        
+        const start = new Date(dateInfo.startDateTime);
+        const end = new Date(dateInfo.endDateTime);
+        const diffDays = Math.ceil((end - start) / (1000 * 60 * 60 * 24));
+        
+        if (activeFilters.duration === '당일') return diffDays <= 1;
+        if (activeFilters.duration === '단기(2~3일)') return diffDays >= 2 && diffDays <= 3;
+        if (activeFilters.duration === '장기(3~5일)') return diffDays >= 3 && diffDays <= 5;
+        return true;
+      });
+    }
+
+    // 유료/무료 필터
+    if (activeFilters.isFree !== null) {
+      filteredFestivals = filteredFestivals.filter(festival => {
+        const isFree = festival.rdnmadr?.includes('무료') || 
+                      festival.ministry_description?.includes('무료') ||
+                      festival.fstvlNm?.includes('무료');
+        return activeFilters.isFree ? isFree : !isFree;
+      });
+    }
+
+    // 주말 포함 필터
+    if (activeFilters.includesWeekend) {
+      filteredFestivals = filteredFestivals.filter(festival => {
+        try {
+          const dateInfo = parseFestivalDate(festival);
+          if (!dateInfo || !dateInfo.startDateTime || !dateInfo.endDateTime) return false;
+          
+          // 문자열로 확실하게 변환
+          const startStr = String(dateInfo.startDateTime).split('T')[0];
+          const endStr = String(dateInfo.endDateTime).split('T')[0];
+          
+          // YYYY-MM-DD 형식인지 확인
+          if (!/^\d{4}-\d{2}-\d{2}$/.test(startStr) || !/^\d{4}-\d{2}-\d{2}$/.test(endStr)) {
+            return false;
+          }
+          
+          // YYYY-MM-DD 형식을 로컬 시간대로 정확하게 파싱
+          const [startYear, startMonth, startDay] = startStr.split('-').map(Number);
+          const [endYear, endMonth, endDay] = endStr.split('-').map(Number);
+          
+          const start = new Date(startYear, startMonth - 1, startDay);
+          // ✅ endDateTime은 이미 +1일 되어있으므로 실제 종료일은 -1일
+          const end = new Date(endYear, endMonth - 1, endDay);
+          end.setDate(end.getDate() - 1);
+          
+          // 기간 중 토요일(6) 또는 일요일(0)이 포함되어 있는지 확인
+          let current = new Date(start);
+          while (current <= end) {
+            const day = current.getDay();
+            if (day === 0 || day === 6) {
+              return true; // 주말 포함
+            }
+            current.setDate(current.getDate() + 1);
+          }
+          
+          return false; // 주말 미포함
+        } catch (error) {
+          console.error('주말 필터 에러:', festival.fstvlNm, error);
+          return false;
+        }
+      });
+    }
+
+    return filteredFestivals.map(festival => {
+      const dateInfo = parseFestivalDate(festival);
+      if (!dateInfo) return null;
+      
+      return {
+        id: `festival-${festival.pSeq}`,
+        title: festival.fstvlNm,
+        start: dateInfo.startDateTime,
+        end: dateInfo.endDateTime,
+        allDay: true,
+        backgroundColor: 'rgb(244,133,37)',
+        borderColor: 'rgb(244,133,37)',
+        extendedProps: {
+          festival: festival
+        }
+      };
+    }).filter(Boolean);
+  }, [activeFilters]);
+
+  // ✅ 저장된 축제를 FullCalendar 이벤트로 변환 (Saved Festivals 뷰용)
+  // ✅ 주말 필터도 같이 적용
+  // ✅ Saved Festivals 뷰의 이벤트: likedFestivals를 캘린더에 표시
+  const savedFestivalEvents = useMemo(() => {
+    if (!likedFestivals || likedFestivals.length === 0) {
+      return [];
+    }
+
+    let filteredSaved = [...likedFestivals];
+
+    // 주말 포함 필터 적용
+    if (activeFilters.includesWeekend) {
+      filteredSaved = filteredSaved.filter(festival => {
+        try {
+          const dateInfo = parseFestivalDate(festival);
+          if (!dateInfo || !dateInfo.startDateTime || !dateInfo.endDateTime) return false;
+          
+          const startStr = String(dateInfo.startDateTime).split('T')[0];
+          const endStr = String(dateInfo.endDateTime).split('T')[0];
+          
+          if (!/^\d{4}-\d{2}-\d{2}$/.test(startStr) || !/^\d{4}-\d{2}-\d{2}$/.test(endStr)) {
+            return false;
+          }
+          
+          const [startYear, startMonth, startDay] = startStr.split('-').map(Number);
+          const [endYear, endMonth, endDay] = endStr.split('-').map(Number);
+          
+          const start = new Date(startYear, startMonth - 1, startDay);
+          // ✅ endDateTime은 이미 +1일 되어있으므로 실제 종료일은 -1일
+          const end = new Date(endYear, endMonth - 1, endDay);
+          end.setDate(end.getDate() - 1);
+          
+          let current = new Date(start);
+          while (current <= end) {
+            const day = current.getDay();
+            if (day === 0 || day === 6) {
+              return true;
+            }
+            current.setDate(current.getDate() + 1);
+          }
+          
+          return false;
+        } catch {
+          return false;
+        }
+      });
+    }
+
+    return filteredSaved.map(festival => {
+      const dateInfo = parseFestivalDate(festival);
+      if (!dateInfo) return null;
+      
+      return {
+        id: `liked-${festival.pSeq}`,
+        title: `❤️ ${festival.fstvlNm || festival.festival_name}`,
+        start: dateInfo.startDateTime,
+        end: dateInfo.endDateTime,
+        allDay: true,
+        backgroundColor: '#ef4444', // 빨간색으로 구분
+        borderColor: '#ef4444',
+        extendedProps: {
+          festival: festival
+        }
+      };
+    }).filter(Boolean);
+  }, [likedFestivals, activeFilters.includesWeekend]);
 
   // ---------- styles (기존 유지) ----------
   const styles = {
-    container: { display: "flex", minHeight: "100vh", background: "#f9fafb", fontFamily: "'Plus Jakarta Sans','Segoe UI',sans-serif" },
-    header: { position: "fixed", top: 0, left: 0, right: 0, height: 60, background: "#fff", borderBottom: "1px solid #e5e7eb", display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0 20px", zIndex: 100 },
-    sidebar: { position: "fixed", left: 0, top: 60, width: 220, height: "calc(100vh - 60px)", background: "#fff", borderRight: "1px solid #e5e7eb", padding: 20, overflowY: "auto" },
-    main: { marginLeft: 220, marginTop: 60, flex: 1, display: "flex", gap: 20, padding: 20 },
+    container: { display: "flex", flexDirection: "column", minHeight: "calc(100vh - 64px)", background: "#f9fafb", fontFamily: "'Plus Jakarta Sans','Segoe UI',sans-serif" },
+    header: { height: 60, background: "#fff", borderBottom: "1px solid #e5e7eb", display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0 20px", marginBottom: 0 },
+    sidebar: { position: "fixed", left: 0, top: 124, width: 220, height: "calc(100vh - 124px)", background: "#fff", borderRight: "1px solid #e5e7eb", padding: 20, overflowY: "auto" },
+    main: { marginLeft: 250, marginTop: 0, flex: 1, display: "flex", gap: 20, padding: 20 },
     calendarCard: { flex: 1, background: "#fff", borderRadius: 12, boxShadow: "0 2px 8px rgba(0,0,0,0.06)", overflow: "hidden", display: "flex", flexDirection: "column" },
     calendarTopBar: { display: "flex", alignItems: "center", justifyContent: "space-between", padding: "12px 16px", borderBottom: "1px solid #e5e7eb", background: "#fff" },
     calendarBody: { padding: 16, overflowY: "auto", height: "calc(100vh - 120px)" },
@@ -418,41 +847,14 @@ function Calendar() {
   };
 
   return (
-    <div style={styles.container}>
-      <style>{calendarStyles}</style>
-      {/* 헤더 */}
-      <div style={styles.header}>
-        <div style={{ fontSize: 20, fontWeight: 700, color: "rgb(244,133,37)" }}>🎉 Festory</div>
-
-        <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
-          {token ? (
-            <>
-              <button
-                style={styles.btnGhost}
-                onClick={() => {
-                  const now = new Date();
-                  const timeMin = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
-                  const timeMax = new Date(now.getFullYear(), now.getMonth() + 2, 0).toISOString();
-                  fetchEvents(timeMin, timeMax);
-                }}
-              >
-                새로고침
-              </button>
-              {/* ✅ 축제 pSeq 입력 버튼 */}
-              <button
-                style={styles.btnGhost}
-                onClick={() => setShowFestivalInput(!showFestivalInput)}
-              >
-                🎪 축제 추가
-              </button>
-              <button style={styles.btnGhost} onClick={signOut}>로그아웃</button>
-            </>
-          ) : (
-            <button style={styles.btn} onClick={signIn}>Google로 로그인</button>
-          )}
-          <button style={{ border: "none", background: "transparent", cursor: "pointer", fontSize: 18 }}>👤</button>
+    <>
+      <Header />
+      <div style={styles.container}>
+        <style>{calendarStyles}</style>
+        {/* 서브 헤더 - 캘린더 타이틀 */}
+        <div style={styles.header}>
+          <div style={{ fontSize: 18, fontWeight: 600, color: "rgb(244,133,37)" }}>Discovery Calendar</div>
         </div>
-      </div>
 
       {/* ✅ 축제 pSeq 입력 패널 */}
       {showFestivalInput && token && (
@@ -510,28 +912,402 @@ function Calendar() {
       {/* 사이드바 */}
       <div style={styles.sidebar}>
         <div style={styles.sidebarSection}>
-          <button style={{ ...styles.sidebarItem, ...styles.sidebarItemActive }}>📅 Festival Calendar</button>
+          <button 
+            style={{ ...styles.sidebarItem, ...(activeView === 'calendar' ? styles.sidebarItemActive : {}) }}
+            onClick={() => setActiveView('calendar')}
+          >
+            📅 Festival Calendar
+          </button>
         </div>
         <div style={styles.sidebarSection}>
-          <button style={styles.sidebarItem}>⭐ Saved Festivals</button>
+          <button 
+            style={{ ...styles.sidebarItem, ...(activeView === 'saved' ? styles.sidebarItemActive : {}) }}
+            onClick={() => setActiveView('saved')}
+          >
+            ⭐ Saved Festivals
+          </button>
         </div>
         <div style={styles.sidebarSection}>
           <div style={styles.sidebarTitle}>FILTER SEARCH</div>
-          <button style={styles.sidebarItem}>📍 Location</button>
-          <button style={styles.sidebarItem}>🌍 Region</button>
-          <button style={styles.sidebarItem}>🎨 Vibe</button>
-          <button style={styles.sidebarItem}>🎭 Genres</button>
+          
+          {/* 지역 필터 */}
+          <div style={{ marginBottom: 12 }}>
+            <button 
+              style={{ ...styles.sidebarItem, ...(filterSectionsOpen.region ? styles.sidebarItemActive : {}) }}
+              onClick={() => setFilterSectionsOpen(prev => ({ ...prev, region: !prev.region }))}
+            >
+              📍 지역 {activeFilters.regions.length > 0 && `(${activeFilters.regions.length})`}
+            </button>
+            {filterSectionsOpen.region && (
+              <div style={{ padding: '8px 12px', backgroundColor: '#f9fafb', borderRadius: 8, marginTop: 8 }}>
+                {['서울', '부산', '대구', '인천', '광주', '대전', '울산', '세종', '경기', '강원', '충북', '충남', '전북', '전남', '경북', '경남', '제주'].map(region => (
+                  <button
+                    key={region}
+                    onClick={() => {
+                      setActiveFilters(prev => ({
+                        ...prev,
+                        regions: prev.regions.includes(region)
+                          ? prev.regions.filter(r => r !== region)
+                          : [...prev.regions, region]
+                      }));
+                    }}
+                    style={{
+                      display: 'block',
+                      width: '100%',
+                      padding: '8px 12px',
+                      margin: '4px 0',
+                      border: 'none',
+                      borderRadius: 6,
+                      backgroundColor: activeFilters.regions.includes(region) ? '#f48525' : 'white',
+                      color: activeFilters.regions.includes(region) ? 'white' : '#374151',
+                      fontSize: 13,
+                      fontWeight: 600,
+                      cursor: 'pointer',
+                      textAlign: 'left',
+                      transition: 'all 0.2s'
+                    }}
+                  >
+                    {region}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* 기간 필터 */}
+          <div style={{ marginBottom: 12 }}>
+            <button 
+              style={{ ...styles.sidebarItem, ...(filterSectionsOpen.duration ? styles.sidebarItemActive : {}) }}
+              onClick={() => setFilterSectionsOpen(prev => ({ ...prev, duration: !prev.duration }))}
+            >
+              ⏱️ 기간 {activeFilters.duration && `(${activeFilters.duration})`}
+            </button>
+            {filterSectionsOpen.duration && (
+              <div style={{ padding: '8px 12px', backgroundColor: '#f9fafb', borderRadius: 8, marginTop: 8 }}>
+                {['당일', '단기(2~3일)', '장기(3~5일)'].map(duration => (
+                  <button
+                    key={duration}
+                    onClick={() => {
+                      setActiveFilters(prev => ({
+                        ...prev,
+                        duration: prev.duration === duration ? null : duration
+                      }));
+                    }}
+                    style={{
+                      display: 'block',
+                      width: '100%',
+                      padding: '8px 12px',
+                      margin: '4px 0',
+                      border: 'none',
+                      borderRadius: 6,
+                      backgroundColor: activeFilters.duration === duration ? '#f48525' : 'white',
+                      color: activeFilters.duration === duration ? 'white' : '#374151',
+                      fontSize: 13,
+                      fontWeight: 600,
+                      cursor: 'pointer',
+                      textAlign: 'left',
+                      transition: 'all 0.2s'
+                    }}
+                  >
+                    {duration}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* 유료/무료 필터 */}
+          <div style={{ marginBottom: 12 }}>
+            <button 
+              style={{ ...styles.sidebarItem, ...(filterSectionsOpen.price ? styles.sidebarItemActive : {}) }}
+              onClick={() => setFilterSectionsOpen(prev => ({ ...prev, price: !prev.price }))}
+            >
+              💰 가격 {activeFilters.isFree !== null && (activeFilters.isFree ? '(무료)' : '(유료)')}
+            </button>
+            {filterSectionsOpen.price && (
+              <div style={{ padding: '8px 12px', backgroundColor: '#f9fafb', borderRadius: 8, marginTop: 8 }}>
+                {[{ label: '무료', value: true }, { label: '유료', value: false }].map(({ label, value }) => (
+                  <button
+                    key={label}
+                    onClick={() => {
+                      setActiveFilters(prev => ({
+                        ...prev,
+                        isFree: prev.isFree === value ? null : value
+                      }));
+                    }}
+                    style={{
+                      display: 'block',
+                      width: '100%',
+                      padding: '8px 12px',
+                      margin: '4px 0',
+                      border: 'none',
+                      borderRadius: 6,
+                      backgroundColor: activeFilters.isFree === value ? '#f48525' : 'white',
+                      color: activeFilters.isFree === value ? 'white' : '#374151',
+                      fontSize: 13,
+                      fontWeight: 600,
+                      cursor: 'pointer',
+                      textAlign: 'left',
+                      transition: 'all 0.2s'
+                    }}
+                  >
+                    {label}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* 주말 포함 필터 */}
+          <button 
+            style={{ ...styles.sidebarItem, ...(activeFilters.includesWeekend ? styles.sidebarItemActive : {}) }}
+            onClick={() => {
+              setActiveFilters(prev => {
+                const newState = { ...prev, includesWeekend: !prev.includesWeekend };
+                return newState;
+              });
+            }}
+          >
+            📅 주말 포함 {activeFilters.includesWeekend && '✓'}
+          </button>
         </div>
       </div>
 
       {/* 메인 */}
       <div style={styles.main}>
-        {/* ✅ 캘린더 UI */}
-        <div style={styles.calendarCard}>
-          <div style={styles.calendarTopBar}>
-            <div style={{ fontSize: 14, fontWeight: 800, color: "#111" }}>October 2024</div>
-            <div style={styles.note}>
-              {token ? "📌 날짜를 선택해서 일정 추가 | 일정을 클릭하면 수정/삭제 | 드래그로 이동" : "로그인하면 일정 추가/수정/삭제가 됩니다."}
+        {activeView === 'calendar' ? (
+          /* ✅ Festival Calendar 뷰 - 좌측 캘린더 + 우측 선택된 축제 카드 */
+          <>
+            <div style={{ ...styles.calendarCard, flex: 1 }}>
+          {/* 커스텀 상단 헤더 */}
+          <div style={{ padding: '32px 24px 24px', borderBottom: '1px solid #e5e7eb' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 24 }}>
+              <div>
+                <h2 style={{ fontSize: 32, fontWeight: 700, color: '#111', margin: 0, marginBottom: 8 }}>
+                  {festivalCurrentTitle || 'October 2024'}
+                </h2>
+                <p style={{ fontSize: 14, color: '#6b7280', margin: 0 }}>
+                  Discover the vibrant autumn spirit of Korea.
+                </p>
+              </div>
+              <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                <button 
+                  onClick={() => {
+                    const calendarApi = festivalCalendarRef.current?.getApi();
+                    if (calendarApi) calendarApi.prev();
+                  }}
+                  style={{
+                    width: 32,
+                    height: 32,
+                    border: '1px solid #e5e7eb',
+                    backgroundColor: '#fff',
+                    borderRadius: 6,
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    position: 'relative'
+                  }}>
+                  <span style={{
+                    width: 8,
+                    height: 8,
+                    borderLeft: '2px solid #374151',
+                    borderBottom: '2px solid #374151',
+                    transform: 'rotate(45deg)',
+                    marginLeft: 2
+                  }}></span>
+                </button>
+                <button 
+                  onClick={() => {
+                    const calendarApi = festivalCalendarRef.current?.getApi();
+                    if (calendarApi) calendarApi.next();
+                  }}
+                  style={{
+                  width: 32,
+                  height: 32,
+                  border: '1px solid #e5e7eb',
+                  backgroundColor: '#fff',
+                  borderRadius: 6,
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  position: 'relative'
+                }}>
+                  <span style={{
+                    width: 8,
+                    height: 8,
+                    borderRight: '2px solid #374151',
+                    borderTop: '2px solid #374151',
+                    transform: 'rotate(45deg)',
+                    marginRight: 2
+                  }}></span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div style={styles.calendarBody}>
+            <FullCalendar
+              ref={festivalCalendarRef}
+              plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
+              initialView="dayGridMonth"
+              height="100%"
+              selectable={false}
+              editable={false}
+              events={festivalEvents}
+              headerToolbar={false}
+              datesSet={() => {
+                const calendarApi = festivalCalendarRef.current?.getApi();
+                if (calendarApi) {
+                  setFestivalCurrentTitle(calendarApi.view.title);
+                }
+              }}
+              viewDidMount={(info) => {
+                setFestivalCurrentTitle(info.view.title);
+              }}
+              eventClick={(info) => {
+                const festival = info.event.extendedProps?.festival;
+                if (festival) {
+                  setSelectedFestival(festival);
+                  // ✅ 모달 열지 않고 우측 카드에만 표시
+                }
+              }}
+            />
+          </div>
+            </div>
+
+            {/* Festival Calendar: Selected Festival 우측 패널 */}
+            <div style={styles.rightPanel}>
+              <div style={styles.sidebarSection}>
+                <div style={styles.sidebarTitle}>Selected Festival</div>
+                
+                {selectedFestival ? (
+                  <div>
+                    <TownCard 
+                      town={{
+                        id: selectedFestival.pSeq,
+                        name: selectedFestival.fstvlNm,
+                        image: selectedFestival.ministry_image_url || '/placeholder-festival.jpg',
+                        description: selectedFestival.festival_description || selectedFestival.ministry_description || '축제 정보'
+                      }}
+                      festival={selectedFestival}
+                      onClick={() => setFestivalDetailOpen(true)}
+                    />
+                  </div>
+                ) : (
+                  <p style={{
+                    fontSize: 13,
+                    color: '#6b7280',
+                    textAlign: 'center',
+                    padding: '40px 0',
+                    lineHeight: 1.6
+                  }}>
+                    캘린더에서 축제를 클릭하면<br/>여기에 표시됩니다
+                  </p>
+                )}
+              </div>
+            </div>
+          </>
+        ) : (
+          /* ✅ Saved Festivals 뷰 */
+          <>
+            <div style={styles.calendarCard}>
+          {/* 커스텀 상단 헤더 */}
+          <div style={{ padding: '32px 24px 24px', borderBottom: '1px solid #e5e7eb' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 24 }}>
+              <div>
+                <h2 style={{ fontSize: 32, fontWeight: 700, color: '#111', margin: 0, marginBottom: 8 }}>
+                  {currentTitle || 'January 2026'}
+                </h2>
+                <p style={{ fontSize: 14, color: '#6b7280', margin: 0 }}>
+                  {token ? "날짜를 선택해서 일정을 추가하고 관리하세요" : "로그인하면 일정 추가/수정/삭제가 됩니다."}
+                </p>
+              </div>
+              <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                <div style={{ display: 'flex', backgroundColor: '#f3f4f6', borderRadius: 8, padding: 4 }}>
+                  <button 
+                    onClick={() => {
+                      const calendarApi = calendarRef.current?.getApi();
+                      if (calendarApi) {
+                        calendarApi.changeView('dayGridMonth');
+                        setCurrentView('dayGridMonth');
+                      }
+                    }}
+                    style={{
+                      padding: '6px 16px',
+                      border: 'none',
+                      backgroundColor: currentView === 'dayGridMonth' ? '#fff' : 'transparent',
+                      color: currentView === 'dayGridMonth' ? '#111' : '#6b7280',
+                      borderRadius: 6,
+                      fontSize: 13,
+                      fontWeight: 600,
+                      cursor: 'pointer',
+                      boxShadow: currentView === 'dayGridMonth' ? '0 1px 2px rgba(0,0,0,0.05)' : 'none'
+                    }}>
+                    Month
+                  </button>
+                  <button 
+                    onClick={() => {
+                      const calendarApi = calendarRef.current?.getApi();
+                      if (calendarApi) {
+                        calendarApi.changeView('timeGridWeek');
+                        setCurrentView('timeGridWeek');
+                      }
+                    }}
+                    style={{
+                      padding: '6px 16px',
+                      border: 'none',
+                      backgroundColor: currentView === 'timeGridWeek' ? '#fff' : 'transparent',
+                      color: currentView === 'timeGridWeek' ? '#111' : '#6b7280',
+                      borderRadius: 6,
+                      fontSize: 13,
+                      fontWeight: 600,
+                      cursor: 'pointer',
+                      boxShadow: currentView === 'timeGridWeek' ? '0 1px 2px rgba(0,0,0,0.05)' : 'none'
+                    }}>
+                    Week
+                  </button>
+                </div>
+                <button 
+                  onClick={() => {
+                    const calendarApi = calendarRef.current?.getApi();
+                    if (calendarApi) calendarApi.prev();
+                  }}
+                  style={{
+                    width: 32,
+                    height: 32,
+                    border: '1px solid #e5e7eb',
+                    backgroundColor: '#fff',
+                    borderRadius: 6,
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: 16
+                  }}>
+                  ‹
+                </button>
+                <button 
+                  onClick={() => {
+                    const calendarApi = calendarRef.current?.getApi();
+                    if (calendarApi) calendarApi.next();
+                  }}
+                  style={{
+                    width: 32,
+                    height: 32,
+                    border: '1px solid #e5e7eb',
+                    backgroundColor: '#fff',
+                    borderRadius: 6,
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: 16
+                  }}>
+                  ›
+                </button>
+              </div>
             </div>
           </div>
 
@@ -539,24 +1315,27 @@ function Calendar() {
 
           <div style={styles.calendarBody}>
             <FullCalendar
+              ref={calendarRef}
               plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
               initialView="dayGridMonth"
               height="100%"
-              selectable={!!token}       // 로그인해야 선택 가능
-              editable={!!token}         // 로그인하면 드래그로 일정 이동 가능
-              events={events}
-              headerToolbar={{
-                left: "prev,next today",
-                center: "title",
-                right: "dayGridMonth,timeGridWeek",
-              }}
-              // 현재 보이는 달 범위에 맞춰 Google에서 이벤트 불러오기
+              selectable={!!token}
+              editable={!!token}
+              events={[...events, ...savedFestivalEvents]}
+              headerToolbar={false}
               datesSet={(info) => {
                 if (!token) return;
-                // FullCalendar가 제공하는 현재 view 기간
                 fetchEvents(info.start.toISOString(), info.end.toISOString());
+                // 타이틀 업데이트
+                const calendarApi = calendarRef.current?.getApi();
+                if (calendarApi) {
+                  setCurrentTitle(calendarApi.view.title);
+                }
               }}
-              // 날짜/구간 선택 시 일정 추가 모달 열기
+              viewDidMount={(info) => {
+                setCurrentTitle(info.view.title);
+                setCurrentView(info.view.type);
+              }}
               select={(info) => {
                 if (!token) return;
 
@@ -571,8 +1350,19 @@ function Calendar() {
                 setModalMode("add");
                 setModalOpen(true);
               }}
-              // ✅ 이벤트 클릭 시: 수정 모달 열기
               eventClick={(info) => {
+                // ✅ Saved Festival 이벤트인 경우 삭제 처리
+                if (info.event.id.startsWith('saved-')) {
+                  const pSeq = info.event.id.replace('saved-', '');
+                  const festival = savedCalendarFestivals.find(f => String(f.pSeq) === pSeq);
+                  if (festival) {
+                    if (confirm(`"${festival.fstvlNm}"을(를) 저장된 축제에서 제거하시겠습니까?`)) {
+                      toggleCalendarFestival(festival);
+                    }
+                  }
+                  return;
+                }
+
                 if (!token) return;
 
                 setFormData({
@@ -586,7 +1376,6 @@ function Calendar() {
                 setModalMode("edit");
                 setModalOpen(true);
               }}
-              // ✅ 드래그로 일정 이동/크기 조정 시
               eventDrop={(info) => {
                 if (!token) return;
 
@@ -597,7 +1386,6 @@ function Calendar() {
                   allDay: info.event.allDay,
                 });
               }}
-              // ✅ 크기 조정(resize) 이벤트
               eventResize={(info) => {
                 if (!token) return;
 
@@ -616,62 +1404,54 @@ function Calendar() {
               </div>
             )}
           </div>
-        </div>
+            </div>
 
-        {/* 오른쪽 패널 */}
-        <div style={styles.rightPanel}>
-          <div style={{ fontSize: 14, fontWeight: 700, color: "#111", marginBottom: 16 }}>
-            UPCOMING FESTIVALS
+            {/* Saved Festivals: Upcoming Festivals 우측 패널 */}
+            <div style={styles.rightPanel}>
+          <div style={{ fontSize: 16, fontWeight: 700, color: "#111", marginBottom: 20 }}>
+            🎉 UPCOMING FESTIVALS
           </div>
 
           {!token ? (
-            <div style={{ fontSize: 13, color: "#6b7280" }}>
-              로그인하면 다가오는 일정이 표시됩니다.
-            </div>
-          ) : loading ? (
-            <div style={{ fontSize: 13, color: "#6b7280" }}>
-              불러오는 중…
-            </div>
-          ) : upcoming.length === 0 ? (
-            <div style={{ fontSize: 13, color: "#6b7280" }}>
-              다가오는 일정이 없습니다.
-            </div>
+            <Card>
+              <CardContent className="pt-6">
+                <p className="text-sm text-muted-foreground text-center">
+                  로그인하면 다가오는 일정이 표시됩니다.
+                </p>
+              </CardContent>
+            </Card>
+          ) : likedFestivals.length === 0 ? (
+            <Card>
+              <CardContent className="pt-6">
+                <p className="text-sm text-muted-foreground text-center">
+                  찜한 축제가 없습니다.<br/>
+                  Festival Calendar에서 축제를 찜해보세요!
+                </p>
+              </CardContent>
+            </Card>
           ) : (
-            upcoming.map((ev, idx) => (
-              <div key={ev.id} style={styles.eventCard}>
-                <div
-                  style={{
-                    ...styles.eventImage,
-                    background: idx === 0 ? "#fff3e0" : idx === 1 ? "#f3e5f5" : "#e0f2f1",
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+              {likedFestivals.map((festival) => (
+                <TownCard 
+                  key={festival.pSeq}
+                  town={{
+                    id: festival.pSeq,
+                    name: festival.fstvlNm || festival.festival_name,
+                    image: festival.ministry_image_url || festival.image_url || '/placeholder-festival.jpg',
+                    description: festival.festival_description || festival.ministry_description || '축제 정보'
                   }}
-                >
-                  📌
-                </div>
-                <div style={{ fontSize: 14, fontWeight: 700, color: "#111", marginBottom: 8 }}>
-                  {ev.title}
-                </div>
-                <div style={{ fontSize: 12, color: "#9ca3af", marginBottom: 8 }}>
-                  📅 {ev.date}
-                </div>
-                {ev.location ? (
-                  <div style={{ fontSize: 12, color: "#6b7280", marginBottom: 8 }}>
-                    📍 {ev.location}
-                  </div>
-                ) : null}
-                <div style={{ display: "flex", gap: 8 }}>
-                  <button style={{ ...styles.btn, flex: 1 }}>View Details</button>
-                  <button
-                    style={{ ...styles.btnGhost, padding: "10px 8px" }}
-                    onClick={() => deleteEvent(ev.id)}
-                    title="삭제"
-                  >
-                    🗑️
-                  </button>
-                </div>
-              </div>
-            ))
+                  festival={festival}
+                  onClick={() => {
+                    setSelectedFestival(festival);
+                    setFestivalDetailOpen(true);
+                  }}
+                />
+              ))}
+            </div>
           )}
-        </div>
+            </div>
+          </>
+        )}
       </div>
 
       {/* ✅ 일정 추가/수정/삭제 모달 */}
@@ -1044,7 +1824,16 @@ function Calendar() {
           </div>
         </div>
       )}
-    </div>
+
+      {/* ✅ 축제 상세정보 모달 */}
+      {festivalDetailOpen && selectedFestival && (
+        <TownDetailModal
+          festival={selectedFestival}
+          onClose={() => setFestivalDetailOpen(false)}
+        />
+      )}
+      </div>
+    </>
   );
 }
 

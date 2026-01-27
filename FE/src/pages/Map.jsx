@@ -1,9 +1,9 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useLocation } from "react-router-dom";
-import festivals from "../data/festivals_with_geo.json";
+import festivals from "../data/festivals.json";
 import { loadGoogleMaps } from "../lib/googleMaps";
-
-console.log("VITE_GOOGLE_MAPS_KEY =", import.meta.env.VITE_GOOGLE_MAPS_KEY);
+import useStore from "../store/useStore";
+import Header from "../components/Header";
 
 // 위도 경도 거리 계산
 function haversineMeters(lat1, lng1, lat2, lng2) {
@@ -41,9 +41,10 @@ function priceLevelLabel(priceLevel) {
 
 export default function Map() {
   const { state } = useLocation();
+  const { selectedFestivalPSeq } = useStore();
 
-  // 백엔드(ai)에서 받은 축제 id(pSeq)
-  const festivalId = state?.festivalId;
+  // 백엔드(ai)에서 받은 축제 id(pSeq) 또는 zustand store에서 가져오기
+  const festivalId = state?.festivalId || selectedFestivalPSeq;
 
   // 혹시 안나오면 서울시청 화면 나오게
   const query = state?.query ?? "서울시청";
@@ -290,7 +291,7 @@ export default function Map() {
       const lng = Number(selectedFestival.longitude);
 
       if (!Number.isNaN(lat) && !Number.isNaN(lng)) {
-        showCenterAndSearch(lat, lng, selectedFestival.festival_name || query);
+        showCenterAndSearch(lat, lng, selectedFestival.fstvlNm || query);
         return;
       }
     }
@@ -354,19 +355,21 @@ export default function Map() {
   });
 
   const 기준라벨 = selectedFestival
-    ? `축제: ${selectedFestival.festival_name} (pSeq: ${selectedFestival.pSeq})`
+    ? `축제: ${selectedFestival.fstvlNm} (pSeq: ${selectedFestival.pSeq})`
     : `검색어: ${query}`;
 
   return (
-    <div
-      style={{
-        display: "flex",
-        gap: 12,
-        padding: 12,
-        height: "100vh",
-        boxSizing: "border-box",
-      }}
-    >
+    <>
+      <Header />
+      <div
+        style={{
+          display: "flex",
+          gap: 12,
+          padding: 12,
+          height: "calc(100vh - 64px)",
+          boxSizing: "border-box",
+        }}
+      >
       {/* 왼쪽 리스트 */}
       <div
         style={{
@@ -581,6 +584,7 @@ export default function Map() {
           </a>
         </div>
       </div>
-    </div>
+      </div>
+    </>
   );
 }
