@@ -32,6 +32,16 @@ function Loading() {
           0%, 100% { transform: translateY(0px) rotate(0deg); }
           50% { transform: translateY(-20px) rotate(5deg); }
         }
+        @keyframes bounce {
+          0%, 100% { 
+            transform: translateY(0px);
+            animation-timing-function: cubic-bezier(0.34, 1.56, 0.64, 1);
+          }
+          50% { 
+            transform: translateY(-60px);
+            animation-timing-function: ease-in;
+          }
+        }
         @keyframes orbit {
           from { transform: rotate(0deg) translateX(150px) rotate(0deg); }
           to { transform: rotate(360deg) translateX(150px) rotate(-360deg); }
@@ -72,64 +82,44 @@ function Loading() {
       {/* 메인 컨텐츠 */}
       <div style={{
         textAlign: 'center',
-        zIndex: 10,
-        animation: 'float 4s ease-in-out infinite'
+        zIndex: 10
       }}>
         {/* 달걀 프라이 캐릭터 */}
         <div style={{
           width: '180px',
           height: '180px',
-          background: 'white',
-          borderRadius: '50% 40% 50% 40%',
           margin: '0 auto 40px',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          boxShadow: '0 20px 60px rgba(255, 140, 0, 0.3)',
           position: 'relative',
-          transform: 'rotate(-5deg)',
+          animation: 'bounce 2s ease-in-out infinite'
         }}>
-          {/* 노른자 */}
-          <div style={{
-            width: '100px',
-            height: '100px',
-            background: 'linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%)',
-            borderRadius: '50%',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            boxShadow: '0 8px 20px rgba(251, 191, 36, 0.4)',
-            position: 'relative'
-          }}>
+          {/* SVG 프라이 계란 */}
+          <svg width="180" height="180" viewBox="0 0 100 100" style={{ filter: 'drop-shadow(0 20px 60px rgba(255, 140, 0, 0.3))' }}>
+            {/* 흰자 */}
+            <path 
+              d="M50 5 C 58 5, 62 12, 70 15 C 78 18, 88 15, 92 25 C 96 35, 90 42, 95 50 C 100 58, 105 68, 92 78 C 79 88, 75 82, 65 92 C 55 102, 45 102, 35 92 C 25 82, 21 88, 8 78 C -5 68, 0 58, 5 50 C 10 42, 4 35, 8 25 C 12 15, 22 18, 30 15 C 38 12, 42 5, 50 5" 
+              fill="url(#whiteGrad)"
+              opacity="0.95"
+            />
+            <defs>
+              <radialGradient id="whiteGrad" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stopColor="#fef9e7" />
+                <stop offset="100%" stopColor="#fef5d4" />
+              </radialGradient>
+              <radialGradient id="yolkGrad" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stopColor="#fbbf24" />
+                <stop offset="100%" stopColor="#f59e0b" />
+              </radialGradient>
+            </defs>
+            {/* 노른자 */}
+            <circle cx="50" cy="50" r="24" fill="url(#yolkGrad)" />
             {/* 얼굴 */}
-            <div>
-              <div style={{
-                display: 'flex',
-                gap: '18px',
-                marginBottom: '8px'
-              }}>
-                <div style={{
-                  width: '8px',
-                  height: '8px',
-                  background: '#422006',
-                  borderRadius: '50%'
-                }}></div>
-                <div style={{
-                  width: '8px',
-                  height: '8px',
-                  background: '#422006',
-                  borderRadius: '50%'
-                }}></div>
-              </div>
-              <div style={{
-                width: '24px',
-                height: '12px',
-                borderBottom: '3px solid #422006',
-                borderRadius: '0 0 12px 12px',
-                margin: '0 auto'
-              }}></div>
-            </div>
-          </div>
+            <circle cx="43" cy="46" r="2.5" fill="#422006" />
+            <circle cx="57" cy="46" r="2.5" fill="#422006" />
+            <path d="M42 56 Q50 64 58 56" fill="none" stroke="#422006" strokeWidth="2.5" strokeLinecap="round" />
+          </svg>
 
           {/* 공전하는 작은 요소들 */}
           <div className="orbit-icon" style={{
@@ -175,8 +165,7 @@ function Loading() {
           Searching for your <span style={{
             background: 'linear-gradient(90deg, #f59e0b, #ef4444)',
             WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
-            fontStyle: 'italic'
+            WebkitTextFillColor: 'transparent'
           }}>golden moment</span>...
         </h2>
 

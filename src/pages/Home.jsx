@@ -1,18 +1,16 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import festivals from "../data/festivals.json";
-import useStore from "../store/useStore";
 
 import Header_home from "../components/Header_home";
 import { TownCard } from "../components/TownCard";
 import { TownDetailModal } from "../components/TownDetailModal";
 import WeatherWidget from "../components/WeatherWidget";
+import bannerVideo from "../assets/풍랑30.mp4";
 
 function Home() {
   const navigate = useNavigate();
-  const [pSeqInput, setPSeqInput] = useState("");
   const [selectedFestival, setSelectedFestival] = useState(null);
-  const { setSelectedFestivalPSeq } = useStore();
 
   return (
     <div style={{ minHeight: "100vh", backgroundColor: "#f9fafb" }}>
@@ -25,15 +23,45 @@ function Home() {
             borderRadius: 32,
             overflow: "hidden",
             aspectRatio: "16 / 6",
-            backgroundImage: `linear-gradient(to right, rgba(255,255,255,.95), rgba(255,255,255,.4), rgba(255,255,255,.9)), url('https://images.unsplash.com/photo-1464983953574-0892a716854b?auto=format&fit=crop&w=1200&q=80')`,
-            backgroundSize: "cover",
-            backgroundPosition: "center",
+            position: "relative",
             display: "flex",
             alignItems: "center",
             padding: 60,
           }}
         >
-          <div style={{ maxWidth: 600 }}>
+          {/* 배경 비디오 */}
+          <video
+            autoPlay
+            loop
+            muted
+            playsInline
+            style={{
+              position: "absolute",
+              top: 0,
+              left: 0,
+              width: "100%",
+              height: "100%",
+              objectFit: "cover",
+              zIndex: 0,
+            }}
+          >
+            <source src={bannerVideo} type="video/mp4" />
+          </video>
+          
+          {/* 오버레이 */}
+          <div
+            style={{
+              position: "absolute",
+              top: 0,
+              left: 0,
+              width: "100%",
+              height: "100%",
+              background: "linear-gradient(to right, rgba(255,255,255,.95), rgba(255,255,255,.4), rgba(255,255,255,.9))",
+              zIndex: 1,
+            }}
+          />
+
+          <div style={{ maxWidth: 600, position: "relative", zIndex: 2 }}>
             <span
               style={{
                 display: "inline-block",
@@ -78,40 +106,6 @@ function Home() {
             >
               Start Recommendation with AI
             </button>
-            <div style={{ marginTop: 24, display: "flex", gap: 8 }}>
-              <input
-                value={pSeqInput}
-                onChange={(e) => setPSeqInput(e.target.value)}
-                placeholder="축제 번호 입력"
-                style={{
-                  padding: "12px 16px",
-                  borderRadius: 12,
-                  border: "1px solid #FF5F33",
-                }}
-              />
-              <button
-                onClick={() => {
-                  const f = festivals.find((x) => String(x.pSeq) === String(pSeqInput));
-                  if (f) {
-                    setSelectedFestivalPSeq(pSeqInput);
-                    alert("캘린더에 저장했어요!");
-                    setPSeqInput("");
-                  } else {
-                    alert("축제를 찾지 못했어요.");
-                  }
-                }}
-                style={{
-                  padding: "12px 24px",
-                  borderRadius: 12,
-                  border: "none",
-                  background: "#FF5F33",
-                  color: "white",
-                  fontWeight: 700,
-                }}
-              >
-                캘린더로 🎪
-              </button>
-            </div>
           </div>
         </section>
         {/* GRID */}
@@ -125,7 +119,7 @@ function Home() {
               AI 분석 결과: #전통예술 #야경 #사진명소
             </p>
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 12 }}>
-              {festivals.slice(0, 3).map((f) => (
+              {festivals.filter(f => [201, 750, 272].includes(f.pSeq)).map((f) => (
                 <TownCard
                   key={f.pSeq}
                   town={{

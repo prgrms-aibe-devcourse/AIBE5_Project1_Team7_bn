@@ -154,6 +154,8 @@ function Dateregistration() {
     } : null
   );
   const [tripName, setTripName] = useState(editingTrip?.name || "");
+  const [selectedRegion, setSelectedRegion] = useState(editingTrip?.region || "서울");
+  const [currentMonth, setCurrentMonth] = useState(new Date());
 
   // 날짜 선택 핸들러
   const handleDateSelect = (selectInfo) => {
@@ -242,6 +244,27 @@ function Dateregistration() {
     }
   }, [selectedDates]);
 
+  // 이전/다음 달로 이동
+  const goToPreviousMonth = () => {
+    setCurrentMonth(prev => {
+      const newDate = new Date(prev);
+      newDate.setMonth(newDate.getMonth() - 1);
+      return newDate;
+    });
+  };
+
+  const goToNextMonth = () => {
+    setCurrentMonth(prev => {
+      const newDate = new Date(prev);
+      newDate.setMonth(newDate.getMonth() + 1);
+      return newDate;
+    });
+  };
+
+  const formatMonthYear = (date) => {
+    return `${date.getFullYear()}년 ${date.getMonth() + 1}월`;
+  };
+
   return (
     <div className="min-h-screen flex flex-col bg-white dark:bg-gray-900">
       <style>{calendarStyles}</style>
@@ -271,6 +294,20 @@ function Dateregistration() {
                   placeholder="여행 이름을 입력하세요 (예: 보성여행길라잡이)"
                   className="px-4 py-2 border-2 border-gray-300 rounded-lg text-base focus:outline-none focus:border-orange-500 transition-colors flex-1 max-w-md"
                 />
+                <select
+                  value={selectedRegion}
+                  onChange={(e) => setSelectedRegion(e.target.value)}
+                  className="px-4 py-2 border-2 border-gray-300 rounded-lg text-base focus:outline-none focus:border-orange-500 transition-colors bg-white"
+                >
+                  <option value="서울">서울</option>
+                  <option value="부산">부산</option>
+                  <option value="대구">대구</option>
+                  <option value="인천">인천</option>
+                  <option value="광주">광주</option>
+                  <option value="대전">대전</option>
+                  <option value="강릉">강릉</option>
+                  <option value="제주">제주</option>
+                </select>
               </div>
             </div>
             <button 
@@ -281,6 +318,7 @@ function Dateregistration() {
                   // 편집 모드: 기존 trip 업데이트
                   updateTrip(editingTripId, {
                     name: tripName,
+                    region: selectedRegion,
                     start: selectedDates.start,
                     end: selectedDates.end,
                     display: selectedDates.display,
@@ -294,6 +332,7 @@ function Dateregistration() {
                   const newTrip = {
                     id: Date.now(),
                     name: tripName,
+                    region: selectedRegion,
                     start: selectedDates.start,
                     end: selectedDates.end,
                     display: selectedDates.display,
@@ -320,18 +359,30 @@ function Dateregistration() {
           </section>
 
           {/* Calendar Scroll Container */}
-          <div className="overflow-y-auto pr-4 flex-1 space-y-12">
-            {/* 2026년 3월 */}
+          <div className="overflow-y-auto pr-4 flex-1">
+            {/* Calendar Navigation */}
             <section>
               <div className="flex items-center justify-between mb-8">
-                <h3 className="text-2xl font-bold text-primary dark:text-primary">2026년 3월</h3>
+                <button
+                  onClick={goToPreviousMonth}
+                  className="p-2 rounded-full hover:bg-gray-100 transition-all"
+                >
+                  <span className="material-symbols-outlined text-2xl text-gray-700">chevron_left</span>
+                </button>
+                <h3 className="text-2xl font-bold text-primary dark:text-primary">{formatMonthYear(currentMonth)}</h3>
+                <button
+                  onClick={goToNextMonth}
+                  className="p-2 rounded-full hover:bg-gray-100 transition-all"
+                >
+                  <span className="material-symbols-outlined text-2xl text-gray-700">chevron_right</span>
+                </button>
               </div>
               <div className="custom-calendar">
                 <FullCalendar
                   ref={calendarRef}
                   plugins={[dayGridPlugin, interactionPlugin]}
                   initialView="dayGridMonth"
-                  initialDate="2026-03-01"
+                  initialDate={currentMonth}
                   headerToolbar={false}
                   height="auto"
                   dayMaxEvents={false}
@@ -344,31 +395,7 @@ function Dateregistration() {
                   dayCellClassNames="cursor-pointer"
                   locale="ko"
                   dayHeaderFormat={{ weekday: 'short' }}
-                />
-              </div>
-            </section>
-
-            {/* 2026년 4월 */}
-            <section className="mb-12">
-              <div className="flex items-center justify-between mb-8">
-                <h3 className="text-2xl font-bold text-primary dark:text-primary">2026년 4월</h3>
-              </div>
-              <div className="custom-calendar opacity-60">
-                <FullCalendar
-                  plugins={[dayGridPlugin, interactionPlugin]}
-                  initialView="dayGridMonth"
-                  initialDate="2026-04-01"
-                  headerToolbar={false}
-                  height="auto"
-                  dayMaxEvents={false}
-                  fixedWeekCount={false}
-                  showNonCurrentDates={false}
-                  selectable={true}
-                  selectMirror={true}
-                  select={handleDateSelect}
-                  unselectAuto={false}
-                  locale="ko"
-                  dayHeaderFormat={{ weekday: 'short' }}
+                  key={currentMonth.toISOString()}
                 />
               </div>
             </section>
