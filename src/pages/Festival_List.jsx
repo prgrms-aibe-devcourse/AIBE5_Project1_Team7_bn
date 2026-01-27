@@ -1,21 +1,12 @@
-<<<<<<< Updated upstream
-
 
 import React, { useState, useEffect } from "react";
-=======
-import React, { useState } from "react";
->>>>>>> Stashed changes
 import festivals from "../data/festivals.json";
 import Header from "../components/Header";
 import { TownCard } from "../components/TownCard";
 import { TownDetailModal } from "../components/TownDetailModal";
 import { useNavigate } from "react-router-dom";
-<<<<<<< Updated upstream
 import Loading from "./Loading";
-
-=======
 import "./Festival_List.css";
->>>>>>> Stashed changes
 
 function Festival_List() {
 	const [selectedFestival, setSelectedFestival] = useState(null);
@@ -215,7 +206,7 @@ function Festival_List() {
 								))
 							) : (
 								<div className="text-center text-gray-400 py-12 text-lg font-semibold w-full">
-									표시할 축제가 없습니다.<br />
+									표시할 축제가 없습니다.
 									(데이터가 없거나, 필터 조건에 맞는 축제가 없습니다.)
 								</div>
 							)}

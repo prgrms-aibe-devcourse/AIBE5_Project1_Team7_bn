@@ -44,7 +44,7 @@ function Home() {
                 marginBottom: 24,
               }}
             >
-              🍏 처음 오신 멘트 - 효연님 해주세요
+              3분이면 오늘의 축제 여행 코스가 뚝딱✨
             </span>
             <h1 style={{ fontSize: 48, fontWeight: 900, lineHeight: 1.1 }}>
               Find your <br />
@@ -118,7 +118,7 @@ function Home() {
           {/* LEFT - 추천 섹션 */}
           <section>
             <h2 style={{ fontSize: 28, fontWeight: 900 }}>
-              ✨ 지금 뜨는 축제 - 멘트 정해주세요 효연님
+              요즘 난리 난 축제들, 놓치면 아쉬워요 😎
             </h2>
             <p style={{ color: "#6b7280", marginBottom: 24 }}>
               AI 분석 결과: #전통예술 #야경 #사진명소

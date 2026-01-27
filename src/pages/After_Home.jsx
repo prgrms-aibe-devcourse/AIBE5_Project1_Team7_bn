@@ -134,7 +134,7 @@ function After_Home() {
           {/* LEFT */}
           <section>
             <h2 style={{ fontSize: 28, fontWeight: 900 }}>
-              ✨ 풋사과님 취향에 딱 맞는 축제
+              OO님을 위한 노을 한 스푼, 이 축제 어때요? 🌇
             </h2>
             <p style={{ color: "#6b7280", marginBottom: 24 }}>
               AI 분석 결과: #전통예술 #야경 #사진명소

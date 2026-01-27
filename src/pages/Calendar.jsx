@@ -14,7 +14,7 @@ import { TownDetailModal } from "../components/TownDetailModal";
 // ✅ FullCalendar 이벤트 텍스트 중앙정렬 및 스타일 개선
 const calendarStyles = `
   .fc {
-    font-family: 'Plus Jakarta Sans','Segoe UI',sans-serif;
+    font-family: 'Pretendard','Noto Sans KR','Apple SD Gothic Neo','Malgun Gothic','Segoe UI',sans-serif;
   }
   
   .fc-event-title {
@@ -864,9 +864,9 @@ function Calendar() {
   const styles = {
     container: { display: "flex", flexDirection: "column", minHeight: "calc(100vh - 64px)", background: "#f9fafb", fontFamily: "'Plus Jakarta Sans','Segoe UI',sans-serif" },
     header: { height: 60, background: "#fff", borderBottom: "1px solid #e5e7eb", display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0 20px", marginBottom: 0 },
-    sidebar: { position: "fixed", left: 0, top: 124, width: 220, height: "calc(100vh - 124px)", background: "#fff", borderRight: "1px solid #e5e7eb", padding: 20, overflowY: "auto" },
-    main: { marginLeft: 250, marginTop: 0, flex: 1, display: "flex", gap: 20, padding: 20 },
-    calendarCard: { flex: 1, background: "#fff", borderRadius: 12, boxShadow: "0 2px 8px rgba(0,0,0,0.06)", overflow: "hidden", display: "flex", flexDirection: "column" },
+    sidebar: { position: "fixed", left: 0, top: 124, width: 320, height: "calc(100vh - 124px)", background: "#fff", borderRight: "1px solid #e5e7eb", padding: 28, overflowY: "auto" },
+    main: { marginLeft: 340, marginTop: 0, flex: 1, display: "flex", gap: 20, padding: 20, maxWidth: "calc(100vw - 380px)" },
+    calendarCard: { flex: "0 0 60%", maxWidth: "60%", background: "#fff", borderRadius: 12, boxShadow: "0 2px 8px rgba(0,0,0,0.06)", overflow: "hidden", display: "flex", flexDirection: "column" },
     calendarTopBar: { display: "flex", alignItems: "center", justifyContent: "space-between", padding: "12px 16px", borderBottom: "1px solid #e5e7eb", background: "#fff" },
     calendarBody: { padding: 16, overflowY: "auto", height: "calc(100vh - 120px)" },
     rightPanel: { width: 340, background: "#fff", borderRadius: 12, padding: 20, boxShadow: "0 2px 8px rgba(0,0,0,0.06)", overflowY: "auto" },

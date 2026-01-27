@@ -1,5 +1,6 @@
 import { Link, useLocation } from "react-router-dom";
 import { Bell, User } from "lucide-react";
+import home_logo from "../assets/home_logo.png";
 
 function Header() {
   const location = useLocation();
@@ -17,19 +18,20 @@ function Header() {
 
   return (
     <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
-      <div className="max-w-[77%] mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-[84%] mx-auto px-4 sm:px-6 lg:px-8">
         {/* 🔑 핵심: relative */}
         <div className="flex items-center h-16 relative">
           {/* ================= 좌측 ================= */}
           <div className="flex items-center space-x-8">
             {/* 로고 */}
             <Link to="/after_home" className="flex items-center space-x-2">
-              <div className="w-10 h-10 bg-linear-to-br from-orange-400 to-orange-500 rounded-full flex items-center justify-center text-white text-xl font-bold">
-                🎪
-              </div>
-              <span className="text-2xl font-bold text-gray-900">
-                Festory
-              </span>
+              <img
+                src={home_logo}
+                alt="Festory Logo"
+                className="w-30 h-20 object-cover"
+                style={{ background: 'linear-gradient(135deg, #FFA500 0%, #FFD700 100%)' }}
+              />
+            
             </Link>
 
             {/* 네비게이션 */}
@@ -38,7 +40,7 @@ function Header() {
                 <Link
                   key={item.path}
                   to={item.path}
-                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                  className={`px-4 py-2 rounded-lg text-lg font-medium transition-colors ${
                     isActive(item.path)
                       ? "text-orange-600 bg-orange-50"
                       : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
@@ -51,7 +53,7 @@ function Header() {
           </div>
 
           {/* ================= 중앙 ================= */}
-          <div className="hidden lg:block absolute left-[60%] -translate-x-1/2 w-full max-w-md">
+          <div className="hidden lg:block absolute left-[79%] -translate-x-1/2 w-full max-w-xs">
             <div className="relative">
               <input
                 type="text"
