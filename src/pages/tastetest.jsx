@@ -2,17 +2,38 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Header from "../components/Header";
 import useStore from "../store/useStore";
+import Loading from "./Loading";
 
 function TasteTest() {
   const navigate = useNavigate();
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const { addTasteTestAnswer, clearTasteTestAnswers } = useStore();
+  const [isLoading, setIsLoading] = useState(() => {
+    // 1/3 확률로 로딩 화면 표시 결정 (초기값으로만 계산)
+    return Math.random() < 1/3;
+  });
+
+  // 1/3 확률로 로딩 화면 표시
+  useEffect(() => {
+    if (isLoading) {
+      // 2~4초 랜덤 대기
+      const randomDelay = 2000 + Math.random() * 2000;
+      const timer = setTimeout(() => {
+        setIsLoading(false);
+      }, randomDelay);
+      return () => clearTimeout(timer);
+    }
+  }, [isLoading]);
 
   // 테스트 시작 시 기존 답변 초기화
   useEffect(() => {
     clearTasteTestAnswers();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  if (isLoading) {
+    return <Loading />;
+  }
 
   // 5개의 질문 정의
   const questions = [

@@ -10,6 +10,7 @@ import useStore from "../store/useStore";
 import Header from "../components/Header";
 import { TownCard } from "../components/TownCard";
 import { TownDetailModal } from "../components/TownDetailModal";
+import Loading from "./Loading";
 
 // ✅ FullCalendar 이벤트 텍스트 중앙정렬 및 스타일 개선
 const calendarStyles = `
@@ -130,6 +131,10 @@ function Calendar() {
   const [error, setError] = useState("");
   const [events, setEvents] = useState([]); // FullCalendar용 이벤트 배열
   const [loading, setLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(() => {
+    // 1/3 확률로 로딩 화면 표시 결정 (초기값으로만 계산)
+    return Math.random() < 1/3;
+  });
 
   // 오른쪽 "Upcoming" 패널용 원본(구글 이벤트)
   // const [rawEvents, setRawEvents] = useState([]); // ✅ 이제 likedFestivals를 사용하므로 제거
@@ -182,6 +187,17 @@ function Calendar() {
     price: false,
     weekend: false
   });
+
+  // ✅ 로딩 타이머 (페이지 진입 시 1/3 확률로 2~4초 대기)
+  useEffect(() => {
+    if (isLoading) {
+      const randomDelay = 2000 + Math.random() * 2000;
+      const timer = setTimeout(() => {
+        setIsLoading(false);
+      }, randomDelay);
+      return () => clearTimeout(timer);
+    }
+  }, [isLoading]);
 
   // ---------- GIS init ----------
   useEffect(() => {
@@ -682,7 +698,31 @@ function Calendar() {
     if (activeFilters.regions.length > 0) {
       filteredFestivals = filteredFestivals.filter(festival => {
         const location = festival.ministry_region || festival.opar || festival.rdnmadr || "";
-        return activeFilters.regions.some(region => location.includes(region));
+        return activeFilters.regions.some(region => {
+          // 축약형 지역명을 전체 이름으로 매핑
+          const regionMap = {
+            '서울': '서울',
+            '부산': '부산',
+            '대구': '대구',
+            '인천': '인천',
+            '광주': '광주',
+            '대전': '대전',
+            '울산': '울산',
+            '세종': '세종',
+            '경기': '경기',
+            '강원': '강원',
+            '충북': '충청북도',
+            '충남': '충청남도',
+            '전북': '전라북도',
+            '전남': '전라남도',
+            '경북': '경상북도',
+            '경남': '경상남도',
+            '제주': '제주'
+          };
+          
+          const fullRegionName = regionMap[region] || region;
+          return location.includes(fullRegionName);
+        });
       });
     }
 
@@ -881,6 +921,10 @@ function Calendar() {
     eventImage: { width: "100%", height: 160, borderRadius: 8, background: "#f3f4f6", marginBottom: 12, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 48 },
     note: { fontSize: 12, color: "#6b7280" },
   };
+
+  if (isLoading) {
+    return <Loading />;
+  }
 
   return (
     <>

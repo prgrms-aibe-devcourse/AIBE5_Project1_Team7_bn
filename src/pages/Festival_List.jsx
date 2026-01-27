@@ -1,4 +1,7 @@
+<<<<<<< HEAD
 
+=======
+>>>>>>> 32e92aeb68067d3a2e2606de26a1cea2c564a582
 import React, { useState, useEffect } from "react";
 import festivals from "../data/festivals.json";
 import Header from "../components/Header";
@@ -6,7 +9,10 @@ import { TownCard } from "../components/TownCard";
 import { TownDetailModal } from "../components/TownDetailModal";
 import { useNavigate } from "react-router-dom";
 import Loading from "./Loading";
+<<<<<<< HEAD
 import "./Festival_List.css";
+=======
+>>>>>>> 32e92aeb68067d3a2e2606de26a1cea2c564a582
 
 function Festival_List() {
 	const [selectedFestival, setSelectedFestival] = useState(null);
@@ -14,17 +20,22 @@ function Festival_List() {
 	const [theme, setTheme] = useState("");
 	const [date, setDate] = useState("");
 	const [region, setRegion] = useState("");
-	const [isLoading, setIsLoading] = useState(true);
+	const [isLoading, setIsLoading] = useState(() => {
+		// 1/3 확률로 로딩 화면 표시 결정 (초기값으로만 계산)
+		return Math.random() < 1/3;
+	});
 	const navigate = useNavigate();
 
 	useEffect(() => {
-		// 페이지 로딩 시뮬레이션
-		const timer = setTimeout(() => {
-			setIsLoading(false);
-		}, 3000);
-
-		return () => clearTimeout(timer);
-	}, []);
+		if (isLoading) {
+			// 2~4초 랜덤 대기
+			const randomDelay = 2000 + Math.random() * 2000;
+			const timer = setTimeout(() => {
+				setIsLoading(false);
+			}, randomDelay);
+			return () => clearTimeout(timer);
+		}
+	}, [isLoading]);
 
 	if (isLoading) {
 		return <Loading />;

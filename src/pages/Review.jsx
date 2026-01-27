@@ -1,12 +1,17 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Header from "../components/Header";
 import useStore from "../store/useStore";
+import Loading from "./Loading";
 
 function Review() {
   const navigate = useNavigate();
   const tripSchedules = useStore((state) => state.tripSchedules);
   const trips = useStore((state) => state.trips);
+  const [isLoading, setIsLoading] = useState(() => {
+    // 1/3 확률로 로딩 화면 표시 결정 (초기값으로만 계산)
+    return Math.random() < 1/3;
+  });
   
   // 로컬 스토리지에서 초기값 가져오기
   const getInitialReviews = () => {
@@ -21,6 +26,21 @@ function Review() {
   const [hoveredRating, setHoveredRating] = useState(0);
   const [reviewText, setReviewText] = useState("");
   const [activeTab, setActiveTab] = useState("write"); // 'write' | 'list'
+
+  useEffect(() => {
+    if (isLoading) {
+      // 2~4초 랜덤 대기
+      const randomDelay = 2000 + Math.random() * 2000;
+      const timer = setTimeout(() => {
+        setIsLoading(false);
+      }, randomDelay);
+      return () => clearTimeout(timer);
+    }
+  }, [isLoading]);
+
+  if (isLoading) {
+    return <Loading />;
+  }
 
   // 모든 일정의 축제 모으기
   const getAllFestivals = () => {
