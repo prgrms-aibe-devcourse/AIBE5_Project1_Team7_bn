@@ -82,6 +82,7 @@ const useStore = create(
       // 여행 일정 목록 (여러 개의 trip 관리)
       trips: [],
       currentTripId: null,
+      editingTripId: null,
       addTrip: (trip) => set((state) => ({
         trips: [...state.trips, { ...trip, id: Date.now() }],
         currentTripId: trip.id || Date.now()
@@ -96,6 +97,30 @@ const useStore = create(
         currentTripId: state.currentTripId === tripId ? (state.trips[0]?.id || null) : state.currentTripId
       })),
       setCurrentTrip: (tripId) => set({ currentTripId: tripId }),
+      setEditingTripId: (tripId) => set({ editingTripId: tripId }),
+
+      // 일정별 축제 목록 (tripId -> dayIndex -> festivals[])
+      tripSchedules: {}, // { [tripId]: { [dayIndex]: [festivals] } }
+      addFestivalToSchedule: (tripId, dayIndex, festival) => set((state) => {
+        const tripSchedules = { ...state.tripSchedules };
+        if (!tripSchedules[tripId]) {
+          tripSchedules[tripId] = {};
+        }
+        if (!tripSchedules[tripId][dayIndex]) {
+          tripSchedules[tripId][dayIndex] = [];
+        }
+        tripSchedules[tripId][dayIndex] = [...tripSchedules[tripId][dayIndex], festival];
+        return { tripSchedules };
+      }),
+      removeFestivalFromSchedule: (tripId, dayIndex, festivalPSeq) => set((state) => {
+        const tripSchedules = { ...state.tripSchedules };
+        if (tripSchedules[tripId] && tripSchedules[tripId][dayIndex]) {
+          tripSchedules[tripId][dayIndex] = tripSchedules[tripId][dayIndex].filter(
+            f => f.pSeq !== festivalPSeq
+          );
+        }
+        return { tripSchedules };
+      }),
       getCurrentTrip: () => (state) => state.trips.find(trip => trip.id === state.currentTripId),
 
       // 전체 초기화 (로그아웃 시 사용)
@@ -113,6 +138,7 @@ const useStore = create(
         selectedTravelDates: null,
         trips: [],
         currentTripId: null,
+        editingTripId: null,
       }),
     }),
     {
@@ -132,6 +158,7 @@ const useStore = create(
         selectedTravelDates: state.selectedTravelDates,
         trips: state.trips,
         currentTripId: state.currentTripId,
+        editingTripId: state.editingTripId,
       }),
     }
   )

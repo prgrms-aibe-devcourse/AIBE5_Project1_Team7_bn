@@ -134,11 +134,26 @@ const calendarStyles = `
 function Dateregistration() {
   const navigate = useNavigate();
   const calendarRef = useRef(null);
-  const [selectedDates, setSelectedDates] = useState(null);
-  const [tripName, setTripName] = useState("");
   const setSelectedTravelDates = useStore((state) => state.setSelectedTravelDates);
   const addTrip = useStore((state) => state.addTrip);
+  const updateTrip = useStore((state) => state.updateTrip);
   const setCurrentTrip = useStore((state) => state.setCurrentTrip);
+  const editingTripId = useStore((state) => state.editingTripId);
+  const setEditingTripId = useStore((state) => state.setEditingTripId);
+  const trips = useStore((state) => state.trips);
+
+  // 편집 중인 trip 가져오기
+  const editingTrip = editingTripId ? trips.find(trip => trip.id === editingTripId) : null;
+
+  // 초기값 설정
+  const [selectedDates, setSelectedDates] = useState(
+    editingTrip ? {
+      start: editingTrip.start,
+      end: editingTrip.end,
+      display: editingTrip.display
+    } : null
+  );
+  const [tripName, setTripName] = useState(editingTrip?.name || "");
 
   // 날짜 선택 핸들러
   const handleDateSelect = (selectInfo) => {
@@ -211,6 +226,15 @@ function Dateregistration() {
     }
   };
 
+  // 편집 모드에서 캘린더에 선택 상태 표시
+  useEffect(() => {
+    if (editingTrip && selectedDates) {
+      setTimeout(() => {
+        applySelectionStyles(selectedDates.start, selectedDates.end);
+      }, 100);
+    }
+  }, [editingTrip]);
+
   // 캘린더 렌더링 후 스타일 재적용
   useEffect(() => {
     if (selectedDates) {
@@ -232,7 +256,7 @@ function Dateregistration() {
           <section className="flex items-center justify-between mb-8 shrink-0">
             <div className="flex-1">
               <h2 className="text-gray-900 dark:text-white text-3xl font-bold leading-tight tracking-tight">
-                여행일정 등록
+                {editingTripId ? '여행일정 수정' : '여행일정 등록'}
               </h2>
               <p className="text-gray-500 dark:text-gray-400 text-base font-normal mt-1">
                 일정에 따른 날씨예보, 여행 정보를 알려드립니다.
@@ -252,22 +276,37 @@ function Dateregistration() {
             {selectedDates && tripName && (
               <button 
                 onClick={() => {
-                  const newTrip = {
-                    id: Date.now(),
-                    name: tripName,
-                    start: selectedDates.start,
-                    end: selectedDates.end,
-                    display: selectedDates.display,
-                    createdAt: new Date().toISOString()
-                  };
-                  addTrip(newTrip);
-                  setCurrentTrip(newTrip.id);
-                  setSelectedTravelDates(selectedDates);
-                  navigate('/plancuration');
+                  if (editingTripId) {
+                    // 편집 모드: 기존 trip 업데이트
+                    updateTrip(editingTripId, {
+                      name: tripName,
+                      start: selectedDates.start,
+                      end: selectedDates.end,
+                      display: selectedDates.display,
+                      updatedAt: new Date().toISOString()
+                    });
+                    setSelectedTravelDates(selectedDates);
+                    setEditingTripId(null); // 편집 모드 해제
+                    navigate('/plancuration');
+                  } else {
+                    // 새 일정 추가 모드
+                    const newTrip = {
+                      id: Date.now(),
+                      name: tripName,
+                      start: selectedDates.start,
+                      end: selectedDates.end,
+                      display: selectedDates.display,
+                      createdAt: new Date().toISOString()
+                    };
+                    addTrip(newTrip);
+                    setCurrentTrip(newTrip.id);
+                    setSelectedTravelDates(selectedDates);
+                    navigate('/plancuration');
+                  }
                 }}
                 className="px-8 py-3 bg-gradient-to-r from-orange-500 to-orange-400 text-white rounded-xl font-bold text-base shadow-lg hover:shadow-orange-200/50 transition-all flex items-center gap-2"
               >
-                <span>{selectedDates.display} / 등록완료</span>
+                <span>{selectedDates.display} / {editingTripId ? '수정완료' : '등록완료'}</span>
                 <span className="material-symbols-outlined text-lg">check_circle</span>
               </button>
             )}
