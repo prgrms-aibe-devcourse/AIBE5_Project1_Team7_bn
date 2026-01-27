@@ -1,8 +1,12 @@
 import { Link, useLocation } from "react-router-dom";
 import { Bell, User } from "lucide-react";
+import useStore from "../store/useStore";
 
 function Header() {
   const location = useLocation();
+  const store = useStore();
+
+  const { loginUser, loginType, user } = store;
 
   const navItems = [
     { name: "Home", path: "/after_home" },
@@ -50,7 +54,7 @@ function Header() {
           </div>
 
           {/* ================= 중앙 ================= */}
-          <div className="hidden lg:block absolute left-[60%] -translate-x-1/2 w-full max-w-md">
+          <div className="hidden lg:block absolute left-[70%] -translate-x-1/2 w-full max-w-md">
             <div className="relative">
               <input
                 type="text"
@@ -91,7 +95,13 @@ function Header() {
                 <User className="w-5 h-5" />
               </div>
               <span className="hidden md:block text-sm font-medium text-gray-700">
-                Alex Kim
+                {loginType === "google"
+                  ? loginUser && loginUser !== "google"
+                    ? loginUser
+                    : user?.name || "Google 사용자"
+                  : loginType === "local"
+                  ? user?.name || loginUser || "회원"
+                  : "로그인"}
               </span>
             </Link>
           </div>
