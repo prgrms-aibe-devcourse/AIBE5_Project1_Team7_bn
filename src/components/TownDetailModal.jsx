@@ -54,7 +54,9 @@ export function TownDetailModal({ festival, onClose }) {
           <div className="grid grid-cols-2 gap-6 mb-8 pb-8 border-b border-gray-100">
             <div>
               <p className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-2">📅 기간</p>
-              <p className="text-lg font-bold text-gray-900">{festival.ministry_date}</p>
+              <p className="text-lg font-bold text-gray-900">
+                {festival.fstvlStartDate} ~ {festival.fstvlEndDate}
+              </p>
             </div>
             <div>
               <p className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-2">📍 지역</p>
