@@ -27,7 +27,7 @@ const generateMockReviews = (festivalId) => {
     reviews.push({
       id: `mock_${festivalId}_${i}`,
       author: names[Math.floor(Math.random() * names.length)],
-      rating: Math.floor(Math.random() * 2) + 4, // 4~5점
+      rating: Math.floor(Math.random() * 4) + 2, // 2~5점
       text: comments[Math.floor(Math.random() * comments.length)],
       date: new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000).toISOString(),
       isMock: true
@@ -439,9 +439,21 @@ function Review() {
                       onClick={() => setRating(star)}
                       onMouseEnter={() => setHoveredRating(star)}
                       onMouseLeave={() => setHoveredRating(0)}
-                      className="text-5xl transition-transform hover:scale-110"
+                      className="transition-transform hover:scale-110"
                     >
-                      {star <= (hoveredRating || rating) ? '⭐' : '☆'}
+                      <svg 
+                        width="48" 
+                        height="48" 
+                        viewBox="0 0 24 24" 
+                        fill={star <= (hoveredRating || rating) ? "#FCD34D" : "none"}
+                        stroke={star <= (hoveredRating || rating) ? "#FCD34D" : "#D1D5DB"}
+                        strokeWidth="1.5"
+                        strokeLinecap="round" 
+                        strokeLinejoin="round"
+                        className="transition-all"
+                      >
+                        <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" />
+                      </svg>
                     </button>
                   ))}
                   {rating > 0 && (
