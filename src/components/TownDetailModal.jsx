@@ -72,7 +72,7 @@ export function TownDetailModal({ festival, onClose }) {
             </div>
             <div>
               <p className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-2">📌 장소</p>
-              <p className="text-lg font-bold text-gray-900">{festival.ministry_location}</p>
+              <p className="text-lg font-bold text-gray-900">{festival.rdnmadr || festival.lnmadr || festival.ministry_location || '장소 정보 없음'}</p>
             </div>
             <div>
               <p className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-2">💰 입장료</p>

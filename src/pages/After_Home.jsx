@@ -108,7 +108,7 @@ function After_Home() {
                 marginBottom: 24,
               }}
             >
-              🍏 Welcome back, 풋사과님
+              🍏 Welcome back, {getUserName()}님
             </span>
 
             <h1 style={{ fontSize: 56, fontWeight: 900, lineHeight: 1.1 }}>
@@ -125,7 +125,7 @@ function After_Home() {
             </h1>
 
             <p style={{ color: "#4b5563", margin: "24px 0" }}>
-              풋사과님의 이전 기록과 취향을 바탕으로
+              {getUserName()}님의 이전 기록과 취향을 바탕으로
               가장 잘 어울리는 축제를 추천했어요.
             </p>
 
@@ -227,7 +227,7 @@ function After_Home() {
             >
               <h3 style={{ fontWeight: 800 }}>My Festival Calendar</h3>
               <p style={{ fontSize: 12, color: "#FF5F33", marginBottom: 16 }}>
-                풋사과님의 저장된 일정
+                {getUserName()}님의 저장된 일정
               </p>
 
               {/* 미니 캘린더 */}

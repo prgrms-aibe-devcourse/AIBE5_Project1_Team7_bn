@@ -7,6 +7,7 @@ import { TownDetailModal } from "../components/TownDetailModal";
 import { useNavigate } from "react-router-dom";
 import Loading from "./Loading";
 import "./Festival_List.css";
+import useStore from "../store/useStore";
 
 function Festival_List() {
 	const [selectedFestival, setSelectedFestival] = useState(null);
@@ -19,6 +20,12 @@ function Festival_List() {
 		return Math.random() < 1/3;
 	});
 	const navigate = useNavigate();
+	const { user, loginUser } = useStore();
+	const getUserName = () => {
+		if (user?.name) return user.name;
+		if (loginUser && loginUser !== "google") return loginUser;
+		return "회원";
+	};
 
 	useEffect(() => {
 		if (isLoading) {
@@ -128,7 +135,7 @@ function Festival_List() {
 									<span className="material-symbols-outlined">auto_awesome</span>
 								</div>
 								<div>
-									<h2 className="text-2xl font-extrabold text-[#181411]">Customized for Minho</h2>
+									  <h2 className="text-2xl font-extrabold text-[#181411]">Customized for {getUserName()}</h2>
 									<p className="text-sm text-gray-500">Based on your recent interests and searches</p>
 								</div>
 							</div>
@@ -191,7 +198,6 @@ function Festival_List() {
 								</div>
 							</div>
 						</div>
-						// 전체 축제 카드 그리드
 						<div className="flex flex-col gap-6 items-center">
 							{filtered.slice(2, 12).length > 0 ? (
 								filtered.slice(2, 12).map((f, idx) => (
@@ -210,18 +216,18 @@ function Festival_List() {
 											{/* 예시: D-day 뱃지 */}
 											<div className="absolute top-4 left-4 bg-black/70 backdrop-blur-md text-white text-sm font-bold px-3 py-1 rounded-full border border-white/20">D-5</div>
 										</div>
-										<div className="p-6 flex flex-col justify-between flex-1 relative">
+										<div className="p-4 flex flex-col flex-1 relative justify-start">
 											<div>
-												<div className="flex justify-between items-start mb-2">
-													<div className="flex gap-2 mb-2">
+												<div className="flex justify-between items-start mb-1">
+													<div className="flex gap-2 mb-1">
 														<span className="px-2 py-0.5 bg-secondary/10 text-secondary text-xs font-bold rounded">Spectacular</span>
 														<span className="px-2 py-0.5 bg-gray-100 text-gray-500 text-xs font-bold rounded">Night View</span>
 													</div>
 													<button className="text-gray-300 hover:text-red-500 transition-colors bg-gray-50 p-2 rounded-full hover:bg-red-50"><span className="material-symbols-outlined filled">favorite</span></button>
 												</div>
-												<h3 className="text-2xl font-bold text-[#181411] mb-2 group-hover:text-primary transition-colors">{f.fstvlNm}</h3>
-												<p className="text-gray-500 line-clamp-2 mb-4 leading-relaxed">{f.ministry_description || 'No description available.'}</p>
-												<div className="flex gap-6 mt-2">
+												<h3 className="text-2xl font-bold text-[#181411] mb-1 group-hover:text-primary transition-colors">{f.fstvlNm}</h3>
+												<p className="text-gray-500 line-clamp-2 mb-2 leading-relaxed">{f.ministry_description || 'No description available.'}</p>
+												<div className="flex gap-4 mt-1">
 													<div className="flex items-center gap-2 text-sm text-gray-700">
 														<span className="material-symbols-outlined text-primary text-[20px]">calendar_today</span>
 														<span className="font-medium">{f.fstvlStartDate || 'Date TBA'}</span>
@@ -232,12 +238,11 @@ function Festival_List() {
 													</div>
 												</div>
 											</div>
-											<div className="flex items-center justify-between pt-4 border-t border-gray-100 mt-auto">
-												<div className="flex items-center gap-1.5 text-gray-400 font-medium text-sm">
-													<span className="material-symbols-outlined text-[18px]">visibility</span>
-													<span>12.5k views</span>
-												</div>
-												<button className="text-white font-bold text-sm px-6 py-2.5 bg-primary rounded-lg hover:bg-orange-600 transition-colors shadow-sm hover:shadow-md">
+											<div className="flex items-center justify-end pt-2 border-t border-gray-100 mt-2">
+												<button
+													className="text-white font-bold text-sm px-6 py-2 rounded-lg shadow-sm hover:shadow-md transition-all"
+													style={{ background: 'linear-gradient(90deg, #FF8C00 0%, #FFD700 100%)', border: 'none' }}
+												>
 													View Details
 												</button>
 											</div>
