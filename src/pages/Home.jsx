@@ -127,7 +127,7 @@ function Home() {
                     image: f.ministry_image_url || "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f",
                     id: f.pSeq,
                   }}
-                  festival={f}
+                  festivl={f}
                   onClick={() => setSelectedFestival(f)}
                 />
               ))}
