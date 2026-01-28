@@ -351,7 +351,7 @@ function Plancuration() {
           <div className="relative" ref={dropdownRef}>
             <button 
               onClick={() => setShowTripDropdown(!showTripDropdown)}
-              className="flex items-center gap-2 px-4 py-2 bg-white border-2 border-primary rounded-full text-sm font-bold text-primary shadow-sm hover:bg-primary hover:text-white transition-all"
+              className="flex items-center gap-2 px-4 py-2 bg-white border-2 border-primary rounded-full text-sm font-bold text-black shadow-sm"
             >
               <span className="text-xl">🏠</span>
               {currentTrip ? currentTrip.name : '일정 선택'}
