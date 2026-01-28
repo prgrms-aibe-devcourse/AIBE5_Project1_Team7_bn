@@ -108,7 +108,7 @@ function After_Home() {
                 marginBottom: 24,
               }}
             >
-              🍏 Welcome back, {getUserName()}님
+              👋 Welcome back, {getUserName()}님
             </span>
 
             <h1 style={{ fontSize: 56, fontWeight: 900, lineHeight: 1.1 }}>
@@ -125,8 +125,7 @@ function After_Home() {
             </h1>
 
             <p style={{ color: "#4b5563", margin: "24px 0" }}>
-              {getUserName()}님의 이전 기록과 취향을 바탕으로
-              가장 잘 어울리는 축제를 추천했어요.
+               다시 만나서 반가워요 {getUserName()}님✨ 새로운 추천을 받아보실래요?
             </p>
 
             <button
@@ -155,10 +154,10 @@ function After_Home() {
           {/* LEFT */}
           <section>
             <h2 style={{ fontSize: 28, fontWeight: 900 }}>
-              {getUserName()}님을 위한 노을 한 스푼, 이 축제 어때요? 🌇
+              {getUserName()}님을 위한 <span style={{ color: "#FF5F33" }}>노을 한 스푼</span>, 이 축제 어때요? 🌇
             </h2>
             <p style={{ color: "#6b7280", marginBottom: 24 }}>
-              AI 분석 결과: #전통예술 #야경 #사진명소
+               이전 취향을 바탕으로 AI가 가장 잘 어울리는 축제를 추천했어요.
             </p>
 
             <div style={{ display: "grid", gridTemplateColumns: "repeat(3, minmax(260px, 1fr))", gap: 12, justifyContent: "center" }}>
@@ -181,7 +180,7 @@ function After_Home() {
 
             {/* 요즘 난리 난 축제들 섹션 */}
             <h2 style={{ fontSize: 28, fontWeight: 900, marginTop: 48 }}>
-              요즘 난리 난 축제들 🔥
+              <span style={{ color: "#FF5F33" }}>요즘 난리 난</span> 축제들 🔥
             </h2>
             <p style={{ color: "#6b7280", marginBottom: 24 }}>
               지금 가장 핫한 축제를 확인해보세요

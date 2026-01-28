@@ -113,10 +113,9 @@ function Home() {
           {/* LEFT - 추천 섹션 */}
           <section>
             <h2 style={{ fontSize: 28, fontWeight: 900 }}>
-              요즘 난리 난 축제들, 놓치면 아쉬워요 😎
+               <span style={{ color: "#FF5F33" }}>요즘 난리 난</span> 축제들, 놓치면 아쉬워요 😎
             </h2>
             <p style={{ color: "#6b7280", marginBottom: 24 }}>
-              AI 분석 결과: #전통예술 #야경 #사진명소
             </p>
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 12 }}>
               {festivals.filter(f => [201, 750, 272].includes(f.pSeq)).map((f) => (
@@ -136,7 +135,7 @@ function Home() {
             {/* 요즘 핫한 축제 포토카드 5개 */}
             <div style={{ marginTop: 40 }}>
               <h3 style={{ fontSize: 22, fontWeight: 800, marginBottom: 16 }}>
-                요즘 핫한 축제
+                지역별 추천 축제
               </h3>
               <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: 10 }}>
                 {festivals.slice(67, 72).map((f) => (

@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import festivals from "../data/festivals.json";
 import Header from "../components/Header";
 import { TownCard } from "../components/TownCard";
@@ -11,10 +11,20 @@ import useStore from "../store/useStore";
 
 function Festival_List() {
 	const [selectedFestival, setSelectedFestival] = useState(null);
-	const [keyword, setKeyword] = useState("");
-	const [theme, setTheme] = useState("");
-	const [date, setDate] = useState("");
-	const [region, setRegion] = useState("");
+
+	// Calendar에서 가져온 필터 상태
+	const [activeFilters, setActiveFilters] = useState({
+		regions: [], // 선택된 지역들
+		duration: null, // '당일', '단기(2~3일)', '장기(3~5일)'
+		isFree: null, // true(무료), false(유료), null(전체)
+		includesWeekend: false // 주말 포함 여부
+	});
+	const [filterSectionsOpen, setFilterSectionsOpen] = useState({
+		region: false,
+		duration: false,
+		price: false,
+		weekend: false
+	});
 	const [isLoading, setIsLoading] = useState(() => {
 		// 1/3 확률로 로딩 화면 표시 결정 (초기값으로만 계산)
 		return Math.random() < 1/5;
@@ -42,83 +52,197 @@ function Festival_List() {
 		return <Loading />;
 	}
 
-	// 필터링 예시 (실제 옵션은 필요에 따라 구현)
-	const filtered = festivals.filter(f => {
-		return (
-			(!keyword || f.fstvlNm.includes(keyword)) &&
-			(!theme || (f.ministry_personality && f.ministry_personality.includes(theme))) &&
-			(!region || (f.ministry_region && f.ministry_region.includes(region)))
-		);
-	});
+	// Calendar의 고급 필터 로직 적용
+	const parseFestivalDate = (festival) => {
+		try {
+			if (festival.fstvlStartDate) {
+				const startDateTime = festival.fstvlStartDate;
+				let endDateTime = festival.fstvlEndDate || festival.fstvlStartDate;
+				const endDate = new Date(endDateTime);
+				endDate.setDate(endDate.getDate() + 1);
+				endDateTime = endDate.toISOString().split('T')[0];
+				return { startDateTime, endDateTime };
+			}
+			const dateStr = festival.ministry_date;
+			if (!dateStr) return null;
+			let match = dateStr.match(/(\d{4})\.\s+(\d{1,2})\.\s+(\d{1,2})\.\s*~\s*(\d{1,2})\.\s+(\d{1,2})\./);
+			if (match) {
+				const year = parseInt(match[1]);
+				const startMonth = parseInt(match[2]);
+				const startDay = parseInt(match[3]);
+				const endMonth = parseInt(match[4]);
+				const endDay = parseInt(match[5]);
+				const startDateTime = `${year}-${String(startMonth).padStart(2, '0')}-${String(startDay).padStart(2, '0')}`;
+				const endDate = new Date(year, endMonth - 1, endDay);
+				endDate.setDate(endDate.getDate() + 1);
+				const endDateTime = `${endDate.getFullYear()}-${String(endDate.getMonth() + 1).padStart(2, '0')}-${String(endDate.getDate()).padStart(2, '0')}`;
+				return { startDateTime, endDateTime };
+			}
+			match = dateStr.match(/(\d{4})\.\s+(\d{1,2})\.\s+(\d{1,2})\.\s*~\s*(\d{4})\.\s+(\d{1,2})\.\s+(\d{1,2})\./);
+			if (match) {
+				const startYear = parseInt(match[1]);
+				const startMonth = parseInt(match[2]);
+				const startDay = parseInt(match[3]);
+				const endYear = parseInt(match[4]);
+				const endMonth = parseInt(match[5]);
+				const endDay = parseInt(match[6]);
+				const startDateTime = `${startYear}-${String(startMonth).padStart(2, '0')}-${String(startDay).padStart(2, '0')}`;
+				const endDate = new Date(endYear, endMonth - 1, endDay);
+				endDate.setDate(endDate.getDate() + 1);
+				const endDateTime = `${endDate.getFullYear()}-${String(endDate.getMonth() + 1).padStart(2, '0')}-${String(endDate.getDate()).padStart(2, '0')}`;
+				return { startDateTime, endDateTime };
+			}
+			match = dateStr.match(/(\d{4})\.\s+(\d{1,2})\.\s+(\d{1,2})\./);
+			if (match) {
+				const year = parseInt(match[1]);
+				const month = parseInt(match[2]);
+				const day = parseInt(match[3]);
+				const startDateTime = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+				const endDate = new Date(year, month - 1, day);
+				endDate.setDate(endDate.getDate() + 1);
+				const endDateTime = `${endDate.getFullYear()}-${String(endDate.getMonth() + 1).padStart(2, '0')}-${String(endDate.getDate()).padStart(2, '0')}`;
+				return { startDateTime, endDateTime };
+			}
+			return null;
+		} catch {
+			return null;
+		}
+	};
+
+	const filtered = useMemo(() => {
+		let filteredFestivals = festivals;
+		if (activeFilters.regions.length > 0) {
+			filteredFestivals = filteredFestivals.filter(festival => {
+				const location = festival.ministry_region || festival.opar || festival.rdnmadr || "";
+				const regionMap = {
+					'서울': '서울', '부산': '부산', '대구': '대구', '인천': '인천', '광주': '광주', '대전': '대전', '울산': '울산', '세종': '세종', '경기': '경기', '강원': '강원', '충북': '충청북도', '충남': '충청남도', '전북': '전라북도', '전남': '전라남도', '경북': '경상북도', '경남': '경상남도', '제주': '제주'
+				};
+				return activeFilters.regions.some(region => {
+					const fullRegionName = regionMap[region] || region;
+					return location.includes(fullRegionName);
+				});
+			});
+		}
+		if (activeFilters.duration) {
+			filteredFestivals = filteredFestivals.filter(festival => {
+				const dateInfo = parseFestivalDate(festival);
+				if (!dateInfo) return false;
+				const start = new Date(dateInfo.startDateTime);
+				const end = new Date(dateInfo.endDateTime);
+				const diffDays = Math.ceil((end - start) / (1000 * 60 * 60 * 24));
+				if (activeFilters.duration === '당일') return diffDays <= 1;
+				if (activeFilters.duration === '단기(2~3일)') return diffDays >= 2 && diffDays <= 3;
+				if (activeFilters.duration === '장기(3~5일)') return diffDays >= 3 && diffDays <= 5;
+				return true;
+			});
+		}
+		if (activeFilters.isFree !== null) {
+			filteredFestivals = filteredFestivals.filter(festival => {
+				const isFree = festival.rdnmadr?.includes('무료') || festival.ministry_description?.includes('무료') || festival.fstvlNm?.includes('무료');
+				return activeFilters.isFree ? isFree : !isFree;
+			});
+		}
+		if (activeFilters.includesWeekend) {
+			filteredFestivals = filteredFestivals.filter(festival => {
+				try {
+					const dateInfo = parseFestivalDate(festival);
+					if (!dateInfo || !dateInfo.startDateTime || !dateInfo.endDateTime) return false;
+					const startStr = String(dateInfo.startDateTime).split('T')[0];
+					const endStr = String(dateInfo.endDateTime).split('T')[0];
+					if (!/^\d{4}-\d{2}-\d{2}$/.test(startStr) || !/^\d{4}-\d{2}-\d{2}$/.test(endStr)) return false;
+					const [startYear, startMonth, startDay] = startStr.split('-').map(Number);
+					const [endYear, endMonth, endDay] = endStr.split('-').map(Number);
+					const start = new Date(startYear, startMonth - 1, startDay);
+					const end = new Date(endYear, endMonth - 1, endDay);
+					end.setDate(end.getDate() - 1);
+					let current = new Date(start);
+					while (current <= end) {
+						const day = current.getDay();
+						if (day === 0 || day === 6) return true;
+						current.setDate(current.getDate() + 1);
+					}
+					return false;
+				} catch {
+					return false;
+				}
+			});
+		}
+		return filteredFestivals;
+	}, [activeFilters]);
 
 	return (
 		<div className="bg-background-light text-[#181411] font-display min-h-screen">
 			<Header />
 			<div className="max-w-[1280px] mx-auto px-6 py-8 grid grid-cols-12 gap-8">
-				{/* FILTERS */}
+				{/* FILTERS - Calendar에서 가져온 UI */}
 				<aside className="col-span-12 lg:col-span-3 space-y-6">
 					<div className="bg-[#FFFBF6] rounded-xl p-5 border border-[#e6dfdb] sticky top-20">
 						<h3 className="font-bold text-2xl mb-4" style={{ color: '#FF5F33' }}>Filters</h3>
 						<div className="space-y-4">
-							<div className="space-y-2">
-								<label className="text-xs font-bold text-gray-500 uppercase tracking-wide">Keyword</label>
-								<div className="flex w-full items-center rounded-lg bg-white border border-[#e6dfdb] h-10 px-3 overflow-hidden focus-within:ring-1 focus-within:ring-primary focus-within:border-primary">
-									<span className="material-symbols-outlined text-[#8c725f] text-[18px]">search</span>
-									<input
-										className="flex-1 bg-transparent border-none focus:ring-0 text-[#181411] placeholder:text-[#8c725f]/70 text-sm ml-2 p-0"
-										placeholder="Festival name..."
-										value={keyword}
-										onChange={e => setKeyword(e.target.value)}
-									/>
-								</div>
+							{/* 지역 필터 */}
+							<div>
+								<button className="w-full flex justify-between items-center py-2 px-4 rounded-lg font-bold text-lg mb-2"
+									style={{ background: filterSectionsOpen.region ? 'linear-gradient(135deg, #ff9800 0%, #ffd600 100%)' : '#fff8e1', color: filterSectionsOpen.region ? '#fff' : '#1f2937' }}
+									onClick={() => setFilterSectionsOpen(prev => ({ ...prev, region: !prev.region }))}>
+									<span>지역</span>
+									<span>{filterSectionsOpen.region ? '▲' : '▼'}</span>
+								</button>
+								{filterSectionsOpen.region && (
+									<div className="flex flex-wrap gap-2 mt-2">
+										{['서울', '부산', '대구', '인천', '광주', '대전', '울산', '세종', '경기', '강원', '충북', '충남', '전북', '전남', '경북', '경남', '제주'].map(region => (
+											<button key={region} className={`px-3 py-1 rounded-lg font-semibold border ${activeFilters.regions.includes(region) ? 'bg-orange-400 text-white' : 'bg-white text-gray-700'}`}
+												onClick={() => setActiveFilters(prev => ({ ...prev, regions: prev.regions.includes(region) ? prev.regions.filter(r => r !== region) : [...prev.regions, region] }))}>
+												{region}
+											</button>
+										))}
+									</div>
+								)}
 							</div>
-							<div className="space-y-2">
-								<label className="text-xs font-bold text-gray-500 uppercase tracking-wide">Theme</label>
-								<div className="relative">
-									<select className="w-full h-10 rounded-lg bg-white border border-[#e6dfdb] text-[#181411] text-sm px-3 appearance-none focus:ring-primary focus:border-primary cursor-pointer"
-										value={theme} onChange={e => setTheme(e.target.value)}>
-										<option value="">All Themes</option>
-										<option>Quiet</option>
-										<option>Active</option>
-										<option>Ember Pulse</option>
-										<option>Music</option>
-										<option>Traditional</option>
-										<option>Food</option>
-									</select>
-									<span className="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-[#8c725f] pointer-events-none text-[18px]">style</span>
-								</div>
+							{/* 기간 필터 */}
+							<div>
+								<button className="w-full flex justify-between items-center py-2 px-4 rounded-lg font-bold text-lg mb-2"
+									style={{ background: filterSectionsOpen.duration ? 'linear-gradient(135deg, #60a5fa 0%, #93c5fd 100%)' : '#eff6ff', color: filterSectionsOpen.duration ? '#fff' : '#1f2937' }}
+									onClick={() => setFilterSectionsOpen(prev => ({ ...prev, duration: !prev.duration }))}>
+									<span>기간</span>
+									<span>{filterSectionsOpen.duration ? '▲' : '▼'}</span>
+								</button>
+								{filterSectionsOpen.duration && (
+									<div className="flex flex-col gap-2 mt-2">
+										{['당일', '단기(2~3일)', '장기(3~5일)'].map(duration => (
+											<button key={duration} className={`px-3 py-1 rounded-lg font-semibold border ${activeFilters.duration === duration ? 'bg-blue-400 text-white' : 'bg-white text-gray-700'}`}
+												onClick={() => setActiveFilters(prev => ({ ...prev, duration: prev.duration === duration ? null : duration }))}>
+												{duration}
+											</button>
+										))}
+									</div>
+								)}
 							</div>
-							<div className="space-y-2">
-								<label className="text-xs font-bold text-gray-500 uppercase tracking-wide">Date</label>
-								<div className="relative">
-									<select className="w-full h-10 rounded-lg bg-white border border-[#e6dfdb] text-[#181411] text-sm px-3 appearance-none focus:ring-primary focus:border-primary cursor-pointer"
-										value={date} onChange={e => setDate(e.target.value)}>
-										<option>This Weekend</option>
-										<option>Next Week</option>
-										<option>This Month</option>
-									</select>
-									<span className="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-[#8c725f] pointer-events-none text-[18px]">calendar_month</span>
-								</div>
+							{/* 유료/무료 필터 */}
+							<div>
+								<button className="w-full flex justify-between items-center py-2 px-4 rounded-lg font-bold text-lg mb-2"
+									style={{ background: filterSectionsOpen.price ? 'linear-gradient(135deg, #84cc16 0%, #a3e635 100%)' : '#f7fee7', color: filterSectionsOpen.price ? '#fff' : '#1f2937' }}
+									onClick={() => setFilterSectionsOpen(prev => ({ ...prev, price: !prev.price }))}>
+									<span>가격</span>
+									<span>{filterSectionsOpen.price ? '▲' : '▼'}</span>
+								</button>
+								{filterSectionsOpen.price && (
+									<div className="flex flex-col gap-2 mt-2">
+										{[{ label: '무료', value: true }, { label: '유료', value: false }].map(({ label, value }) => (
+											<button key={label} className={`px-3 py-1 rounded-lg font-semibold border ${activeFilters.isFree === value ? 'bg-lime-500 text-white' : 'bg-white text-gray-700'}`}
+												onClick={() => setActiveFilters(prev => ({ ...prev, isFree: prev.isFree === value ? null : value }))}>
+												{label}
+											</button>
+										))}
+									</div>
+								)}
 							</div>
-							<div className="space-y-2">
-								<label className="text-xs font-bold text-gray-500 uppercase tracking-wide">Region</label>
-								<div className="relative">
-									<select className="w-full h-10 rounded-lg bg-white border border-[#e6dfdb] text-[#181411] text-sm px-3 appearance-none focus:ring-primary focus:border-primary cursor-pointer"
-										value={region} onChange={e => setRegion(e.target.value)}>
-										<option>All Regions</option>
-										<option>Seoul</option>
-										<option>Busan</option>
-										<option>Jeju</option>
-									</select>
-									<span className="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-[#8c725f] pointer-events-none text-[18px]">location_on</span>
-								</div>
-							</div>
-							<div className="pt-2">
-								<button
-									className="w-full text-white font-bold h-10 rounded-lg shadow-md active:scale-[0.98] transition-all flex items-center justify-center gap-2 text-sm"
-									style={{ background: 'linear-gradient(135deg, #FF8C42 0%, #FF6B35 100%)', border: 'none' }}
-								>
-									Apply Filters
+							{/* 주말 포함 필터 */}
+							<div>
+								<button className="w-full flex justify-between items-center py-2 px-4 rounded-lg font-bold text-lg mb-2"
+									style={{ background: activeFilters.includesWeekend ? 'linear-gradient(135deg, #a78bfa 0%, #c4b5fd 100%)' : '#f5f3ff', color: activeFilters.includesWeekend ? '#fff' : '#1f2937' }}
+									onClick={() => setActiveFilters(prev => ({ ...prev, includesWeekend: !prev.includesWeekend }))}>
+									<span>주말 포함</span>
+									<span>{activeFilters.includesWeekend ? '✓' : ''}</span>
 								</button>
 							</div>
 						</div>
@@ -203,7 +327,7 @@ function Festival_List() {
 						</div>
 						<div className="flex flex-col gap-6 items-center">
 							{filtered.slice(2, 12).length > 0 ? (
-								filtered.slice(2, 12).map((f, idx) => (
+								filtered.slice(2, 12).map((f) => (
 									<article
 										key={f.pSeq}
 										className="bg-white rounded-2xl overflow-hidden shadow-soft border border-[#e6dfdb] flex flex-row group hover:shadow-lg transition-shadow duration-300 h-64 w-full max-w-4xl"
