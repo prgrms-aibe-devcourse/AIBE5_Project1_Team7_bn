@@ -11,7 +11,6 @@ import bannerVideo from "../assets/풍랑30.mp4";
 function Home() {
   const navigate = useNavigate();
   const [selectedFestival, setSelectedFestival] = useState(null);
-  // const { user, loginUser } = useStore();
 
   return (
     <div style={{ minHeight: "100vh", backgroundColor: "#f9fafb" }}>
@@ -119,7 +118,7 @@ function Home() {
             <p style={{ color: "#6b7280", marginBottom: 24 }}>
               AI 분석 결과: #전통예술 #야경 #사진명소
             </p>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8 }}>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 12 }}>
               {festivals.filter(f => [201, 750, 272].includes(f.pSeq)).map((f) => (
                 <TownCard
                   key={f.pSeq}
@@ -133,6 +132,29 @@ function Home() {
                   onClick={() => setSelectedFestival(f)}
                 />
               ))}
+            </div>
+            {/* 요즘 핫한 축제 포토카드 5개 */}
+            <div style={{ marginTop: 40 }}>
+              <h3 style={{ fontSize: 22, fontWeight: 800, marginBottom: 16 }}>
+                요즘 핫한 축제
+              </h3>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: 10 }}>
+                {festivals.slice(67, 72).map((f) => (
+                  <div style={{ minWidth: 0, height: 340, display: "flex" }} key={f.pSeq}>
+                    <TownCard
+                      town={{
+                        name: f.fstvlNm,
+                        description: f.ministry_description,
+                        image: f.ministry_image_url || "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f",
+                        id: f.pSeq,
+                      }}
+                      festival={f}
+                      onClick={() => setSelectedFestival(f)}
+                      style={{ flex: 1, height: "100%" }}
+                    />
+                  </div>
+                ))}
+              </div>
             </div>
           </section>
           {/* RIGHT - 캘린더 & 날씨 */}
@@ -156,9 +178,9 @@ function Home() {
               }}
             >
               <h3 style={{ fontWeight: 800 }}>My Festival Calendar</h3>
-              {/* <p style={{ fontSize: 12, color: "#FF5F33", marginBottom: 16 }}>
-                {getUserName()}님의 저장된 일정
-              </p> */}
+              <p style={{ fontSize: 12, color: "#FF5F33", marginBottom: 16 }}>
+                풋사과님의 저장된 일정
+              </p>
               
               {/* 미니 캘린더 */}
               <div style={{

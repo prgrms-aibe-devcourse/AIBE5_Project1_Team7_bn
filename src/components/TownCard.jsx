@@ -30,20 +30,19 @@ export function TownCard({ town, festival, onClick, onMainEventSelect }) {
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       className="
-        group w-full max-w-[320px] text-left
+        group w-full text-left
         rounded-2xl bg-white
-        shadow-md hover:shadow-xl
+        shadow-sm hover:shadow-md
         transition-all
         overflow-hidden
         relative
         cursor-pointer
       "
-      //호버시 테두리 효과
       style={isHovered ? {
-        boxShadow: '0 0 0 4px #FFA500, 0 0 0 8px #FFD700', // 주황(오렌지)+금색
+        boxShadow: '0 0 0 4px #FFA500, 0 0 0 8px #FFD700',
         borderRadius: '1rem',
         transition: 'box-shadow 0.3s',
-      } : {}}
+      } : { margin: 0, border: 'none' }}
     >
       {/* 이미지 영역 */}
       <div className="aspect-4/3 overflow-hidden relative">

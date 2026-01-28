@@ -14,7 +14,7 @@ function After_Home() {
   const [selectedFestival, setSelectedFestival] = useState(null);
   const [isLoading, setIsLoading] = useState(() => {
     // 1/3 확률로 로딩 화면 표시 결정 (초기값으로만 계산)
-    return Math.random() < 1/5
+    return Math.random() < 1/3;
   });
 
   const {
@@ -108,7 +108,7 @@ function After_Home() {
                 marginBottom: 24,
               }}
             >
-              <span style={{ fontSize: "1.2em" }}>👋</span> Welcome back, {getUserName()}님
+              🍏 Welcome back, {getUserName()}님
             </span>
 
             <h1 style={{ fontSize: 56, fontWeight: 900, lineHeight: 1.1 }}>
@@ -125,7 +125,8 @@ function After_Home() {
             </h1>
 
             <p style={{ color: "#4b5563", margin: "24px 0" }}>
-              다시 만나서 반가워요 {getUserName()}님✨ 새로운 추천을 받아보실래요?
+              {getUserName()}님의 이전 기록과 취향을 바탕으로
+              가장 잘 어울리는 축제를 추천했어요.
             </p>
 
             <button
@@ -153,14 +154,14 @@ function After_Home() {
         <div style={{ display: "grid", gridTemplateColumns: "1fr 320px", gap: 15 }}>
           {/* LEFT */}
           <section>
-            <h2 style={{ fontSize: 28, fontWeight: 900, color: "#666" }}>
-              {getUserName()}님을 위한 <span style={{ color: "#FF5F33" }}>노을 한 스푼</span>, 이 축제 어때요? 🌇
+            <h2 style={{ fontSize: 28, fontWeight: 900 }}>
+              {getUserName()}님을 위한 노을 한 스푼, 이 축제 어때요? 🌇
             </h2>
             <p style={{ color: "#6b7280", marginBottom: 24 }}>
-              이전 취향을 바탕으로 AI가 가장 잘 어울리는 축제를 추천했어요.
+              AI 분석 결과: #전통예술 #야경 #사진명소
             </p>
 
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8 }}>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(3, minmax(260px, 1fr))", gap: 12, justifyContent: "center" }}>
               {festivals.slice(0, 3).map((f) => (
                 <TownCard
                   key={f.pSeq}
@@ -179,15 +180,15 @@ function After_Home() {
             </div>
 
             {/* 요즘 난리 난 축제들 섹션 */}
-            <h2 style={{ fontSize: 28, fontWeight: 900, marginTop: 48, color: "#666" }}>
-              <span style={{ color: "#FF5F33" }}>요즘 난리 난</span> 축제들 🔥
+            <h2 style={{ fontSize: 28, fontWeight: 900, marginTop: 48 }}>
+              요즘 난리 난 축제들 🔥
             </h2>
             <p style={{ color: "#6b7280", marginBottom: 24 }}>
               지금 가장 핫한 축제를 확인해보세요
             </p>
 
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8 }}>
-              {festivals.filter(f => [201, 750, 272].includes(f.pSeq)).map((f) => (
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(5, minmax(180px, 1fr))", gap: 10, justifyContent: "center" }}>
+              {festivals.slice(0, 5).map((f) => (
                 <TownCard
                   key={f.pSeq}
                   town={{
@@ -225,9 +226,9 @@ function After_Home() {
               }}
             >
               <h3 style={{ fontWeight: 800 }}>My Festival Calendar</h3>
-              {/* <p style={{ fontSize: 12, color: "#FF5F33", marginBottom: 16 }}>
-                {getUserName()}님의 저장된 일정
-              </p> */}
+              <p style={{ fontSize: 12, color: "#FF5F33", marginBottom: 16 }}>
+                {getUserName()}님의 저장된 일정
+              </p>
 
               {/* 미니 캘린더 */}
               <div style={{
