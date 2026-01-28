@@ -617,7 +617,9 @@ function Plancuration() {
               {getRecommendedFestivals().map((festival) => (
                 <div 
                   key={festival.pSeq}
-                  className="min-w-[340px] bg-white rounded-[32px] overflow-hidden shadow-sm border border-orange-50 group hover:shadow-2xl transition-all translate-y-0 hover:-translate-y-2"
+                  className="min-w-[340px] bg-white rounded-[32px] overflow-hidden shadow-sm border-2 border-orange-50 group hover:shadow-2xl transition-all translate-y-0 hover:-translate-y-2 hover:border-transparent"
+                  onMouseEnter={e => e.currentTarget.style.boxShadow = '0 0 0 4px #FFA500, 0 0 0 8px #FFD700'}
+                  onMouseLeave={e => e.currentTarget.style.boxShadow = ''}
                 >
                   <div className="h-56 relative overflow-hidden">
                     {festival.ministry_image_url ? (
@@ -704,7 +706,9 @@ function Plancuration() {
                 {likedFestivals.map((festival) => (
                   <div
                     key={festival.pSeq}
-                    className="bg-white rounded-3xl overflow-hidden border-2 border-gray-100 hover:border-primary/30 hover:shadow-xl transition-all group"
+                    className="bg-white rounded-3xl overflow-hidden border-2 border-gray-100 hover:shadow-xl transition-all group hover:border-transparent"
+                    onMouseEnter={e => e.currentTarget.style.boxShadow = '0 0 0 4px #FFA500, 0 0 0 8px #FFD700'}
+                    onMouseLeave={e => e.currentTarget.style.boxShadow = ''}
                   >
                     {/* 축제 이미지 */}
                     <div className="relative aspect-video overflow-hidden bg-gray-100">
@@ -889,9 +893,11 @@ function Plancuration() {
                             addFestivalToSchedule(currentTripId, currentDayIndex, festival);
                           }
                         }}
-                        className={`bg-white rounded-2xl overflow-hidden border-2 border-gray-200 shadow-md hover:border-primary hover:shadow-xl transition-all ${
-                          isAlreadyAdded ? 'cursor-not-allowed opacity-60' : 'cursor-pointer hover:scale-[1.02]'
+                        className={`bg-white rounded-2xl overflow-hidden border-2 border-gray-200 shadow-md hover:shadow-xl transition-all ${
+                          isAlreadyAdded ? 'cursor-not-allowed opacity-60' : 'cursor-pointer hover:scale-[1.02] hover:border-transparent'
                         }`}
+                        onMouseEnter={e => { if (!isAlreadyAdded) e.currentTarget.style.boxShadow = '0 0 0 4px #FFA500, 0 0 0 8px #FFD700'; }}
+                        onMouseLeave={e => e.currentTarget.style.boxShadow = ''}
                       >
                         {/* 축제 이미지 */}
                         <div className="relative aspect-video overflow-hidden bg-gray-100">
