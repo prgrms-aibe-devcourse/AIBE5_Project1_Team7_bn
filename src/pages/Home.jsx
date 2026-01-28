@@ -177,9 +177,6 @@ function Home() {
               }}
             >
               <h3 style={{ fontWeight: 800 }}>My Festival Calendar</h3>
-              <p style={{ fontSize: 12, color: "#FF5F33", marginBottom: 16 }}>
-                풋사과님의 저장된 일정
-              </p>
               
               {/* 미니 캘린더 */}
               <div style={{
