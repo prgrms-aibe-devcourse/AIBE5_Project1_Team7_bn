@@ -507,7 +507,7 @@ function Testresult() {
                     <span className="material-symbols-outlined" style={{ color: "#f48525", fontSize: "30px" }}>
                       auto_awesome
                     </span>
-                    Your Perfect Itinerary
+                    itinerary recommendation
                   </h3>
                   <div style={{ position: 'relative', display: 'inline-block' }}>
                     <button 
@@ -525,7 +525,7 @@ function Testresult() {
                       <span className="material-symbols-outlined" style={{ fontSize: "20px" }}>
                         calendar_add_on
                       </span>
-                      나의 일정으로 저장하기
+                      여행일정 만들기
                     </button>
 
                     {/* 드롭다운 메뉴 */}
