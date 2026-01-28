@@ -351,7 +351,20 @@ function Plancuration() {
           <div className="relative" ref={dropdownRef}>
             <button 
               onClick={() => setShowTripDropdown(!showTripDropdown)}
-              className="flex items-center gap-2 px-4 py-2 bg-white border-2 border-primary rounded-full text-sm font-bold text-primary shadow-sm hover:bg-primary hover:text-white transition-all"
+              className="flex items-center gap-2 px-4 py-2 rounded-full text-sm font-bold shadow-sm transition-all"
+              style={{ 
+                backgroundColor: "#FFF9E6", 
+                color: "#000000", 
+                border: "2px solid #FFE8A3" 
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = "#FFF4CC";
+                e.currentTarget.style.color = "#000000";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = "#FFF9E6";
+                e.currentTarget.style.color = "#000000";
+              }}
             >
               <span className="text-xl">🏠</span>
               {currentTrip ? currentTrip.name : '일정 선택'}
@@ -417,7 +430,20 @@ function Plancuration() {
               setEditingTripId(null); // 편집 모드 해제
               navigate('/dateregistration');
             }}
-            className="flex items-center gap-2 px-4 py-2 bg-white border-2 border-gray-200 rounded-full text-sm font-bold text-gray-700 hover:border-primary hover:text-primary hover:bg-orange-50 active:bg-orange-100 transition-all"
+            className="flex items-center gap-2 px-4 py-2 rounded-full text-sm font-bold transition-all active:scale-95"
+            style={{ 
+              backgroundColor: "#FFF9E6", 
+              color: "#000000", 
+              border: "2px solid #FFE8A3" 
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.backgroundColor = "#FFF4CC";
+              e.currentTarget.style.color = "#000000";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = "#FFF9E6";
+              e.currentTarget.style.color = "#000000";
+            }}
           >
             <span className="material-symbols-outlined text-lg">add</span>
             New Trip
@@ -467,7 +493,8 @@ function Plancuration() {
                       alert('선택된 일정이 없습니다.');
                     }
                   }}
-                  className="flex items-center gap-2 px-5 py-2.5 bg-white border border-gray-200 rounded-xl text-sm font-bold text-primary shadow-sm hover:shadow-md transition-all active:scale-95"
+                  className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold shadow-sm hover:shadow-md transition-all active:scale-95"
+                  style={{ backgroundColor: "#FFE5D9", color: "#FF5F33", border: "1px solid #FFE5D9" }}
                 >
                   <span className="material-symbols-outlined text-lg">calendar_month</span>
                   날짜 일정 변경
@@ -598,7 +625,7 @@ function Plancuration() {
             <div className="flex items-center justify-between mb-8">
               <h3 className="text-3xl font-black flex items-center gap-4">
                 <span className="material-symbols-outlined text-yellow-500 text-4xl">auto_awesome</span>
-                AI Recommended Contents
+                <span style={{ background: "linear-gradient(90deg,#FF5F33,#EAB308)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>AI Recommended Contents</span>
               </h3>
               <div className="flex gap-2">
                 <button className="size-10 rounded-full border border-gray-200 flex items-center justify-center text-gray-400 hover:border-primary hover:text-primary transition-all">
@@ -685,7 +712,7 @@ function Plancuration() {
             <div className="flex items-center justify-between mb-8">
               <h3 className="text-3xl font-black flex items-center gap-4">
                 <span className="material-symbols-outlined text-red-500 text-4xl">favorite</span>
-                My Saved List
+                <span style={{ background: "linear-gradient(90deg,#FF5F33,#EAB308)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>My Saved List</span>
               </h3>
               <span className="text-sm font-bold text-gray-500">
                 {likedFestivals.length}개의 축제
