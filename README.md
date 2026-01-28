@@ -1,5 +1,21 @@
 # PortPilot Backend — Travel Recommendation + Personal Assistant (FE-friendly)
 
+## Jan 28 Log
+
+**Hot Festivals Feature & Frontend Integration Complete** ✅
+- Added two-row layout on Home page: 3 AI-recommended festivals (top row) + 5 hot festivals from Typesense (bottom row)
+- Implemented separate data fetching: `/recommend` API for AI recommendations, `/search` API for Typesense hot festivals
+- Enhanced loading messages: "🤖 AI가 3개의 맞춤 축제를 찾고 있습니다..." for better UX clarity
+- Fixed layout constraints: Hot festivals section now properly fits left column space (5-column grid within grid layout)
+- Updated TownCard component to maintain consistent styling across both sections
+- Pushed all changes to frontend submodule (feat/integration) and main repository (feat/typesense-search)
+- Backend serving 768 festivals, Typesense indexed with 749 documents, all services running stable
+- Continued improving chatbot error handling and response validation from previous session
+- Successfully managed Git operations: staged changes, committed with descriptive messages, pushed to remote repositories
+- Documentation updated with today's feature additions and architectural improvements
+
+---
+
 ## Jan 27 Log
 
 **Pet Festival Search Fix & Frontend Comparison** ✅
