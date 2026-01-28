@@ -992,92 +992,148 @@ function Calendar() {
       {/* 사이드바 */}
       <div style={styles.sidebar}>
         <div style={styles.sidebarSection}>
-          <button 
-            style={{ ...styles.sidebarItem, ...(activeView === 'calendar' ? styles.sidebarItemActive : {}) }}
+          <button
+            style={{
+              fontFamily: 'Pretendard, sans-serif',
+              width: '100%',
+              padding: '14px 0 14px 18px',
+              borderRadius: 12,
+              border: 'none',
+              background: activeView === 'calendar' ? 'linear-gradient(90deg, #ff9800 0%, #ffb74d 100%)' : '#fff',
+              color: activeView === 'calendar' ? '#fff' : '#1a3556',
+              fontSize: 17,
+              fontWeight: 900,
+              cursor: 'pointer',
+              textAlign: 'left',
+              display: 'flex',
+              alignItems: 'center',
+              gap: 10,
+              boxShadow: activeView === 'calendar' ? '0 4px 16px rgba(255, 168, 0, 0.13)' : 'none',
+              marginBottom: 8,
+              letterSpacing: '0.01em',
+              borderBottom: activeView === 'calendar' ? 'none' : '1.5px solid #f3f3f3',
+              transition: 'all 0.2s',
+            }}
             onClick={() => setActiveView('calendar')}
           >
-            📅 Festival Calendar
+            <span style={{fontSize:20, marginRight:6, display:'flex', alignItems:'center'}}>
+              <svg width="20" height="20" fill="none" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="3" fill={activeView === 'calendar' ? '#fff' : 'none'} stroke={activeView === 'calendar' ? '#fff' : '#1a3556'} strokeWidth="1.5"/><rect x="7" y="2" width="2" height="4" rx="1" fill={activeView === 'calendar' ? '#fff' : '#1a3556'} /><rect x="15" y="2" width="2" height="4" rx="1" fill={activeView === 'calendar' ? '#fff' : '#1a3556'} /></svg>
+            </span>
+            Discovery Calendar
           </button>
         </div>
         <div style={styles.sidebarSection}>
-          <button 
-            style={{ ...styles.sidebarItem, ...(activeView === 'saved' ? styles.sidebarItemActive : {}) }}
+          <button
+            style={{
+              fontFamily: 'Pretendard, sans-serif',
+              width: '100%',
+              padding: '12px 0 12px 18px',
+              borderRadius: 12,
+              border: 'none',
+              background: activeView === 'saved' ? 'linear-gradient(90deg, #ff9800 0%, #ffb74d 100%)' : '#fff',
+              color: activeView === 'saved' ? '#fff' : '#1a3556',
+              fontSize: 16,
+              fontWeight: 700,
+              cursor: 'pointer',
+              textAlign: 'left',
+              display: 'flex',
+              alignItems: 'center',
+              gap: 10,
+              boxShadow: activeView === 'saved' ? '0 4px 16px rgba(255, 168, 0, 0.13)' : 'none',
+              marginBottom: 8,
+              letterSpacing: '0.01em',
+              borderBottom: activeView === 'saved' ? 'none' : '1.5px solid #f3f3f3',
+              transition: 'all 0.2s',
+            }}
             onClick={() => setActiveView('saved')}
           >
-            ⭐ Saved Festivals
+            <span style={{fontSize:20, marginRight:6, display:'flex', alignItems:'center'}}>
+              <svg width="20" height="20" fill="none" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" stroke={activeView === 'saved' ? '#fff' : '#1a3556'} strokeWidth="1.5" fill="none"/></svg>
+            </span>
+            Saved Festivals
           </button>
         </div>
         <div style={styles.sidebarSection}>
           <div style={{ 
-            fontSize: 11, 
-            fontWeight: 800, 
-            color: '#9ca3af', 
-            textTransform: 'uppercase', 
-            letterSpacing: '1.2px', 
-            marginBottom: 16,
-            paddingLeft: 4
+            fontFamily: 'Pretendard, sans-serif',
+            fontSize: 13,
+            fontWeight: 900,
+            color: '#ff9800',
+            textTransform: 'uppercase',
+            letterSpacing: '2px',
+            marginBottom: 18,
+            paddingLeft: 4,
+            background: 'linear-gradient(90deg, #ff9800 0%, #ffd600 100%)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+            display: 'flex',
+            alignItems: 'center',
+            gap: 6
           }}>
-            🔍 Filter Search
+            <span style={{fontSize:18}}>🔍</span> FILTER SEARCH
           </div>
           
           {/* 지역 필터 */}
           <div style={{ marginBottom: 16 }}>
             <button 
               style={{ 
+                fontFamily: 'Pretendard, sans-serif',
                 width: '100%',
-                padding: '12px 16px',
-                borderRadius: 10,
+                padding: '14px 18px',
+                borderRadius: 16,
                 border: 'none',
                 background: filterSectionsOpen.region 
-                  ? 'linear-gradient(135deg, #f48525 0%, #ff9f5a 100%)' 
+                  ? 'linear-gradient(135deg, #ff9800 0%, #ffd600 100%)' 
                   : '#fff',
                 color: filterSectionsOpen.region ? '#fff' : '#1f2937',
-                fontSize: 14,
-                fontWeight: 700,
+                fontSize: 15,
+                fontWeight: 800,
                 cursor: 'pointer',
                 textAlign: 'left',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'space-between',
                 boxShadow: filterSectionsOpen.region 
-                  ? '0 4px 12px rgba(244, 133, 37, 0.3)' 
-                  : '0 2px 6px rgba(0,0,0,0.06)',
-                transition: 'all 0.3s ease',
-                transform: filterSectionsOpen.region ? 'translateY(-2px)' : 'translateY(0)'
+                  ? '0 4px 16px rgba(255, 168, 0, 0.18)' 
+                  : '0 2px 8px rgba(0,0,0,0.04)',
+                transition: 'all 0.3s cubic-bezier(.4,2,.6,1)',
+                transform: filterSectionsOpen.region ? 'translateY(-2px) scale(1.01)' : 'translateY(0) scale(1)',
+                marginBottom: 2
               }}
               onClick={() => setFilterSectionsOpen(prev => ({ ...prev, region: !prev.region }))}
             >
-              <span style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                <span style={{ fontSize: 18 }}>📍</span>
-                지역
+              <span style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                <span style={{ fontSize: 20 }}>📍</span>
+                <span style={{letterSpacing:'1.2px'}}>지역</span>
                 {activeFilters.regions.length > 0 && (
                   <span style={{ 
-                    background: filterSectionsOpen.region ? 'rgba(255,255,255,0.3)' : '#fef3e8',
-                    color: filterSectionsOpen.region ? '#fff' : '#f48525',
-                    padding: '2px 8px',
-                    borderRadius: 12,
-                    fontSize: 11,
-                    fontWeight: 700
+                    background: filterSectionsOpen.region ? 'rgba(255,255,255,0.3)' : '#fff8e1',
+                    color: filterSectionsOpen.region ? '#fff' : '#ff9800',
+                    padding: '2px 10px',
+                    borderRadius: 14,
+                    fontSize: 12,
+                    fontWeight: 800,
+                    marginLeft: 6
                   }}>
                     {activeFilters.regions.length}
                   </span>
                 )}
               </span>
-              <span style={{ fontSize: 12, opacity: 0.7 }}>
+              <span style={{ fontSize: 13, opacity: 0.7, fontWeight: 700 }}>
                 {filterSectionsOpen.region ? '▲' : '▼'}
               </span>
             </button>
             {filterSectionsOpen.region && (
               <div style={{ 
                 marginTop: 8,
-                padding: '12px',
-                backgroundColor: '#f9fafb',
-                borderRadius: 10,
-                border: '1px solid #e5e7eb',
+                padding: '14px',
+                background: 'linear-gradient(135deg, #fffde4 0%, #fff8e1 100%)',
+                borderRadius: 16,
+                border: '1.5px solid #ffe0b2',
                 maxHeight: 240,
                 overflowY: 'auto',
                 scrollbarWidth: 'thin',
-                scrollbarColor: '#cbd5e1 #f1f5f9'
+                scrollbarColor: '#ffe082 #fffde4'
               }}>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
                   {['서울', '부산', '대구', '인천', '광주', '대전', '울산', '세종', '경기', '강원', '충북', '충남', '전북', '전남', '경북', '경남', '제주'].map(region => (
@@ -1092,18 +1148,19 @@ function Calendar() {
                         }));
                       }}
                       style={{
-                        padding: '6px 12px',
+                        fontFamily: 'Pretendard, sans-serif',
+                        padding: '7px 14px',
                         border: 'none',
-                        borderRadius: 6,
-                        backgroundColor: activeFilters.regions.includes(region) ? '#f48525' : 'white',
-                        color: activeFilters.regions.includes(region) ? 'white' : '#4b5563',
-                        fontSize: 12,
-                        fontWeight: 600,
+                        borderRadius: 10,
+                        background: activeFilters.regions.includes(region) ? 'linear-gradient(135deg, #ff9800 0%, #ffd600 100%)' : '#fff',
+                        color: activeFilters.regions.includes(region) ? '#fff' : '#4b5563',
+                        fontSize: 13,
+                        fontWeight: 700,
                         cursor: 'pointer',
                         transition: 'all 0.2s',
                         boxShadow: activeFilters.regions.includes(region) 
-                          ? '0 2px 6px rgba(244, 133, 37, 0.3)' 
-                          : '0 1px 3px rgba(0,0,0,0.1)'
+                          ? '0 2px 8px rgba(255, 168, 0, 0.18)' 
+                          : '0 1px 3px rgba(0,0,0,0.07)'
                       }}
                       onMouseEnter={(e) => {
                         if (!activeFilters.regions.includes(region)) {
@@ -1335,26 +1392,28 @@ function Calendar() {
           {/* 주말 포함 필터 */}
           <button 
             style={{ 
+              fontFamily: 'Pretendard, sans-serif',
               width: '100%',
-              padding: '12px 16px',
-              borderRadius: 10,
+              padding: '14px 18px',
+              borderRadius: 16,
               border: 'none',
               background: activeFilters.includesWeekend 
                 ? 'linear-gradient(135deg, #a78bfa 0%, #c4b5fd 100%)' 
                 : '#fff',
               color: activeFilters.includesWeekend ? '#fff' : '#1f2937',
-              fontSize: 14,
-              fontWeight: 700,
+              fontSize: 15,
+              fontWeight: 800,
               cursor: 'pointer',
               textAlign: 'left',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'space-between',
               boxShadow: activeFilters.includesWeekend 
-                ? '0 4px 12px rgba(167, 139, 250, 0.3)' 
-                : '0 2px 6px rgba(0,0,0,0.06)',
-              transition: 'all 0.3s ease',
-              transform: activeFilters.includesWeekend ? 'translateY(-2px)' : 'translateY(0)'
+                ? '0 4px 16px rgba(167, 139, 250, 0.18)' 
+                : '0 2px 8px rgba(0,0,0,0.04)',
+              transition: 'all 0.3s cubic-bezier(.4,2,.6,1)',
+              transform: activeFilters.includesWeekend ? 'translateY(-2px) scale(1.01)' : 'translateY(0) scale(1)',
+              marginBottom: 2
             }}
             onClick={() => {
               setActiveFilters(prev => {
