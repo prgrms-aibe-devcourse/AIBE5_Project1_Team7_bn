@@ -469,11 +469,10 @@ Content-Type: application/json
 
 | 이름 | 역할 | 주요 기여 |
 |-----|------|----------|
-| - | Frontend Lead | 전체 UI/UX 설계 및 구현 |
-| - | Backend Lead | AI API 연동 및 데이터 처리 |
-| - | Design | 브랜딩, 컬러 시스템, 컴포넌트 디자인 |
-| - | QA | 테스트, 버그 리포팅 및 수정 |
-
+| 송지훈/한경수 | Frontend Lead | 전체 Frontend 기능 구현 |
+| 이효연 | Design | UI/UX 설계, 브랜딩, 컴포넌트 디자인, 데이터처리 |
+| 손주현 | QA | 테스트, 버그 리포팅 및 수정 |
+| 이병남 | Backend Lead | AI API 연동  |
 ---
 
 ## 📄 License
@@ -493,3 +492,4 @@ This project is licensed under the MIT License.
 ---
 
 **Made with ❤️ by Festory Team**
+
