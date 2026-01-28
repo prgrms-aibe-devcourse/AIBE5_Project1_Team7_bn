@@ -547,13 +547,21 @@ function TasteTest() {
       fontWeight: 500,
     },
     cardsContainer: {
-      display: "grid",
-      gridTemplateColumns: "repeat(3, 1fr)", // 3열 고정
+      display: currentQuestion === 0 ? "flex" : "grid",
+      flexWrap: currentQuestion === 0 ? "wrap" : undefined,
+      justifyContent: currentQuestion === 0 ? "center" : undefined,
+      gridTemplateColumns: (currentQuestion === 5 || currentQuestion === 6) ? "repeat(2, 1fr)" : currentQuestion === 0 ? undefined : "repeat(3, 1fr)",
       gap: "24px",
       width: "100%",
-      maxWidth: "1400px",
-      marginBottom: "80px",
+      maxWidth: (currentQuestion === 5 || currentQuestion === 6) ? "900px" : "1400px",
+      marginBottom: "120px",
       padding: "0 16px",
+      margin: "0 auto",
+    },
+    firstPageCard: {
+      flex: "0 0 calc(33.333% - 16px)",
+      minWidth: "300px",
+      maxWidth: "400px",
     },
     cardTitle: {
       fontSize: "24px",
@@ -701,13 +709,15 @@ function TasteTest() {
 
             {/* Cards */}
             <div style={styles.cardsContainer}>
-              {currentQ.options.map((option) => {
+              {currentQ.options.map((option, index) => {
                 const isSelected = selectedOptions.includes(option.id);
+                const isFirstPage = currentQuestion === 0;
                 return (
                   <div
                     key={option.id}
                     className={`survey-card ${isSelected ? 'active' : ''}`}
                     onClick={() => handleOptionClick(option.id)}
+                    style={isFirstPage ? styles.firstPageCard : {}}
                   >
                     <div className="icon-box">
                       <span className="material-symbols-outlined" style={{ fontSize: "40px" }}>
@@ -729,7 +739,7 @@ function TasteTest() {
             </div>
 
             {/* Buttons */}
-            <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: "16px", width: "100%" }}>
+            <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: "16px", width: "100%", marginTop: "40px" }}>
               <div style={{ display: "flex", gap: "16px", width: "100%", maxWidth: "600px", justifyContent: "center" }}>
                 <button
                   style={styles.backButton}

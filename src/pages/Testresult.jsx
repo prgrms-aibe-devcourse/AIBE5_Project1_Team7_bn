@@ -343,7 +343,7 @@ function Testresult() {
     },
     timelineLine: {
       position: "absolute",
-      left: "28px",
+      left: "56px",
       top: "16px",
       bottom: "16px",
       width: "2px",
