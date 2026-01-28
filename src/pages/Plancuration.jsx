@@ -491,7 +491,7 @@ function Plancuration() {
                         <span className="text-primary text-xs font-black uppercase tracking-widest block mb-1">
                           {festival.isPlace ? festival.ministry_region : '축제 일정'}
                         </span>
-                        <h4 className="text-2xl font-black text-gray-900 mb-2">{festival.fstvlNm}</h4>
+                        <h4 className="text-2xl font-black mb-2" style={{ color: 'rgb(220,100,20)' }}>{festival.fstvlNm}</h4>
                         <div className="flex items-center gap-2 text-sm text-gray-600">
                           <span className="material-symbols-outlined text-lg">
                             {festival.isPlace ? 'location_on' : 'calendar_today'}
@@ -549,12 +549,9 @@ function Plancuration() {
                           setSelectedFestival(festival);
                         }
                       }}
-                      className="w-full py-3.5 bg-white border-2 border-primary/10 text-primary rounded-2xl text-sm font-bold flex items-center justify-center gap-2 hover:bg-primary hover:text-white transition-all"
+                      className="w-full py-3.5 bg-white border-2 border-primary/10 text-primary rounded-2xl text-sm font-bold flex items-center justify-center gap-2 transition-all"
                     >
-                      <span className="material-symbols-outlined text-lg">
-                        {festival.isPlace ? 'open_in_new' : 'info'}
-                      </span>
-                      {festival.isPlace ? '장소 상세보기' : '축제 상세보기'}
+                      {festival.isPlace ? '장소 상세보기' : '상세보기'}
                     </button>
                   </div>
                 </div>
@@ -671,9 +668,9 @@ function Plancuration() {
                     </div>
                     <button 
                       onClick={() => setSelectedFestival(festival)}
-                      className="w-full bg-white border-2 border-primary text-primary py-4 rounded-2xl text-sm font-bold flex items-center justify-center gap-2 hover:bg-primary hover:text-white shadow-lg shadow-primary/10 transition-all"
+                      className="w-full bg-white border-2 border-primary text-primary py-4 rounded-2xl text-sm font-bold flex items-center justify-center gap-2 shadow-lg shadow-primary/10 transition-all"
                     >
-                      <span className="material-symbols-outlined text-lg">info</span> 상세보기
+                      상세보기
                     </button>
                   </div>
                 </div>
@@ -768,7 +765,7 @@ function Plancuration() {
                       <div className="flex gap-2">
                         <button 
                           onClick={() => setSelectedFestival(festival)}
-                          className="flex-1 py-2.5 bg-white border-2 border-primary text-primary rounded-xl text-sm font-bold hover:bg-primary hover:text-white transition-all"
+                          className="flex-1 py-2.5 bg-white border-2 border-primary text-primary rounded-xl text-sm font-bold transition-all"
                         >
                           상세보기
                         </button>

@@ -904,15 +904,15 @@ function Calendar() {
   const styles = {
     container: { display: "flex", flexDirection: "column", minHeight: "calc(100vh - 64px)", background: "#f9fafb", fontFamily: "'Plus Jakarta Sans','Segoe UI',sans-serif" },
     header: { height: 60, background: "#fff", borderBottom: "1px solid #e5e7eb", display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0 20px", marginBottom: 0 },
-    sidebar: { position: "fixed", left: 0, top: 124, width: 320, height: "calc(100vh - 124px)", background: "#fff", borderRight: "1px solid #e5e7eb", padding: 28, overflowY: "auto" },
-    main: { marginLeft: 340, marginTop: 0, flex: 1, display: "flex", gap: 20, padding: 20, maxWidth: "100%" },
+    sidebar: { position: "absolute", left: 0, top: 124, width: 380, height: "calc(100vh - 124px)", background: "#fff", borderRight: "1px solid #e5e7eb", padding: 28, overflowY: "auto" },
+    main: { marginLeft: 390, marginTop: 0, flex: 1, display: "flex", gap: 20, padding: "20px 20px 20px 10px", maxWidth: "100%" },
     calendarCard: { flex: 1, background: "#fff", borderRadius: 12, boxShadow: "0 2px 8px rgba(0,0,0,0.06)", overflow: "hidden", display: "flex", flexDirection: "column" },
     calendarTopBar: { display: "flex", alignItems: "center", justifyContent: "space-between", padding: "12px 16px", borderBottom: "1px solid #e5e7eb", background: "#fff" },
     calendarBody: { padding: 16, overflowY: "auto", height: "calc(100vh - 120px)" },
     rightPanel: { width: 340, background: "#fff", borderRadius: 12, padding: 20, boxShadow: "0 2px 8px rgba(0,0,0,0.06)", overflowY: "auto" },
     sidebarSection: { marginBottom: 24 },
     sidebarTitle: { fontSize: 16, fontWeight: 700, color: "#111827", textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: 16 },
-    sidebarItem: { fontSize: 13, color: "#374151", padding: "8px 12px", borderRadius: 6, marginBottom: 8, cursor: "pointer", background: "transparent", border: "none", textAlign: "left", width: "100%" },
+    sidebarItem: { fontSize: 15, color: "#374151", padding: "10px 16px", borderRadius: 6, marginBottom: 8, cursor: "pointer", background: "transparent", border: "none", textAlign: "left", width: "100%" },
     sidebarItemActive: { background: "rgb(244,133,37)", color: "#fff", fontWeight: 600 },
     btn: { padding: "10px 12px", background: "linear-gradient(90deg, rgb(244,133,37) 0%, rgb(255,153,102) 100%)", color: "#fff", border: "none", borderRadius: 8, fontSize: 13, fontWeight: 700, cursor: "pointer" },
     btnGhost: { padding: "10px 12px", background: "#fff", color: "#111", border: "1px solid #e5e7eb", borderRadius: 8, fontSize: 13, fontWeight: 700, cursor: "pointer" },
@@ -933,7 +933,9 @@ function Calendar() {
         <style>{calendarStyles}</style>
         {/* 서브 헤더 - 캘린더 타이틀 */}
         <div style={styles.header}>
-          <div style={{ fontSize: 18, fontWeight: 600, color: "rgb(244,133,37)" }}>Discovery Calendar</div>
+          <div style={{ fontSize: 18, fontWeight: 600, color: "rgb(244,133,37)" }}>
+            {activeView === 'calendar' ? 'Discovery Calendar' : 'Saved Festivals'}
+          </div>
         </div>
 
       {/* ✅ 축제 pSeq 입력 패널 */}
@@ -996,12 +998,12 @@ function Calendar() {
             style={{
               fontFamily: 'Pretendard, sans-serif',
               width: '100%',
-              padding: '14px 0 14px 18px',
+              padding: '16px 0 16px 20px',
               borderRadius: 12,
               border: 'none',
               background: activeView === 'calendar' ? 'linear-gradient(90deg, #ff9800 0%, #ffb74d 100%)' : '#fff',
               color: activeView === 'calendar' ? '#fff' : '#1a3556',
-              fontSize: 17,
+              fontSize: 18,
               fontWeight: 900,
               cursor: 'pointer',
               textAlign: 'left',
@@ -1016,8 +1018,8 @@ function Calendar() {
             }}
             onClick={() => setActiveView('calendar')}
           >
-            <span style={{fontSize:20, marginRight:6, display:'flex', alignItems:'center'}}>
-              <svg width="20" height="20" fill="none" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="3" fill={activeView === 'calendar' ? '#fff' : 'none'} stroke={activeView === 'calendar' ? '#fff' : '#1a3556'} strokeWidth="1.5"/><rect x="7" y="2" width="2" height="4" rx="1" fill={activeView === 'calendar' ? '#fff' : '#1a3556'} /><rect x="15" y="2" width="2" height="4" rx="1" fill={activeView === 'calendar' ? '#fff' : '#1a3556'} /></svg>
+            <span style={{fontSize:22, marginRight:6, display:'flex', alignItems:'center'}}>
+              <svg width="22" height="22" fill="none" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="3" fill={activeView === 'calendar' ? '#fff' : 'none'} stroke={activeView === 'calendar' ? '#fff' : '#1a3556'} strokeWidth="1.5"/><rect x="7" y="2" width="2" height="4" rx="1" fill={activeView === 'calendar' ? '#fff' : '#1a3556'} /><rect x="15" y="2" width="2" height="4" rx="1" fill={activeView === 'calendar' ? '#fff' : '#1a3556'} /></svg>
             </span>
             Discovery Calendar
           </button>
@@ -1027,12 +1029,12 @@ function Calendar() {
             style={{
               fontFamily: 'Pretendard, sans-serif',
               width: '100%',
-              padding: '12px 0 12px 18px',
+              padding: '16px 0 16px 20px',
               borderRadius: 12,
               border: 'none',
               background: activeView === 'saved' ? 'linear-gradient(90deg, #ff9800 0%, #ffb74d 100%)' : '#fff',
               color: activeView === 'saved' ? '#fff' : '#1a3556',
-              fontSize: 16,
+              fontSize: 18,
               fontWeight: 700,
               cursor: 'pointer',
               textAlign: 'left',
@@ -1047,30 +1049,27 @@ function Calendar() {
             }}
             onClick={() => setActiveView('saved')}
           >
-            <span style={{fontSize:20, marginRight:6, display:'flex', alignItems:'center'}}>
-              <svg width="20" height="20" fill="none" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" stroke={activeView === 'saved' ? '#fff' : '#1a3556'} strokeWidth="1.5" fill="none"/></svg>
+            <span style={{fontSize:22, marginRight:6, display:'flex', alignItems:'center'}}>
+              <svg width="22" height="22" fill="none" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" stroke={activeView === 'saved' ? '#fff' : '#1a3556'} strokeWidth="1.5" fill="none"/></svg>
             </span>
             Saved Festivals
           </button>
         </div>
-        <div style={styles.sidebarSection}>
+        <div style={{...styles.sidebarSection, marginTop: 32}}>
           <div style={{ 
             fontFamily: 'Pretendard, sans-serif',
-            fontSize: 13,
+            fontSize: 15,
             fontWeight: 900,
-            color: '#ff9800',
+            color: '#4b5563',
             textTransform: 'uppercase',
             letterSpacing: '2px',
             marginBottom: 18,
             paddingLeft: 4,
-            background: 'linear-gradient(90deg, #ff9800 0%, #ffd600 100%)',
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
             display: 'flex',
             alignItems: 'center',
             gap: 6
           }}>
-            <span style={{fontSize:18}}>🔍</span> FILTER SEARCH
+            <span style={{fontSize:20}}>🔎</span> FILTER SEARCH
           </div>
           
           {/* 지역 필터 */}
@@ -1079,14 +1078,14 @@ function Calendar() {
               style={{ 
                 fontFamily: 'Pretendard, sans-serif',
                 width: '100%',
-                padding: '14px 18px',
+                padding: '16px 20px',
                 borderRadius: 16,
                 border: 'none',
                 background: filterSectionsOpen.region 
                   ? 'linear-gradient(135deg, #ff9800 0%, #ffd600 100%)' 
-                  : '#fff',
+                  : 'linear-gradient(135deg, #fff8e1 0%, #fff3cd 100%)',
                 color: filterSectionsOpen.region ? '#fff' : '#1f2937',
-                fontSize: 15,
+                fontSize: 17,
                 fontWeight: 800,
                 cursor: 'pointer',
                 textAlign: 'left',
@@ -1149,12 +1148,12 @@ function Calendar() {
                       }}
                       style={{
                         fontFamily: 'Pretendard, sans-serif',
-                        padding: '7px 14px',
+                        padding: '11px 18px',
                         border: 'none',
                         borderRadius: 10,
                         background: activeFilters.regions.includes(region) ? 'linear-gradient(135deg, #ff9800 0%, #ffd600 100%)' : '#fff',
                         color: activeFilters.regions.includes(region) ? '#fff' : '#4b5563',
-                        fontSize: 13,
+                        fontSize: 15,
                         fontWeight: 700,
                         cursor: 'pointer',
                         transition: 'all 0.2s',
@@ -1188,14 +1187,14 @@ function Calendar() {
             <button 
               style={{ 
                 width: '100%',
-                padding: '12px 16px',
+                padding: '16px 20px',
                 borderRadius: 10,
                 border: 'none',
                 background: filterSectionsOpen.duration 
                   ? 'linear-gradient(135deg, #60a5fa 0%, #93c5fd 100%)' 
-                  : '#fff',
+                  : 'linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%)',
                 color: filterSectionsOpen.duration ? '#fff' : '#1f2937',
-                fontSize: 14,
+                fontSize: 17,
                 fontWeight: 700,
                 cursor: 'pointer',
                 textAlign: 'left',
@@ -1250,7 +1249,7 @@ function Calendar() {
                     style={{
                       display: 'flex',
                       alignItems: 'center',
-                      justifyContent: 'space-between',
+                      justifyContent: 'center',
                       width: '100%',
                       padding: '10px 12px',
                       margin: '4px 0',
@@ -1258,10 +1257,10 @@ function Calendar() {
                       borderRadius: 8,
                       backgroundColor: activeFilters.duration === duration ? '#60a5fa' : 'white',
                       color: activeFilters.duration === duration ? 'white' : '#4b5563',
-                      fontSize: 13,
+                      fontSize: 15,
                       fontWeight: 600,
                       cursor: 'pointer',
-                      textAlign: 'left',
+                      textAlign: 'center',
                       transition: 'all 0.2s',
                       boxShadow: activeFilters.duration === duration 
                         ? '0 2px 6px rgba(96, 165, 250, 0.3)' 
@@ -1291,14 +1290,14 @@ function Calendar() {
             <button 
               style={{ 
                 width: '100%',
-                padding: '12px 16px',
+                padding: '16px 20px',
                 borderRadius: 10,
                 border: 'none',
                 background: filterSectionsOpen.price 
                   ? 'linear-gradient(135deg, #84cc16 0%, #a3e635 100%)' 
-                  : '#fff',
+                  : 'linear-gradient(135deg, #f7fee7 0%, #ecfccb 100%)',
                 color: filterSectionsOpen.price ? '#fff' : '#1f2937',
-                fontSize: 14,
+                fontSize: 17,
                 fontWeight: 700,
                 cursor: 'pointer',
                 textAlign: 'left',
@@ -1353,7 +1352,7 @@ function Calendar() {
                     style={{
                       display: 'flex',
                       alignItems: 'center',
-                      justifyContent: 'space-between',
+                      justifyContent: 'center',
                       width: '100%',
                       padding: '10px 12px',
                       margin: '4px 0',
@@ -1361,10 +1360,10 @@ function Calendar() {
                       borderRadius: 8,
                       backgroundColor: activeFilters.isFree === value ? '#84cc16' : 'white',
                       color: activeFilters.isFree === value ? 'white' : '#4b5563',
-                      fontSize: 13,
+                      fontSize: 15,
                       fontWeight: 600,
                       cursor: 'pointer',
-                      textAlign: 'left',
+                      textAlign: 'center',
                       transition: 'all 0.2s',
                       boxShadow: activeFilters.isFree === value 
                         ? '0 2px 6px rgba(132, 204, 22, 0.3)' 
@@ -1394,14 +1393,14 @@ function Calendar() {
             style={{ 
               fontFamily: 'Pretendard, sans-serif',
               width: '100%',
-              padding: '14px 18px',
+              padding: '16px 20px',
               borderRadius: 16,
               border: 'none',
               background: activeFilters.includesWeekend 
                 ? 'linear-gradient(135deg, #a78bfa 0%, #c4b5fd 100%)' 
-                : '#fff',
+                : 'linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%)',
               color: activeFilters.includesWeekend ? '#fff' : '#1f2937',
-              fontSize: 15,
+              fontSize: 17,
               fontWeight: 800,
               cursor: 'pointer',
               textAlign: 'left',

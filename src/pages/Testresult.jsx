@@ -492,10 +492,8 @@ function Testresult() {
                           image: festival.ministry_image_url || "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=400&h=300&fit=crop"
                         }}
                         festival={festival}
-                        onClick={() => {
-                          setMainEventFestival(festival);
-                          setSelectedFestival(festival);
-                        }}
+                        onClick={() => setSelectedFestival(festival)}
+                        onMainEventSelect={setMainEventFestival}
                       />
                     </div>
                   ))}

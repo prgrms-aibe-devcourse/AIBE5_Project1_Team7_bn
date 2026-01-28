@@ -177,8 +177,8 @@ function Review() {
       <main className="flex-1 w-full max-w-7xl mx-auto px-6 py-12">
         {/* 페이지 헤더 */}
         <div className="mb-10">
-          <h1 className="text-5xl font-black text-gray-900 mb-3">
-            ✍️ Festival Review
+          <h1 className="text-5xl font-black mb-3">
+            <span>✍️</span> <span className="bg-gradient-to-r from-orange-500 via-orange-400 to-yellow-500 bg-clip-text text-transparent">Festival Review</span>
           </h1>
           <p className="text-gray-600 text-lg">
             여행에서 방문한 축제와 장소에 대한 솔직한 후기를 남겨주세요
@@ -195,7 +195,7 @@ function Review() {
                 : "bg-white text-gray-600 hover:bg-gray-50 border-2 border-gray-200"
             }`}
           >
-            📝 리뷰 작성하기
+            📝 후기 작성하기
           </button>
           <button
             onClick={() => setActiveTab("list")}
@@ -205,11 +205,11 @@ function Review() {
                 : "bg-white text-gray-600 hover:bg-gray-50 border-2 border-gray-200"
             }`}
           >
-            📋 내 리뷰 ({reviews.length})
+            📋 내 후기 ({reviews.length})
           </button>
         </div>
 
-        {/* 리뷰 작성하기 탭 */}
+        {/* 후기 작성하기 탭 */}
         {activeTab === "write" && (
           <div>
             {allFestivals.length === 0 ? (
@@ -300,10 +300,9 @@ function Review() {
 
                         <button
                           onClick={() => openReviewListModal(festival)}
-                          className="w-full py-3 bg-gradient-to-r from-orange-500 to-yellow-500 text-white rounded-xl font-bold hover:shadow-lg transition-all flex items-center justify-center gap-2"
+                          className="w-full py-3 bg-gradient-to-r from-gray-50 to-gray-100 text-gray-700 rounded-xl font-bold hover:from-gray-100 hover:to-gray-200 transition-all flex items-center justify-center gap-2"
                         >
-                          <span className="material-symbols-outlined text-lg">visibility</span>
-                          리뷰 보기
+                          상세 후기 보기
                         </button>
                       </div>
                     </div>
@@ -314,7 +313,7 @@ function Review() {
           </div>
         )}
 
-        {/* 내 리뷰 탭 */}
+        {/* 내 후기 탭 */}
         {activeTab === "list" && (
           <div>
             {reviews.length === 0 ? (
@@ -543,7 +542,7 @@ function Review() {
                   </div>
                 ))}
 
-                {/* 내 리뷰 */}
+                {/* 내 후기 */}
                 {reviews.find(r => r.festivalId === selectedFestival.pSeq) && (
                   <div className="bg-orange-50 rounded-2xl p-5 border-2 border-orange-300">
                     <div className="flex items-start justify-between mb-3">
@@ -553,7 +552,7 @@ function Review() {
                         </div>
                         <div>
                           <div className="font-bold text-gray-900 flex items-center gap-2">
-                            내 리뷰
+                            내 후기
                             <span className="px-2 py-0.5 bg-orange-500 text-white text-xs rounded-full">MY</span>
                           </div>
                           <div className="text-sm text-gray-500">
@@ -587,7 +586,7 @@ function Review() {
                 className="w-full py-4 bg-gradient-to-r from-orange-500 to-yellow-500 text-white rounded-2xl font-bold text-lg hover:shadow-lg transition-all flex items-center justify-center gap-2"
               >
                 <span className="material-symbols-outlined">edit</span>
-                {reviews.find(r => r.festivalId === selectedFestival.pSeq) ? '내 리뷰 수정하기' : '리뷰 작성하기'}
+                {reviews.find(r => r.festivalId === selectedFestival.pSeq) ? '내 후기 수정하기' : '후기 작성하기'}
               </button>
             </div>
           </div>

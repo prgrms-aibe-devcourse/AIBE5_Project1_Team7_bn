@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import useStore from '../store/useStore';
 
-export function TownCard({ town, festival, onClick }) {
+export function TownCard({ town, festival, onClick, onMainEventSelect }) {
   const [isHovered, setIsHovered] = useState(false);
   const { likedFestivals, toggleLikeFestival } = useStore();
   
@@ -17,8 +17,11 @@ export function TownCard({ town, festival, onClick }) {
 
   // 좋아요 버튼 클릭 시 부모 onClick이 실행되지 않도록 stopPropagation 사용
   const handleLikeClick = (e) => {
-    e.stopPropagation(); // 이게 없으면 좋아요 누를 때도 모달이 뜸
+    e.stopPropagation();
     toggleLikeFestival(festivalData);
+    if (onMainEventSelect) {
+      onMainEventSelect(festivalData);
+    }
   };
 
   return (

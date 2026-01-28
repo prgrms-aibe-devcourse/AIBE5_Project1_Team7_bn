@@ -102,7 +102,7 @@ function Header() {
                 <Link
                   key={item.path}
                   to={item.path}
-                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                  className={`px-4 py-2 rounded-lg text-lg font-medium transition-colors ${
                     isActive(item.path)
                       ? "text-orange-600 bg-orange-50"
                       : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
@@ -115,12 +115,12 @@ function Header() {
           </div>
 
           {/* ================= 중앙 ================= */}
-          <div className="hidden lg:block absolute left-[79%] -translate-x-1/2 w-full max-w-xs">
+          <div className="hidden lg:block ml-auto mr-2">
             <div className="relative">
               <input
                 type="text"
                 placeholder="Search for any pages you need..."
-                className="w-full px-4 py-2 pl-10 bg-gray-50 border border-gray-200 rounded-lg text-sm
+                className="w-72 px-4 py-2 pl-10 bg-gray-50 border border-gray-200 rounded-lg text-sm
                            focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
               />
               <svg
@@ -140,7 +140,7 @@ function Header() {
           </div>
 
           {/* ================= 우측 ================= */}
-          <div className="ml-auto flex items-center space-x-5">
+          <div className="flex items-center space-x-5">
             {/* 알림 */}
             <div className="relative" ref={notificationRef}>
               <button 
