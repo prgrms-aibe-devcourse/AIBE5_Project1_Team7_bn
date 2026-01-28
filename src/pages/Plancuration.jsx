@@ -355,7 +355,8 @@ function Plancuration() {
               style={{ 
                 backgroundColor: "#FFF9E6", 
                 color: "#000000", 
-                border: "2px solid #FFE8A3" 
+                border: "2px solid #FFE8A3",
+                height: "42px"
               }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.backgroundColor = "#FFF4CC";
@@ -366,7 +367,7 @@ function Plancuration() {
                 e.currentTarget.style.color = "#000000";
               }}
             >
-              <span className="text-xl">🏠</span>
+              <span className="text-lg">🏠</span>
               {currentTrip ? currentTrip.name : '일정 선택'}
               <span className="material-symbols-outlined text-lg">
                 {showTripDropdown ? 'expand_less' : 'expand_more'}
@@ -430,11 +431,12 @@ function Plancuration() {
               setEditingTripId(null); // 편집 모드 해제
               navigate('/dateregistration');
             }}
-            className="flex items-center gap-2 px-4 py-2 rounded-full text-sm font-bold transition-all active:scale-95"
+            className="flex items-center gap-2 px-4 py-2 rounded-full text-sm font-bold shadow-sm transition-all active:scale-95"
             style={{ 
               backgroundColor: "#FFF9E6", 
               color: "#000000", 
-              border: "2px solid #FFE8A3" 
+              border: "2px solid #FFE8A3",
+              height: "42px"
             }}
             onMouseEnter={(e) => {
               e.currentTarget.style.backgroundColor = "#FFF4CC";
