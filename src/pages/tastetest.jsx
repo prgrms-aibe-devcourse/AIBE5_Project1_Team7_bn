@@ -7,6 +7,7 @@ import Loading from "./Loading";
 function TasteTest() {
   const navigate = useNavigate();
   const [currentQuestion, setCurrentQuestion] = useState(0);
+  const [selectedOptions, setSelectedOptions] = useState([]); // 다중 선택을 위한 상태
   const { addTasteTestAnswer, clearTasteTestAnswers } = useStore();
   const [isLoading, setIsLoading] = useState(() => {
     // 1/3 확률로 로딩 화면 표시 결정 (초기값으로만 계산)
@@ -35,144 +36,294 @@ function TasteTest() {
     return <Loading />;
   }
 
-  // 5개의 질문 정의
+  // 7개의 질문 정의
   const questions = [
     {
-      question: "어떤 축제 분위기를 선호하시나요?",
-      subtitle: "당신의 취향에 맞는 축제를 찾아드릴게요.",
+      question: "누구와 함께 가는 여행이 가장 많나요?",
+      subtitle: "함께하는 동행에 따라 맞춤 축제를 찾아드릴게요.",
       options: [
         {
           id: 1,
-          icon: "bedtime",
-          title: "조용하고 차분한",
-          description: "전통 문화와 차 한잔의 여유를 즐기는 고요한 분위기",
-          showStar: true,
-        },
-        {
-          id: 2,
-          icon: "local_fire_department",
-          title: "활기차고 열정적인",
-          description: "신나는 음악과 불꽃쇼가 있는 에너지 넘치는 분위기",
-        },
-        {
-          id: 3,
-          icon: "auto_awesome",
-          title: "현대적이고 화려한",
-          description: "네온 조명과 현대 예술이 어우러진 도시적인 분위기",
-        },
-      ]
-    },
-    {
-      question: "누구와 함께 축제를 즐기고 싶으신가요?",
-      subtitle: "함께하는 사람에 따라 축제 경험이 달라져요.",
-      options: [
-        {
-          id: 1,
-          icon: "groups",
-          title: "많은 사람들과",
-          description: "북적이는 인파 속에서 즐기는 활기찬 축제",
-        },
-        {
-          id: 2,
-          icon: "people",
-          title: "소수의 친구들과",
-          description: "친한 사람들과 오붓하게 즐기는 아늑한 축제",
-        },
-        {
-          id: 3,
           icon: "person",
-          title: "나 혼자",
-          description: "내 페이스대로 자유롭게 둘러보는 여유로운 축제",
+          title: "혼자",
+          description: "나만의 속도로 자유롭게 즐기는 여행",
+          tags: ["#혼행"],
+        },
+        {
+          id: 2,
+          icon: "favorite",
+          title: "연인",
+          description: "둘만의 로맨틱한 시간을 보내는 여행",
+          tags: ["#커플"],
+        },
+        {
+          id: 3,
+          icon: "group",
+          title: "친구",
+          description: "친구들과 함께 추억을 만드는 즐거운 여행",
+          tags: ["#친구"],
+        },
+        {
+          id: 4,
+          icon: "family_restroom",
+          title: "가족 (아이 포함)",
+          description: "온 가족이 함께 즐기는 따뜻한 여행",
+          tags: ["#가족"],
+        },
+        {
+          id: 5,
+          icon: "pets",
+          title: "반려동물과 함께",
+          description: "사랑하는 반려동물과 함께하는 특별한 여행",
+          tags: ["#반려동물"],
         },
       ]
     },
     {
-      question: "언제 축제를 즐기고 싶으신가요?",
+      question: "축제 분위기는 어떤 쪽이 더 좋나요?",
+      subtitle: "당신이 선호하는 에너지를 알려주세요.",
+      options: [
+        {
+          id: 1,
+          icon: "celebration",
+          title: "북적북적, 신나는 게 좋아요",
+          description: "열정과 에너지가 넘치는 활기찬 분위기",
+          tags: ["#활기찬"],
+        },
+        {
+          id: 2,
+          icon: "spa",
+          title: "조용하고 여유로운 게 좋아요",
+          description: "차분하고 평화로운 힐링 분위기",
+          tags: ["#조용한", "#힐링"],
+        },
+        {
+          id: 3,
+          icon: "tune",
+          title: "상황에 따라 상관없어요",
+          description: "어떤 분위기든 다 즐길 수 있어요",
+          tags: [],
+        },
+      ]
+    },
+    {
+      question: "축제에서 가장 중요한 요소는 무엇인가요?",
+      subtitle: "최대 2개까지 선택해주세요.",
+      multiple: true,
+      maxSelections: 2,
+      options: [
+        {
+          id: 1,
+          icon: "restaurant_menu",
+          title: "맛있는 음식",
+          description: "다양하고 특별한 먹거리를 즐기고 싶어요",
+          tags: ["#미식"],
+        },
+        {
+          id: 2,
+          icon: "music_note",
+          title: "공연·음악",
+          description: "라이브 공연과 음악을 감상하고 싶어요",
+          tags: ["#음악"],
+        },
+        {
+          id: 3,
+          icon: "temple_buddhist",
+          title: "전통·문화",
+          description: "우리의 전통과 문화를 체험하고 싶어요",
+          tags: ["#전통"],
+        },
+        {
+          id: 4,
+          icon: "touch_app",
+          title: "직접 해보는 체험",
+          description: "손으로 직접 만들고 체험하고 싶어요",
+          tags: ["#체험"],
+        },
+        {
+          id: 5,
+          icon: "forest",
+          title: "자연 풍경",
+          description: "아름다운 자연을 감상하고 싶어요",
+          tags: ["#자연"],
+        },
+        {
+          id: 6,
+          icon: "photo_camera",
+          title: "사진 찍기 좋은 장소",
+          description: "인생샷을 남길 수 있는 포토존이 있으면 좋겠어요",
+          tags: ["#사진", "#인생샷"],
+        },
+      ]
+    },
+    {
+      question: "여행 예산에 가장 가까운 편은?",
+      subtitle: "예산에 맞는 축제를 추천해드릴게요.",
+      options: [
+        {
+          id: 1,
+          icon: "savings",
+          title: "무료·저렴하면 좋아요",
+          description: "부담 없이 즐길 수 있는 가성비 좋은 축제",
+          tags: ["#무료", "#가성비"],
+        },
+        {
+          id: 2,
+          icon: "account_balance_wallet",
+          title: "적당하면 괜찮아요",
+          description: "합리적인 가격의 축제면 충분해요",
+          tags: [],
+        },
+        {
+          id: 3,
+          icon: "diamond",
+          title: "비용은 크게 상관없어요",
+          description: "가격보다 경험이 더 중요해요",
+          tags: [],
+        },
+      ]
+    },
+    {
+      question: "선호하는 시간대는?",
       subtitle: "시간대에 따라 축제의 매력이 달라져요.",
       options: [
         {
           id: 1,
           icon: "wb_sunny",
-          title: "아침/오전",
-          description: "상쾌한 공기와 함께 시작하는 활기찬 하루",
+          title: "낮에 즐기는 축제",
+          description: "따스한 햇살 아래 활동적으로 즐기는 축제",
+          tags: ["#주간"],
         },
         {
           id: 2,
-          icon: "wb_twilight",
-          title: "오후/해질녘",
-          description: "따스한 햇살 아래 여유롭게 즐기는 시간",
-        },
-        {
-          id: 3,
           icon: "nightlight",
-          title: "저녁/밤",
-          description: "반짝이는 조명 아래 마법 같은 밤 축제",
-        },
-      ]
-    },
-    {
-      question: "어떤 음식을 즐기고 싶으신가요?",
-      subtitle: "축제의 또 다른 즐거움은 맛있는 음식이죠!",
-      options: [
-        {
-          id: 1,
-          icon: "restaurant",
-          title: "전통 한식",
-          description: "정갈한 한정식과 전통 방식으로 만든 음식",
-        },
-        {
-          id: 2,
-          icon: "ramen_dining",
-          title: "길거리 음식",
-          description: "떡볶이, 핫도그 등 간편하게 즐기는 분식",
+          title: "밤이 더 매력적인 축제",
+          description: "조명과 야경이 아름다운 밤 축제",
+          tags: ["#야간"],
         },
         {
           id: 3,
-          icon: "cake",
-          title: "디저트/음료",
-          description: "달콤한 디저트와 시원한 음료가 메인!",
+          icon: "all_inclusive",
+          title: "상관없어요",
+          description: "언제든 즐길 수 있어요",
+          tags: [],
         },
       ]
     },
     {
-      question: "어떤 추억을 만들고 싶으신가요?",
-      subtitle: "축제에서 어떤 경험을 가장 원하시나요?",
+      question: "여행 스타일에 가장 가까운 것은?",
+      subtitle: "당신의 여행 스타일을 알려주세요.",
       options: [
         {
           id: 1,
+          icon: "self_improvement",
+          title: "쉬엄쉬엄 힐링 위주",
+          description: "여유롭게 쉬면서 재충전하는 여행",
+          tags: ["#힐링"],
+        },
+        {
+          id: 2,
+          icon: "directions_run",
+          title: "볼거리·체험 빡빡하게",
+          description: "최대한 많이 보고 경험하는 알찬 여행",
+          tags: ["#축제감성", "#활기찬"],
+        },
+        {
+          id: 3,
           icon: "photo_camera",
-          title: "사진/영상 촬영",
-          description: "인스타 감성 가득한 포토존과 아름다운 풍경",
+          title: "사진·기록 남기기 중요",
+          description: "추억을 사진과 영상으로 남기는 여행",
+          tags: ["#사진"],
+        },
+        {
+          id: 4,
+          icon: "explore",
+          title: "일정은 유연하게",
+          description: "그때그때 기분에 따라 자유롭게",
+          tags: ["#혼행"],
+        },
+      ]
+    },
+    {
+      question: "사람이 많은 축제에 대한 생각은?",
+      subtitle: "혼잡도에 대한 선호를 알려주세요.",
+      options: [
+        {
+          id: 1,
+          icon: "groups",
+          title: "인기 많아도 괜찮아요",
+          description: "사람이 많아도 열기가 느껴지는 축제가 좋아요",
+          tags: ["#혼잡허용"],
         },
         {
           id: 2,
-          icon: "music_note",
-          title: "공연/음악 감상",
-          description: "라이브 공연과 다양한 예술 프로그램 체험",
-        },
-        {
-          id: 3,
-          icon: "favorite",
-          title: "사람들과의 교류",
-          description: "새로운 사람들과 만나고 소통하는 시간",
+          icon: "nature_people",
+          title: "너무 붐비는 건 싫어요",
+          description: "여유롭게 즐길 수 있는 한적한 축제가 좋아요",
+          tags: ["#한적"],
         },
       ]
     },
   ];
 
   const handleOptionClick = (optionId) => {
-    // 선택한 답변을 저장
-    addTasteTestAnswer({
-      questionIndex: currentQuestion,
-      answerId: optionId,
-      question: questions[currentQuestion].question,
-    });
-
-    // 다음 질문으로 이동 또는 완료
-    if (currentQuestion < questions.length - 1) {
-      setCurrentQuestion(currentQuestion + 1);
+    const currentQ = questions[currentQuestion];
+    
+    // 다중 선택 질문인 경우
+    if (currentQ.multiple) {
+      if (selectedOptions.includes(optionId)) {
+        // 이미 선택된 옵션이면 제거
+        setSelectedOptions(selectedOptions.filter(id => id !== optionId));
+      } else {
+        // 최대 선택 개수 체크
+        if (selectedOptions.length < (currentQ.maxSelections || 2)) {
+          setSelectedOptions([...selectedOptions, optionId]);
+        }
+      }
     } else {
-      navigate("/testresult");
+      // 단일 선택 질문인 경우 바로 저장하고 다음 질문으로
+      const answer = {
+        questionIndex: currentQuestion,
+        answerId: optionId,
+        question: currentQ.question,
+        tags: currentQ.options.find(opt => opt.id === optionId)?.tags || [],
+      };
+      
+      addTasteTestAnswer(answer);
+      console.log('답변 저장됨:', answer);
+
+      if (currentQuestion < questions.length - 1) {
+        setCurrentQuestion(currentQuestion + 1);
+        setSelectedOptions([]); // 선택 초기화
+      } else {
+        navigate("/testresult");
+      }
+    }
+  };
+
+  const handleNext = () => {
+    const currentQ = questions[currentQuestion];
+    
+    if (currentQ.multiple && selectedOptions.length > 0) {
+      // 다중 선택 답변 저장
+      const answer = {
+        questionIndex: currentQuestion,
+        answerId: selectedOptions,
+        question: currentQ.question,
+        tags: selectedOptions.flatMap(id => 
+          currentQ.options.find(opt => opt.id === id)?.tags || []
+        ),
+      };
+      
+      addTasteTestAnswer(answer);
+      console.log('다중 선택 답변 저장됨:', answer);
+
+      if (currentQuestion < questions.length - 1) {
+        setCurrentQuestion(currentQuestion + 1);
+        setSelectedOptions([]); // 선택 초기화
+      } else {
+        navigate("/testresult");
+      }
     }
   };
 
@@ -397,8 +548,8 @@ function TasteTest() {
     },
     cardsContainer: {
       display: "grid",
-      gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
-      gap: "32px",
+      gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
+      gap: "24px",
       width: "100%",
       maxWidth: "1400px",
       marginBottom: "80px",
@@ -550,26 +701,31 @@ function TasteTest() {
 
             {/* Cards */}
             <div style={styles.cardsContainer}>
-              {currentQ.options.map((option) => (
-                <div
-                  key={option.id}
-                  className="survey-card"
-                  onClick={() => handleOptionClick(option.id)}
-                >
-                  <div className="icon-box">
-                    <span className="material-symbols-outlined" style={{ fontSize: "40px" }}>
-                      {option.icon}
-                    </span>
-                  </div>
-                  <h3 style={styles.cardTitle}>{option.title}</h3>
-                  <p style={styles.cardDescription}>{option.description}</p>
-                  {option.showStar && (
-                    <div style={styles.starIcon}>
-                      <span className="material-symbols-outlined animate-spin-slow">stars</span>
+              {currentQ.options.map((option) => {
+                const isSelected = selectedOptions.includes(option.id);
+                return (
+                  <div
+                    key={option.id}
+                    className={`survey-card ${isSelected ? 'active' : ''}`}
+                    onClick={() => handleOptionClick(option.id)}
+                  >
+                    <div className="icon-box">
+                      <span className="material-symbols-outlined" style={{ fontSize: "40px" }}>
+                        {option.icon}
+                      </span>
                     </div>
-                  )}
-                </div>
-              ))}
+                    <h3 style={styles.cardTitle}>{option.title}</h3>
+                    <p style={styles.cardDescription}>{option.description}</p>
+                    {isSelected && (
+                      <div style={styles.starIcon}>
+                        <span className="material-symbols-outlined" style={{ color: "#E67E22" }}>
+                          check_circle
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
             </div>
 
             {/* Buttons */}
@@ -580,6 +736,7 @@ function TasteTest() {
                   onClick={() => {
                     if (currentQuestion > 0) {
                       setCurrentQuestion(currentQuestion - 1);
+                      setSelectedOptions([]); // 선택 초기화
                     } else {
                       navigate("/after_home");
                     }
@@ -600,7 +757,47 @@ function TasteTest() {
                   </span>
                   {currentQuestion > 0 ? "Previous" : "Back"}
                 </button>
+                
+                {/* 다중 선택 질문인 경우에만 Next 버튼 표시 */}
+                {currentQ.multiple && (
+                  <button
+                    style={{
+                      ...styles.nextButton,
+                      opacity: selectedOptions.length === 0 ? 0.5 : 1,
+                      cursor: selectedOptions.length === 0 ? "not-allowed" : "pointer",
+                    }}
+                    onClick={handleNext}
+                    disabled={selectedOptions.length === 0}
+                    onMouseEnter={(e) => {
+                      if (selectedOptions.length > 0) {
+                        e.currentTarget.style.transform = "translateY(-2px)";
+                        e.currentTarget.style.boxShadow = "0 12px 32px rgba(230, 126, 34, 0.4)";
+                      }
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.transform = "translateY(0)";
+                      e.currentTarget.style.boxShadow = "0 8px 24px rgba(230, 126, 34, 0.3)";
+                    }}
+                  >
+                    Next
+                    <span className="material-symbols-outlined" style={{ fontSize: "20px" }}>
+                      east
+                    </span>
+                  </button>
+                )}
               </div>
+              
+              {/* 다중 선택 안내 메시지 */}
+              {currentQ.multiple && (
+                <p style={{ 
+                  fontSize: "14px", 
+                  color: "rgba(45, 27, 20, 0.5)",
+                  textAlign: "center",
+                  marginTop: "8px"
+                }}>
+                  {selectedOptions.length} / {currentQ.maxSelections || 2} 선택됨
+                </p>
+              )}
             </div>
           </div>
         </main>

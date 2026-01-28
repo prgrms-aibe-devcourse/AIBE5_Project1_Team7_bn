@@ -6,6 +6,18 @@ import PlanGoogleMap from "../components/PlanGoogleMap";
 import useStore from "../store/useStore";
 import festivalsData from "../data/festivals.json";
 
+// 지역별 좌표
+const REGIONS = [
+  { name: "서울", lat: 37.5665, lon: 126.9780 },
+  { name: "부산", lat: 35.1796, lon: 129.0756 },
+  { name: "대구", lat: 35.8714, lon: 128.6014 },
+  { name: "인천", lat: 37.4563, lon: 126.7052 },
+  { name: "광주", lat: 35.1595, lon: 126.8526 },
+  { name: "대전", lat: 36.3504, lon: 127.3845 },
+  { name: "강릉", lat: 37.7519, lon: 128.8761 },
+  { name: "제주", lat: 33.4996, lon: 126.5312 },
+];
+
 // Custom CSS styles
 const customStyles = `
   .custom-scroll::-webkit-scrollbar {
@@ -98,12 +110,12 @@ function Plancuration() {
   const addFestivalToSchedule = useStore((state) => state.addFestivalToSchedule);
   const removeFestivalFromSchedule = useStore((state) => state.removeFestivalFromSchedule);
   const [currentDayIndex, setCurrentDayIndex] = useState(0);
-  const [showChatBubble, setShowChatBubble] = useState(true);
   const [showTripDropdown, setShowTripDropdown] = useState(false);
   const [selectedFestival, setSelectedFestival] = useState(null);
   const [showAddPlanModal, setShowAddPlanModal] = useState(false);
   const [modalTab, setModalTab] = useState('my'); // 'ai' | 'my' | 'search'
   const [searchQuery, setSearchQuery] = useState('');
+  const [weatherData, setWeatherData] = useState(null);
   const dropdownRef = useRef(null);
 
   // 현재 선택된 trip 가져오기
@@ -167,11 +179,112 @@ function Plancuration() {
     }
   };
 
-  // 날짜 포맷 (M/D)
+  // 날짜 포맷 (M월 D일)
   const formatDate = (date) => {
     if (!date) return '';
-    return `${date.getMonth() + 1}/${date.getDate()}`;
+    return `${date.getMonth() + 1}월 ${date.getDate()}일`;
   };
+
+  // 날씨에 따른 이모지
+  const getWeatherEmoji = (weather) => {
+    const weatherMap = {
+      Clear: "☀️",
+      Clouds: "☁️",
+      Rain: "🌧️",
+      Drizzle: "🌦️",
+      Thunderstorm: "⛈️",
+      Snow: "❄️",
+      Mist: "🌫️",
+      Fog: "🌫️",
+      Haze: "🌫️",
+    };
+    return weatherMap[weather] || "🌤️";
+  };
+
+  // 날씨 정보 가져오기 (날짜별 예보)
+  const fetchWeather = async (region, date) => {
+    const apiKey = import.meta.env.VITE_OPENWEATHER_API_KEY;
+    if (!apiKey) {
+      console.error("날씨 API 키가 설정되지 않았습니다.");
+      return null;
+    }
+
+    let regionData = REGIONS.find(r => region?.includes(r.name));
+    if (!regionData) {
+      // 기본값으로 서울 사용
+      regionData = REGIONS.find(r => r.name === "서울");
+    }
+
+    if (!regionData) return null;
+
+    try {
+      // 5일 예보 API 사용 (3시간 단위)
+      const url = `https://api.openweathermap.org/data/2.5/forecast?lat=${regionData.lat}&lon=${regionData.lon}&appid=${apiKey}&units=metric&lang=kr`;
+      const response = await fetch(url);
+      
+      if (!response.ok) {
+        console.error(`날씨 API 에러:`, response.status);
+        return null;
+      }
+      
+      const data = await response.json();
+      
+      if (!data.list || data.list.length === 0) {
+        console.error(`잘못된 날씨 데이터:`, data);
+        return null;
+      }
+
+      // 해당 날짜의 낮 12시 예보 찾기
+      const targetDate = new Date(date);
+      targetDate.setHours(12, 0, 0, 0);
+      
+      // 날짜에 가장 가까운 예보 찾기
+      let closestForecast = null;
+      let minDiff = Infinity;
+      
+      for (const forecast of data.list) {
+        const forecastDate = new Date(forecast.dt * 1000);
+        const diff = Math.abs(forecastDate - targetDate);
+        
+        if (diff < minDiff) {
+          minDiff = diff;
+          closestForecast = forecast;
+        }
+      }
+      
+      if (!closestForecast || !closestForecast.main || !closestForecast.weather || !closestForecast.weather[0]) {
+        console.error(`예보 데이터를 찾을 수 없음`);
+        return null;
+      }
+      
+      return {
+        temp: Math.round(closestForecast.main.temp),
+        weather: closestForecast.weather[0].main,
+        description: closestForecast.weather[0].description,
+        icon: closestForecast.weather[0].icon,
+      };
+    } catch (err) {
+      console.error(`날씨 정보 가져오기 실패:`, err);
+      return null;
+    }
+  };
+
+  // 현재 trip의 지역과 날짜에 따른 날씨 정보 가져오기
+  useEffect(() => {
+    const loadWeather = async () => {
+      if (currentTrip?.region && currentDate) {
+        console.log('현재 여행 지역:', currentTrip.region, '날짜:', currentDate);
+        const data = await fetchWeather(currentTrip.region, currentDate);
+        console.log('가져온 날씨 데이터:', data);
+        setWeatherData(data);
+      } else {
+        console.log('여행 지역 또는 날짜 정보 없음');
+        setWeatherData(null);
+      }
+    };
+    
+    loadWeather();
+  }, [currentTrip?.region, currentDate]);
 
   // 검색된 축제 필터링
   const getSearchedFestivals = () => {
@@ -326,8 +439,15 @@ function Plancuration() {
                 >
                   <span className="material-symbols-outlined text-2xl text-gray-700">chevron_left</span>
                 </button>
-                <h2 className="text-4xl font-black text-gray-900 tracking-tight">
-                  Day {currentDayIndex + 1} <span className="text-primary/60 text-2xl ml-2 font-bold">({currentDate ? formatDate(currentDate) : '날짜 선택 필요'})</span>
+                <h2 className="text-4xl font-black text-gray-900 tracking-tight flex items-center gap-3">
+                  <span>Day {currentDayIndex + 1}</span>
+                  <span className="text-orange-500 text-2xl font-bold">{currentDate ? formatDate(currentDate) : '날짜 선택 필요'}</span>
+                  {weatherData && (
+                    <span className="text-xl flex items-center gap-1">
+                      <span>{getWeatherEmoji(weatherData.weather)}</span>
+                      <span className="text-orange-500 text-lg font-bold">{weatherData.temp}°</span>
+                    </span>
+                  )}
                 </h2>
                 <button
                   onClick={goToNextDay}
@@ -661,30 +781,6 @@ function Plancuration() {
         </div>
       </main>
 
-      {/* Floating Chat Button */}
-      <div className="fixed bottom-10 right-10 flex flex-col items-end gap-4 z-[110]">
-        {showChatBubble && (
-          <div className="bg-white px-5 py-4 rounded-3xl rounded-br-none shadow-2xl border border-primary/10 max-w-[260px]">
-            <p className="text-sm font-bold text-gray-800 leading-snug">
-              Got questions? <br />
-              Ask me anytime! 😊
-            </p>
-          </div>
-        )}
-        <button 
-          onClick={() => setShowChatBubble(!showChatBubble)}
-          className="size-20 p-1.5 bg-yellow-400 rounded-full flex items-center justify-center shadow-2xl ring-4 ring-white cursor-pointer hover:scale-110 transition-transform active:scale-95 group overflow-hidden"
-        >
-          <div className="relative size-full chat-egg">
-            <div className="egg-mascot">
-              <div className="egg-yolk">
-                <div className="egg-smile"></div>
-              </div>
-            </div>
-          </div>
-        </button>
-      </div>
-
       {/* 축제 상세 모달 */}
       {selectedFestival && (
         <TownDetailModal
@@ -734,7 +830,8 @@ function Plancuration() {
                       setModalTab('my');
                     }
                   }}
-                  className="w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:border-primary focus:outline-none transition-all"
+                  className="w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:border-primary focus:outline-none transition-all text-gray-900"
+                  style={{ color: '#111827', backgroundColor: '#ffffff' }}
                 />
               </div>
 
@@ -745,11 +842,8 @@ function Plancuration() {
                     setModalTab('ai');
                     setSearchQuery('');
                   }}
-                  className={`flex-1 py-3 px-4 rounded-xl font-bold transition-all flex items-center justify-center ${
-                    modalTab === 'ai'
-                      ? 'bg-primary text-white shadow-lg'
-                      : 'bg-gray-100 text-gray-900 hover:bg-gray-200'
-                  }`}
+                  className="flex-1 py-3 px-4 rounded-xl font-bold flex items-center justify-center bg-gray-100 text-gray-900"
+                  style={modalTab === 'ai' ? { boxShadow: '0 0 0 2px #FF5F33' } : {}}
                 >
                   <span className="material-symbols-outlined text-xl mr-2">auto_awesome</span>
                   <span className="text-base">AI 추천</span>
@@ -759,11 +853,8 @@ function Plancuration() {
                     setModalTab('my');
                     setSearchQuery('');
                   }}
-                  className={`flex-1 py-3 px-4 rounded-xl font-bold transition-all flex items-center justify-center ${
-                    modalTab === 'my'
-                      ? 'bg-primary text-white shadow-lg'
-                      : 'bg-gray-100 text-gray-900 hover:bg-gray-200'
-                  }`}
+                  className="flex-1 py-3 px-4 rounded-xl font-bold flex items-center justify-center bg-gray-100 text-gray-900"
+                  style={modalTab === 'my' ? { boxShadow: '0 0 0 2px #FF5F33' } : {}}
                 >
                   <span className="material-symbols-outlined text-xl mr-2">favorite</span>
                   <span className="text-base">내 축제</span>
@@ -863,7 +954,7 @@ function Plancuration() {
                             className={`w-full py-3 rounded-xl text-sm font-bold transition-all flex items-center justify-center gap-2 ${
                               isAlreadyAdded
                                 ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                                : 'bg-primary text-white hover:bg-orange-600'
+                                : 'bg-[#FF8C66] text-white hover:bg-[#FF7A4D]'
                             }`}
                           >
                             <span className="material-symbols-outlined text-lg">

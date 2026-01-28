@@ -4,6 +4,39 @@ import Header from "../components/Header";
 import useStore from "../store/useStore";
 import Loading from "./Loading";
 
+// 임의의 리뷰 데이터 생성
+const generateMockReviews = (festivalId) => {
+  const names = ["김민수", "이지은", "박서준", "최유진", "정하늘", "강민지", "오준호", "신아름"];
+  const comments = [
+    "정말 멋진 축제였어요! 다음에 또 가고 싶습니다.",
+    "가족과 함께 즐거운 시간 보냈습니다. 추천해요!",
+    "음식도 맛있고 분위기도 좋았어요.",
+    "사진 찍기 좋은 곳이 많아서 좋았습니다.",
+    "생각보다 규모가 크고 볼거리가 많았어요.",
+    "친구들과 즐거운 추억 만들었습니다.",
+    "날씨가 좋아서 더 즐거웠던 것 같아요!",
+    "다양한 체험 프로그램이 있어서 재미있었습니다.",
+    "교통편도 편리하고 주차도 편했어요.",
+    "아이들이 정말 좋아했습니다. 가족 여행 추천!"
+  ];
+
+  const reviewCount = Math.floor(Math.random() * 5) + 3; // 3~7개 리뷰
+  const reviews = [];
+  
+  for (let i = 0; i < reviewCount; i++) {
+    reviews.push({
+      id: `mock_${festivalId}_${i}`,
+      author: names[Math.floor(Math.random() * names.length)],
+      rating: Math.floor(Math.random() * 2) + 4, // 4~5점
+      text: comments[Math.floor(Math.random() * comments.length)],
+      date: new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000).toISOString(),
+      isMock: true
+    });
+  }
+  
+  return reviews;
+};
+
 function Review() {
   const navigate = useNavigate();
   const tripSchedules = useStore((state) => state.tripSchedules);
@@ -21,11 +54,13 @@ function Review() {
   
   const [reviews, setReviews] = useState(getInitialReviews);
   const [showReviewModal, setShowReviewModal] = useState(false);
+  const [showReviewListModal, setShowReviewListModal] = useState(false);
   const [selectedFestival, setSelectedFestival] = useState(null);
   const [rating, setRating] = useState(0);
   const [hoveredRating, setHoveredRating] = useState(0);
   const [reviewText, setReviewText] = useState("");
   const [activeTab, setActiveTab] = useState("write"); // 'write' | 'list'
+  const [mockReviews, setMockReviews] = useState([]);
 
   useEffect(() => {
     if (isLoading) {
@@ -67,10 +102,18 @@ function Review() {
 
   const allFestivals = getAllFestivals();
 
-  // 리뷰 작성 모달 열기
-  const openReviewModal = (festival) => {
-    const existingReview = reviews.find(r => r.festivalId === festival.pSeq);
+  // 리뷰 목록 모달 열기
+  const openReviewListModal = (festival) => {
     setSelectedFestival(festival);
+    const mocks = generateMockReviews(festival.pSeq);
+    setMockReviews(mocks);
+    setShowReviewListModal(true);
+  };
+
+  // 리뷰 작성 모달 열기 (리뷰 목록에서)
+  const openWriteReviewFromList = () => {
+    setShowReviewListModal(false);
+    const existingReview = reviews.find(r => r.festivalId === selectedFestival.pSeq);
     if (existingReview) {
       setRating(existingReview.rating);
       setReviewText(existingReview.text);
@@ -256,10 +299,11 @@ function Review() {
                         )}
 
                         <button
-                          onClick={() => openReviewModal(festival)}
-                          className="w-full py-3 bg-gradient-to-r from-orange-500 to-yellow-500 text-white rounded-xl font-bold hover:shadow-lg transition-all"
+                          onClick={() => openReviewListModal(festival)}
+                          className="w-full py-3 bg-gradient-to-r from-orange-500 to-yellow-500 text-white rounded-xl font-bold hover:shadow-lg transition-all flex items-center justify-center gap-2"
                         >
-                          {reviewed ? '리뷰 수정하기' : '리뷰 작성하기'}
+                          <span className="material-symbols-outlined text-lg">visibility</span>
+                          리뷰 보기
                         </button>
                       </div>
                     </div>
@@ -430,6 +474,108 @@ function Review() {
                 className="w-full py-4 bg-gradient-to-r from-orange-500 to-yellow-500 text-white rounded-2xl font-bold text-lg hover:shadow-lg transition-all"
               >
                 리뷰 저장하기
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 리뷰 목록 모달 */}
+      {showReviewListModal && selectedFestival && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-3xl max-w-4xl w-full max-h-[90vh] overflow-hidden flex flex-col">
+            {/* 모달 헤더 */}
+            <div className="p-6 border-b border-gray-200 flex justify-between items-start">
+              <div className="flex-1">
+                <h2 className="text-3xl font-black text-gray-900 mb-2">
+                  {selectedFestival.fstvlNm}
+                </h2>
+                <p className="text-gray-600">다른 사람들의 후기를 확인해보세요</p>
+              </div>
+              <button
+                onClick={() => setShowReviewListModal(false)}
+                className="p-2 hover:bg-gray-100 rounded-full transition-all"
+              >
+                <span className="material-symbols-outlined text-2xl">close</span>
+              </button>
+            </div>
+
+            {/* 리뷰 목록 */}
+            <div className="flex-1 overflow-y-auto p-6">
+              <div className="space-y-4">
+                {/* 다른 사람들의 리뷰 */}
+                {mockReviews.map((review) => (
+                  <div key={review.id} className="bg-gray-50 rounded-2xl p-5 border border-gray-200">
+                    <div className="flex items-start justify-between mb-3">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 bg-gradient-to-br from-orange-400 to-yellow-400 rounded-full flex items-center justify-center text-white font-bold">
+                          {review.author.charAt(0)}
+                        </div>
+                        <div>
+                          <div className="font-bold text-gray-900">{review.author}</div>
+                          <div className="text-sm text-gray-500">
+                            {new Date(review.date).toLocaleDateString('ko-KR')}
+                          </div>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        {[1, 2, 3, 4, 5].map((star) => (
+                          <span key={star} className="text-yellow-500 text-lg">
+                            {star <= review.rating ? '⭐' : '☆'}
+                          </span>
+                        ))}
+                        <span className="ml-1 font-bold text-gray-700">{review.rating}.0</span>
+                      </div>
+                    </div>
+                    <p className="text-gray-700 leading-relaxed">{review.text}</p>
+                  </div>
+                ))}
+
+                {/* 내 리뷰 */}
+                {reviews.find(r => r.festivalId === selectedFestival.pSeq) && (
+                  <div className="bg-orange-50 rounded-2xl p-5 border-2 border-orange-300">
+                    <div className="flex items-start justify-between mb-3">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 bg-gradient-to-br from-orange-500 to-yellow-500 rounded-full flex items-center justify-center text-white font-bold">
+                          나
+                        </div>
+                        <div>
+                          <div className="font-bold text-gray-900 flex items-center gap-2">
+                            내 리뷰
+                            <span className="px-2 py-0.5 bg-orange-500 text-white text-xs rounded-full">MY</span>
+                          </div>
+                          <div className="text-sm text-gray-500">
+                            {new Date(reviews.find(r => r.festivalId === selectedFestival.pSeq).date).toLocaleDateString('ko-KR')}
+                          </div>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        {[1, 2, 3, 4, 5].map((star) => (
+                          <span key={star} className="text-yellow-500 text-lg">
+                            {star <= reviews.find(r => r.festivalId === selectedFestival.pSeq).rating ? '⭐' : '☆'}
+                          </span>
+                        ))}
+                        <span className="ml-1 font-bold text-gray-700">
+                          {reviews.find(r => r.festivalId === selectedFestival.pSeq).rating}.0
+                        </span>
+                      </div>
+                    </div>
+                    <p className="text-gray-700 leading-relaxed">
+                      {reviews.find(r => r.festivalId === selectedFestival.pSeq).text || "리뷰 내용 없음"}
+                    </p>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* 모달 푸터 */}
+            <div className="p-6 border-t border-gray-200">
+              <button
+                onClick={openWriteReviewFromList}
+                className="w-full py-4 bg-gradient-to-r from-orange-500 to-yellow-500 text-white rounded-2xl font-bold text-lg hover:shadow-lg transition-all flex items-center justify-center gap-2"
+              >
+                <span className="material-symbols-outlined">edit</span>
+                {reviews.find(r => r.festivalId === selectedFestival.pSeq) ? '내 리뷰 수정하기' : '리뷰 작성하기'}
               </button>
             </div>
           </div>

@@ -15,6 +15,9 @@ function Testresult() {
 
   // 테스트 결과 분석
   const labelResult = useMemo(() => {
+    console.log('저장된 답변들:', tasteTestAnswers);
+    console.log('총 답변 개수:', tasteTestAnswers?.length);
+    
     if (!tasteTestAnswers || tasteTestAnswers.length === 0) {
       return {
         typeNumber: 1,

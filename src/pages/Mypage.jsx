@@ -484,19 +484,6 @@ function Mypage() {  const navigate = useNavigate();  const [activeTab, setActiv
         )}
         </div>
       </main>
-
-      <div className="fixed bottom-10 right-10 flex flex-col items-end group z-[100]">
-        <div className="mb-5 bg-white shadow-2xl border border-orange-100 px-8 py-5 rounded-[2rem] rounded-br-none relative">
-          <p className="text-[15px] font-bold text-[#1c140d] leading-relaxed">Got questions?<br />Ask me anytime! </p>
-          <div className="absolute -bottom-2 right-0 w-6 h-6 bg-white border-r border-b border-orange-100 rotate-45 transform translate-y-[-50%] translate-x-[-50%]"></div>
-        </div>
-        <button className="w-20 h-20 bg-yellow-400 rounded-full flex items-center justify-center shadow-2xl hover:scale-110 active:scale-95 transition-all relative overflow-hidden ring-8 ring-white/50">
-          <div className="w-10 h-10 bg-white rounded-full absolute -top-2 -right-2 opacity-40"></div>
-          <div className="w-12 h-8 bg-white/90 rounded-full shadow-md flex items-center justify-center">
-            <div className="w-5 h-1.5 bg-orange-400/20 rounded-full"></div>
-          </div>
-        </button>
-      </div>
     </div>
   );
 }

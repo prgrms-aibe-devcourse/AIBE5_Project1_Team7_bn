@@ -28,8 +28,7 @@ function Header() {
               <img
                 src={home_logo}
                 alt="Festory Logo"
-                className="w-30 h-20 object-cover"
-                style={{ background: 'linear-gradient(135deg, #FFA500 0%, #FFD700 100%)' }}
+                className="h-12 w-auto object-contain"
               />
             
             </Link>

@@ -7,6 +7,7 @@ import { TownCard } from "../components/TownCard";
 import { TownDetailModal } from "../components/TownDetailModal";
 import Loading from "./Loading";
 import WeatherWidget from "../components/WeatherWidget";
+import bannerVideo from "../assets/풍랑30.mp4";
 
 function After_Home() {
   const navigate = useNavigate();
@@ -18,7 +19,16 @@ function After_Home() {
 
   const {
     clearTasteTestAnswers,
+    loginUser,
+    user,
   } = useStore();
+
+  // 사용자 이름 가져오기
+  const getUserName = () => {
+    if (user?.name) return user.name;
+    if (loginUser && loginUser !== "google") return loginUser;
+    return "회원";
+  };
 
   useEffect(() => {
     if (isLoading) {
@@ -48,16 +58,45 @@ function After_Home() {
             borderRadius: 32,
             overflow: "hidden",
             aspectRatio: "16 / 6",
-            backgroundImage: `linear-gradient(to right, rgba(255,255,255,.95), rgba(255,255,255,.4), rgba(255,255,255,.9)),
-              url("https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=1200")`,
-            backgroundSize: "cover",
-            backgroundPosition: "center",
+            position: "relative",
             display: "flex",
             alignItems: "center",
             padding: 60,
           }}
         >
-          <div style={{ maxWidth: 600 }}>
+          {/* 배경 비디오 */}
+          <video
+            autoPlay
+            loop
+            muted
+            playsInline
+            style={{
+              position: "absolute",
+              top: 0,
+              left: 0,
+              width: "100%",
+              height: "100%",
+              objectFit: "cover",
+              zIndex: 0,
+            }}
+          >
+            <source src={bannerVideo} type="video/mp4" />
+          </video>
+          
+          {/* 오버레이 */}
+          <div
+            style={{
+              position: "absolute",
+              top: 0,
+              left: 0,
+              width: "100%",
+              height: "100%",
+              background: "linear-gradient(to right, rgba(255,255,255,.95), rgba(255,255,255,.4), rgba(255,255,255,.9))",
+              zIndex: 1,
+            }}
+          />
+
+          <div style={{ maxWidth: 600, position: "relative", zIndex: 2 }}>
             <span
               style={{
                 display: "inline-block",
@@ -103,9 +142,10 @@ function After_Home() {
                 color: "white",
                 fontWeight: 800,
                 cursor: "pointer",
+                fontSize: 18,
               }}
             >
-              추천 계속 보기 ✨
+              Start Recommendation with AI
             </button>
           </div>
         </section>
@@ -115,7 +155,7 @@ function After_Home() {
           {/* LEFT */}
           <section>
             <h2 style={{ fontSize: 28, fontWeight: 900 }}>
-              OO님을 위한 노을 한 스푼, 이 축제 어때요? 🌇
+              {getUserName()}님을 위한 노을 한 스푼, 이 축제 어때요? 🌇
             </h2>
             <p style={{ color: "#6b7280", marginBottom: 24 }}>
               AI 분석 결과: #전통예술 #야경 #사진명소
@@ -127,6 +167,31 @@ function After_Home() {
                   key={f.pSeq}
                   town={{
             
+                    name: f.fstvlNm,
+                    description: f.ministry_description,
+                    image: f.ministry_image_url || "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f",
+                  }}
+                  festival={f}
+                  onClick={() => {
+                    setSelectedFestival(f);
+                  }}
+                />
+              ))}
+            </div>
+
+            {/* 요즘 난리 난 축제들 섹션 */}
+            <h2 style={{ fontSize: 28, fontWeight: 900, marginTop: 48 }}>
+              요즘 난리 난 축제들 🔥
+            </h2>
+            <p style={{ color: "#6b7280", marginBottom: 24 }}>
+              지금 가장 핫한 축제를 확인해보세요
+            </p>
+
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 12 }}>
+              {festivals.filter(f => [201, 750, 272].includes(f.pSeq)).map((f) => (
+                <TownCard
+                  key={f.pSeq}
+                  town={{
                     name: f.fstvlNm,
                     description: f.ministry_description,
                     image: f.ministry_image_url || "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f",
