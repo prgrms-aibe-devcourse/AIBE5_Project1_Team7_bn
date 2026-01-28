@@ -623,10 +623,18 @@ function Review() {
                   onChange={e => {
                     setMediaFiles(Array.from(e.target.files));
                   }}
-                  className="mb-4"
+                  className="hidden"
+                  id="media-upload"
                 />
+                <label
+                  htmlFor="media-upload"
+                  className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-gray-400 to-gray-500 text-white rounded-lg font-semibold cursor-pointer hover:from-gray-500 hover:to-gray-600 transition-all shadow-sm hover:shadow-md"
+                >
+                  <span className="material-symbols-outlined text-[20px]">add_photo_alternate</span>
+                  사진추가하기
+                </label>
                 {/* 미리보기 */}
-                <div className="flex flex-wrap gap-4 mb-4">
+                <div className="flex flex-wrap gap-4 mt-4">
                   {mediaFiles.map((file, idx) => {
                     const url = URL.createObjectURL(file);
                     if (file.type.startsWith('image/')) {
