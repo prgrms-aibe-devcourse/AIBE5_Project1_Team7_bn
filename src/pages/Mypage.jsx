@@ -139,9 +139,9 @@ function Mypage() {  const navigate = useNavigate();  const [activeTab, setActiv
     }));
   };
 
-  // 로그아웃 버튼 클릭 시 홈으로 이동
+  // 로그아웃 버튼 클릭 시 /home으로 이동
   const handleLogout = () => {
-    navigate("/");
+    navigate("/home");
   };
 
   return (
