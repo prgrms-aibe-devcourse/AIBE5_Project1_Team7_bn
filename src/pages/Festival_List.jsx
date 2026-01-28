@@ -174,76 +174,108 @@ function Festival_List() {
 		<div className="bg-background-light text-[#181411] font-display min-h-screen">
 			<Header />
 			<div className="max-w-[1280px] mx-auto px-6 py-8 grid grid-cols-12 gap-8">
-				{/* FILTERS - Calendar에서 가져온 UI */}
+				{/* FILTERS - 새로운 디자인 */}
 				<aside className="col-span-12 lg:col-span-3 space-y-6">
-					<div className="bg-[#FFFBF6] rounded-xl p-5 border border-[#e6dfdb] sticky top-20">
-						<h3 className="font-bold text-2xl mb-4" style={{ color: '#FF5F33' }}>Filters</h3>
-						<div className="space-y-4">
-							{/* 지역 필터 */}
+					<div className="bg-white rounded-2xl p-6 shadow-sm sticky top-20">
+						<h3 className="font-bold text-2xl mb-6 text-gray-900">Filters</h3>
+						<div className="space-y-5">
+							{/* KEYWORD 검색 */}
 							<div>
-								<button className="w-full flex justify-between items-center py-2 px-4 rounded-lg font-bold text-lg mb-2"
-									style={{ background: filterSectionsOpen.region ? 'linear-gradient(135deg, #ff9800 0%, #ffd600 100%)' : '#fff8e1', color: filterSectionsOpen.region ? '#fff' : '#1f2937' }}
-									onClick={() => setFilterSectionsOpen(prev => ({ ...prev, region: !prev.region }))}>
-									<span>지역</span>
-									<span>{filterSectionsOpen.region ? '▲' : '▼'}</span>
-								</button>
-								{filterSectionsOpen.region && (
-									<div className="flex flex-wrap gap-2 mt-2">
+								<label className="block text-sm font-bold text-gray-600 mb-2 uppercase tracking-wide">Keyword</label>
+								<div className="relative">
+									<span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-[20px]">search</span>
+									<input
+										type="text"
+										placeholder="Festival name..."
+										className="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-orange-200 focus:border-orange-400 transition-all outline-none text-gray-700"
+									/>
+								</div>
+							</div>
+
+							{/* REGION 필터 */}
+							<div>
+								<label className="block text-sm font-bold text-gray-600 mb-2 uppercase tracking-wide">Region</label>
+								<div className="relative">
+									<select
+										className="w-full appearance-none px-4 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-orange-200 focus:border-orange-400 transition-all outline-none text-gray-700 bg-white cursor-pointer"
+										onChange={(e) => {
+											const value = e.target.value;
+											setActiveFilters(prev => ({
+												...prev,
+												regions: value === 'all' ? [] : [value]
+											}));
+										}}
+										value={activeFilters.regions.length === 0 ? 'all' : activeFilters.regions[0]}
+									>
+										<option value="all">All Regions</option>
 										{['서울', '부산', '대구', '인천', '광주', '대전', '울산', '세종', '경기', '강원', '충북', '충남', '전북', '전남', '경북', '경남', '제주'].map(region => (
-											<button key={region} className={`px-3 py-1 rounded-lg font-semibold border ${activeFilters.regions.includes(region) ? 'bg-orange-400 text-white' : 'bg-white text-gray-700'}`}
-												onClick={() => setActiveFilters(prev => ({ ...prev, regions: prev.regions.includes(region) ? prev.regions.filter(r => r !== region) : [...prev.regions, region] }))}>
-												{region}
-											</button>
+											<option key={region} value={region}>{region}</option>
 										))}
-									</div>
-								)}
+									</select>
+									<span className="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none text-[20px]">expand_more</span>
+								</div>
 							</div>
-							{/* 기간 필터 */}
+
+							{/* DATE 필터 */}
 							<div>
-								<button className="w-full flex justify-between items-center py-2 px-4 rounded-lg font-bold text-lg mb-2"
-									style={{ background: filterSectionsOpen.duration ? 'linear-gradient(135deg, #60a5fa 0%, #93c5fd 100%)' : '#eff6ff', color: filterSectionsOpen.duration ? '#fff' : '#1f2937' }}
-									onClick={() => setFilterSectionsOpen(prev => ({ ...prev, duration: !prev.duration }))}>
-									<span>기간</span>
-									<span>{filterSectionsOpen.duration ? '▲' : '▼'}</span>
-								</button>
-								{filterSectionsOpen.duration && (
-									<div className="flex flex-col gap-2 mt-2">
-										{['당일', '단기(2~3일)', '장기(3~5일)'].map(duration => (
-											<button key={duration} className={`px-3 py-1 rounded-lg font-semibold border ${activeFilters.duration === duration ? 'bg-blue-400 text-white' : 'bg-white text-gray-700'}`}
-												onClick={() => setActiveFilters(prev => ({ ...prev, duration: prev.duration === duration ? null : duration }))}>
-												{duration}
-											</button>
-										))}
-									</div>
-								)}
+								<label className="block text-sm font-bold text-gray-600 mb-2 uppercase tracking-wide">Date</label>
+								<div className="relative">
+									<select
+										className="w-full appearance-none px-4 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-orange-200 focus:border-orange-400 transition-all outline-none text-gray-700 bg-white cursor-pointer"
+										onChange={(e) => {
+											const value = e.target.value;
+											setActiveFilters(prev => ({
+												...prev,
+												duration: value === 'all' ? null : value
+											}));
+										}}
+										value={activeFilters.duration || 'all'}
+									>
+										<option value="all">This Weekend</option>
+										<option value="당일">당일</option>
+										<option value="단기(2~3일)">단기(2~3일)</option>
+										<option value="장기(3~5일)">장기(3~5일)</option>
+									</select>
+									<span className="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none text-[20px]">expand_more</span>
+								</div>
 							</div>
-							{/* 유료/무료 필터 */}
-							<div>
-								<button className="w-full flex justify-between items-center py-2 px-4 rounded-lg font-bold text-lg mb-2"
-									style={{ background: filterSectionsOpen.price ? 'linear-gradient(135deg, #84cc16 0%, #a3e635 100%)' : '#f7fee7', color: filterSectionsOpen.price ? '#fff' : '#1f2937' }}
-									onClick={() => setFilterSectionsOpen(prev => ({ ...prev, price: !prev.price }))}>
-									<span>가격</span>
-									<span>{filterSectionsOpen.price ? '▲' : '▼'}</span>
-								</button>
-								{filterSectionsOpen.price && (
-									<div className="flex flex-col gap-2 mt-2">
-										{[{ label: '무료', value: true }, { label: '유료', value: false }].map(({ label, value }) => (
-											<button key={label} className={`px-3 py-1 rounded-lg font-semibold border ${activeFilters.isFree === value ? 'bg-lime-500 text-white' : 'bg-white text-gray-700'}`}
-												onClick={() => setActiveFilters(prev => ({ ...prev, isFree: prev.isFree === value ? null : value }))}>
-												{label}
-											</button>
-										))}
+
+							{/* 주말 포함 토글 */}
+							<div className="pt-2">
+								<label className="flex items-center justify-between cursor-pointer group">
+									<span className="text-sm font-bold text-gray-600 uppercase tracking-wide">주말 포함</span>
+									<div
+										className={`relative w-12 h-6 rounded-full transition-colors ${
+											activeFilters.includesWeekend ? 'bg-orange-500' : 'bg-gray-200'
+										}`}
+										onClick={() => setActiveFilters(prev => ({ ...prev, includesWeekend: !prev.includesWeekend }))}
+									>
+										<div
+											className={`absolute top-1 left-1 w-4 h-4 bg-white rounded-full transition-transform ${
+												activeFilters.includesWeekend ? 'translate-x-6' : 'translate-x-0'
+											}`}
+										/>
 									</div>
-								)}
+								</label>
 							</div>
-							{/* 주말 포함 필터 */}
-							<div>
-								<button className="w-full flex justify-between items-center py-2 px-4 rounded-lg font-bold text-lg mb-2"
-									style={{ background: activeFilters.includesWeekend ? 'linear-gradient(135deg, #a78bfa 0%, #c4b5fd 100%)' : '#f5f3ff', color: activeFilters.includesWeekend ? '#fff' : '#1f2937' }}
-									onClick={() => setActiveFilters(prev => ({ ...prev, includesWeekend: !prev.includesWeekend }))}>
-									<span>주말 포함</span>
-									<span>{activeFilters.includesWeekend ? '✓' : ''}</span>
-								</button>
+
+							{/* 무료/유료 토글 */}
+							<div className="pt-2">
+								<label className="flex items-center justify-between cursor-pointer group">
+									<span className="text-sm font-bold text-gray-600 uppercase tracking-wide">무료만 보기</span>
+									<div
+										className={`relative w-12 h-6 rounded-full transition-colors ${
+											activeFilters.isFree === true ? 'bg-orange-500' : 'bg-gray-200'
+										}`}
+										onClick={() => setActiveFilters(prev => ({ ...prev, isFree: prev.isFree === true ? null : true }))}
+									>
+										<div
+											className={`absolute top-1 left-1 w-4 h-4 bg-white rounded-full transition-transform ${
+												activeFilters.isFree === true ? 'translate-x-6' : 'translate-x-0'
+											}`}
+										/>
+									</div>
+								</label>
 							</div>
 						</div>
 					</div>
