@@ -139,6 +139,11 @@ function Mypage() {  const navigate = useNavigate();  const [activeTab, setActiv
     }));
   };
 
+  // 로그아웃 버튼 클릭 시 홈으로 이동
+  const handleLogout = () => {
+    navigate("/");
+  };
+
   return (
     <div className="min-h-screen bg-[#fff9f2]">
       <style>{`
@@ -349,9 +354,17 @@ function Mypage() {  const navigate = useNavigate();  const [activeTab, setActiv
             </div>
             
             <div className="text-center py-6">
-              <button className="text-gray-400 text-sm hover:text-gray-600 underline">
-                회원 탈퇴하기
-              </button>
+              <div className="flex justify-center gap-4">
+                <button
+                  onClick={handleLogout}
+                  className="text-gray-400 text-sm hover:text-gray-600 underline"
+                >
+                  로그아웃
+                </button>
+                <button className="text-gray-400 text-sm hover:text-gray-600 underline">
+                  회원 탈퇴하기
+                </button>
+              </div>
             </div>
           </div>
         )}
@@ -438,9 +451,7 @@ function Mypage() {  const navigate = useNavigate();  const [activeTab, setActiv
                 </div>
               </div>
             </div>
-            <div className="text-center pb-24">
-              <p className="text-gray-400 text-sm font-medium">분석 결과가 마음에 드시나요? 친구들에게 내 취향을 공유해보세요.</p>
-            </div>
+            {/* 하단 안내 문구 제거됨 */}
           </div>
         )}
 
