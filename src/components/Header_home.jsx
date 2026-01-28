@@ -18,7 +18,7 @@ function Header() {
 
   return (
     <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
-      <div className="max-w-[84%] mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-[95%] mx-auto px-6">
         {/* 🔑 핵심: relative */}
         <div className="flex items-center h-16 relative">
           {/* ================= 좌측 ================= */}
@@ -52,12 +52,12 @@ function Header() {
           </div>
 
           {/* ================= 중앙 ================= */}
-          <div className="hidden lg:block absolute left-[79%] -translate-x-1/2 w-full max-w-xs">
+          <div className="hidden lg:block ml-auto mr-2">
             <div className="relative">
               <input
                 type="text"
-                placeholder="Search for any pages you need..."
-                className="w-full px-4 py-2 pl-10 bg-gray-50 border border-gray-200 rounded-lg text-sm
+                placeholder="Search for you need"
+                className="w-52 px-4 py-2 pl-10 bg-gray-50 border border-gray-200 rounded-lg text-sm
                            focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
               />
               <svg
@@ -77,11 +77,10 @@ function Header() {
           </div>
 
           {/* ================= 우측 ================= */}
-          <div className="ml-auto flex items-center space-x-5">
+          <div className="flex items-center space-x-2">
             {/* 알림 */}
             <button className="relative p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors">
               <Bell className="w-5 h-5" />
-              <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full" />
             </button>
 
             {/* 로그인 버튼 */}

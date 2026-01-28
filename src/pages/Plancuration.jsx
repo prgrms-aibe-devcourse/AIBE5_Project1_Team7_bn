@@ -417,7 +417,7 @@ function Plancuration() {
               setEditingTripId(null); // 편집 모드 해제
               navigate('/dateregistration');
             }}
-            className="flex items-center gap-2 px-4 py-2 bg-white border-2 border-gray-200 rounded-full text-sm font-bold text-gray-700 hover:border-primary hover:text-primary transition-all"
+            className="flex items-center gap-2 px-4 py-2 bg-white border-2 border-gray-200 rounded-full text-sm font-bold text-gray-700 hover:border-primary hover:text-primary hover:bg-orange-50 active:bg-orange-100 transition-all"
           >
             <span className="material-symbols-outlined text-lg">add</span>
             New Trip
@@ -435,7 +435,7 @@ function Plancuration() {
                 <button
                   onClick={goToPreviousDay}
                   disabled={currentDayIndex === 0}
-                  className="p-2 rounded-full hover:bg-gray-100 transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+                  className="p-2 rounded-full hover:bg-orange-100 active:bg-orange-200 transition-all disabled:opacity-30 disabled:cursor-not-allowed"
                 >
                   <span className="material-symbols-outlined text-2xl text-gray-700">chevron_left</span>
                 </button>
@@ -452,7 +452,7 @@ function Plancuration() {
                 <button
                   onClick={goToNextDay}
                   disabled={currentDayIndex === totalDays - 1}
-                  className="p-2 rounded-full hover:bg-gray-100 transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+                  className="p-2 rounded-full hover:bg-orange-100 active:bg-orange-200 transition-all disabled:opacity-30 disabled:cursor-not-allowed"
                 >
                   <span className="material-symbols-outlined text-2xl text-gray-700">chevron_right</span>
                 </button>

@@ -119,7 +119,7 @@ function Home() {
             <p style={{ color: "#6b7280", marginBottom: 24 }}>
               AI 분석 결과: #전통예술 #야경 #사진명소
             </p>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 12 }}>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8 }}>
               {festivals.filter(f => [201, 750, 272].includes(f.pSeq)).map((f) => (
                 <TownCard
                   key={f.pSeq}

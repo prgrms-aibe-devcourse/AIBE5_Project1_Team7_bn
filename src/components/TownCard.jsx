@@ -30,7 +30,7 @@ export function TownCard({ town, festival, onClick, onMainEventSelect }) {
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       className="
-        group w-full text-left
+        group w-full max-w-[320px] text-left
         rounded-2xl bg-white
         shadow-md hover:shadow-xl
         transition-all
