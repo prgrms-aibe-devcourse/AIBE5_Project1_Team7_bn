@@ -177,7 +177,7 @@ function Festival_List() {
 				{/* FILTERS - 새로운 디자인 */}
 				<aside className="col-span-12 lg:col-span-3 space-y-6">
 					<div className="bg-white rounded-2xl p-6 shadow-sm sticky top-20">
-						<h3 className="font-bold text-2xl mb-6 text-gray-900">Filters</h3>
+						<h3 className="font-bold text-2xl mb-6" style={{ color: '#FF5F33' }}>Filters</h3>
 						<div className="space-y-5">
 							{/* KEYWORD 검색 */}
 							<div>
