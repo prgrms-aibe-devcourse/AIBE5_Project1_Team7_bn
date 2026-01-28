@@ -153,11 +153,14 @@ function After_Home() {
         <div style={{ display: "grid", gridTemplateColumns: "1fr 320px", gap: 15 }}>
           {/* LEFT */}
           <section>
-            <h2 style={{ fontSize: 28, fontWeight: 900, marginBottom: 24 }}>
+            <h2 style={{ fontSize: 28, fontWeight: 900, color: "#666" }}>
               {getUserName()}님을 위한 <span style={{ color: "#FF5F33" }}>노을 한 스푼</span>, 이 축제 어때요? 🌇
             </h2>
+            <p style={{ color: "#6b7280", marginBottom: 24 }}>
+              이전 취향을 바탕으로 AI가 가장 잘 어울리는 축제를 추천했어요.
+            </p>
 
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr 1fr", gap: 5.5 }}>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr 1fr", gap: 8 }}>
               {festivals.slice(0, 4).map((f) => (
                 <TownCard
                   key={f.pSeq}
@@ -176,12 +179,15 @@ function After_Home() {
             </div>
 
             {/* 요즘 난리 난 축제들 섹션 */}
-            <h2 style={{ fontSize: 28, fontWeight: 900, marginTop: 48, marginBottom: 24 }}>
-              요즘 <span style={{ color: "#FF5F33" }}>난리 난 축제들</span>, 놓치면 아쉬워요 😎
+            <h2 style={{ fontSize: 28, fontWeight: 900, marginTop: 48, color: "#666" }}>
+              <span style={{ color: "#FF5F33" }}>요즘 난리 난</span> 축제들 🔥
             </h2>
+            <p style={{ color: "#6b7280", marginBottom: 24 }}>
+              지금 가장 핫한 축제를 확인해보세요
+            </p>
 
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr 1fr", gap: 5.5 }}>
-              {festivals.filter(f => [201, 750, 272, 388].includes(f.pSeq)).map((f) => (
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr 1fr", gap: 8 }}>
+              {festivals.filter(f => [201, 750, 272, 1].includes(f.pSeq)).map((f) => (
                 <TownCard
                   key={f.pSeq}
                   town={{

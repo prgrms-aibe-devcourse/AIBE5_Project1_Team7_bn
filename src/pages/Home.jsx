@@ -114,10 +114,10 @@ function Home() {
           {/* LEFT - 추천 섹션 */}
           <section>
             <h2 style={{ fontSize: 28, fontWeight: 900, marginBottom: 24 }}>
-              요즘 <span style={{ color: "#FF5F33" }}>난리 난 축제들</span>, 놓치면 아쉬워요 😎
+              요즘 난리 난 축제들, 놓치면 아쉬워요 😎
             </h2>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr 1fr", gap: 5.5 }}>
-              {festivals.filter(f => [201, 750, 272, 388].includes(f.pSeq)).map((f) => (
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr 1fr", gap: 8 }}>
+              {festivals.filter(f => [201, 750, 272, 1].includes(f.pSeq)).map((f) => (
                 <TownCard
                   key={f.pSeq}
                   town={{
