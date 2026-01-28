@@ -20,7 +20,7 @@ function Festival_List() {
 		return Math.random() < 1/5;
 	});
 	const navigate = useNavigate();
-	const { user, loginUser } = useStore();
+	const { user, loginUser, likedFestivals, toggleLikeFestival } = useStore();
 	const getUserName = () => {
 		if (user?.name) return user.name;
 		if (loginUser && loginUser !== "google") return loginUser;
@@ -226,7 +226,20 @@ function Festival_List() {
 														<span className="px-2 py-0.5 text-xs font-bold rounded" style={{ backgroundColor: '#FFF9E6', color: '#D4A017' }}>Spectacular</span>
 														<span className="px-2 py-0.5 text-xs font-bold rounded" style={{ backgroundColor: '#E8F5E9', color: '#66BB6A' }}>Night View</span>
 													</div>
-													<button className="text-gray-300 hover:text-red-500 transition-colors bg-gray-50 p-2 rounded-full hover:bg-red-50"><span className="material-symbols-outlined filled">favorite</span></button>
+													<button
+														className={`transition-colors bg-gray-50 p-2 rounded-full ${
+															likedFestivals.some(fest => fest.pSeq === f.pSeq)
+																? "text-red-500"
+																: "text-gray-300"
+														}`}
+														onClick={e => {
+															e.stopPropagation();
+															toggleLikeFestival(f);
+														}}
+														aria-label="찜하기"
+													>
+														<span className="material-symbols-outlined filled">favorite</span>
+													</button>
 												</div>
 												<h3 className="text-2xl font-bold text-[#181411] mb-1 group-hover:text-primary transition-colors">{f.fstvlNm}</h3>
 												<p className="text-gray-500 line-clamp-2 mb-2 leading-relaxed">{f.ministry_description || 'No description available.'}</p>
