@@ -133,7 +133,7 @@ function Calendar() {
   const [loading, setLoading] = useState(false);
   const [isLoading, setIsLoading] = useState(() => {
     // 1/3 확률로 로딩 화면 표시 결정 (초기값으로만 계산)
-    return Math.random() < 1/3;
+    return Math.random() < 1/5;
   });
 
   // 오른쪽 "Upcoming" 패널용 원본(구글 이벤트)

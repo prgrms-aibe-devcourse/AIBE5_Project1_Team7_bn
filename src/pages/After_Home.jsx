@@ -14,7 +14,7 @@ function After_Home() {
   const [selectedFestival, setSelectedFestival] = useState(null);
   const [isLoading, setIsLoading] = useState(() => {
     // 1/3 확률로 로딩 화면 표시 결정 (초기값으로만 계산)
-    return Math.random() < 1/3;
+    return Math.random() < 1/5
   });
 
   const {
@@ -226,9 +226,9 @@ function After_Home() {
               }}
             >
               <h3 style={{ fontWeight: 800 }}>My Festival Calendar</h3>
-              <p style={{ fontSize: 12, color: "#FF5F33", marginBottom: 16 }}>
-                {getUserName()}님의 저장된 일정
-              </p>
+              {/* <p style={{ fontSize: 12, color: "#FF5F33", marginBottom: 16 }}>
+                {getUserName()}님의 저장된 일정
+              </p> */}
 
               {/* 미니 캘린더 */}
               <div style={{

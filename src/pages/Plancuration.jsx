@@ -951,7 +951,8 @@ function Plancuration() {
 
                           {/* 액션 버튼 */}
                           <button
-                            onClick={() => {
+                            onClick={(e) => {
+                              e.stopPropagation();
                               if (!isAlreadyAdded) {
                                 addFestivalToSchedule(currentTripId, currentDayIndex, festival);
                               }

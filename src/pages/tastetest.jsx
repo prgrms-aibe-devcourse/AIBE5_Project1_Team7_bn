@@ -11,7 +11,7 @@ function TasteTest() {
   const { addTasteTestAnswer, clearTasteTestAnswers } = useStore();
   const [isLoading, setIsLoading] = useState(() => {
     // 1/3 확률로 로딩 화면 표시 결정 (초기값으로만 계산)
-    return Math.random() < 1/3;
+    return Math.random() < 1/5;
   });
 
   // 1/3 확률로 로딩 화면 표시
@@ -548,7 +548,7 @@ function TasteTest() {
     },
     cardsContainer: {
       display: "grid",
-      gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
+      gridTemplateColumns: "repeat(3, 1fr)", // 3열 고정
       gap: "24px",
       width: "100%",
       maxWidth: "1400px",

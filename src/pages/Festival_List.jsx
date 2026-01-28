@@ -17,7 +17,7 @@ function Festival_List() {
 	const [region, setRegion] = useState("");
 	const [isLoading, setIsLoading] = useState(() => {
 		// 1/3 확률로 로딩 화면 표시 결정 (초기값으로만 계산)
-		return Math.random() < 1/3;
+		return Math.random() < 1/5;
 	});
 	const navigate = useNavigate();
 	const { user, loginUser } = useStore();

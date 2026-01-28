@@ -43,7 +43,7 @@ function Review() {
   const trips = useStore((state) => state.trips);
   const [isLoading, setIsLoading] = useState(() => {
     // 1/3 확률로 로딩 화면 표시 결정 (초기값으로만 계산)
-    return Math.random() < 1/3;
+    return Math.random() < 1/5;
   });
   
   // 로컬 스토리지에서 초기값 가져오기

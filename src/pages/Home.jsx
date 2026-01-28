@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import festivals from "../data/festivals.json";
-import useStore from "../store/useStore";
 
 import Header_home from "../components/Header_home";
 import { TownCard } from "../components/TownCard";
@@ -12,12 +11,7 @@ import bannerVideo from "../assets/풍랑30.mp4";
 function Home() {
   const navigate = useNavigate();
   const [selectedFestival, setSelectedFestival] = useState(null);
-  const { user, loginUser } = useStore();
-  const getUserName = () => {
-    if (user?.name) return user.name;
-    if (loginUser && loginUser !== "google") return loginUser;
-    return "회원";
-  };
+  // const { user, loginUser } = useStore();
 
   return (
     <div style={{ minHeight: "100vh", backgroundColor: "#f9fafb" }}>
@@ -162,9 +156,9 @@ function Home() {
               }}
             >
               <h3 style={{ fontWeight: 800 }}>My Festival Calendar</h3>
-              <p style={{ fontSize: 12, color: "#FF5F33", marginBottom: 16 }}>
-                {getUserName()}님의 저장된 일정
-              </p>
+              {/* <p style={{ fontSize: 12, color: "#FF5F33", marginBottom: 16 }}>
+                {getUserName()}님의 저장된 일정
+              </p> */}
               
               {/* 미니 캘린더 */}
               <div style={{
