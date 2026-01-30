@@ -472,7 +472,7 @@ Content-Type: application/json
 | 송지훈/한경수 | Frontend Lead | 전체 Frontend 기능 구현 |
 | 이효연 | Design | UI/UX 설계, 브랜딩, 컴포넌트 디자인, 데이터처리 |
 | 손주현 | QA | 테스트, 버그 리포팅 및 수정 |
-| 이병남 | Backend Lead | AI API 연동  |
+| 이병남 | Backend Lead | RAG AI/Typesense Search API 연동  |
 ---
 
 ## 📄 License
@@ -483,7 +483,8 @@ This project is licensed under the MIT License.
 
 ## 🙏 Acknowledgments
 
-- **Google Gemini**: AI 추천 엔진
+- **Claude 3.5**: AI 추천/Persona 엔진
+- **Typesense**: Intelligent Search Engine
 - **FullCalendar**: 일정 관리 라이브러리
 - **shadcn/ui**: UI 컴포넌트 시스템
 - **Pretendard**: 한글 폰트 시스템
@@ -492,4 +493,5 @@ This project is licensed under the MIT License.
 ---
 
 **Made with ❤️ by Festory Team**
+
 
