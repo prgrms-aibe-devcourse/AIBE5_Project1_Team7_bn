@@ -483,7 +483,7 @@ This project is licensed under the MIT License.
 
 ## 🙏 Acknowledgments
 
-- **Claude 3.5**: AI 추천/Persona 엔진
+- **Llama 3.5**: AI 추천/Persona 엔진
 - **Typesense**: Intelligent Search Engine
 - **FullCalendar**: 일정 관리 라이브러리
 - **shadcn/ui**: UI 컴포넌트 시스템
@@ -493,6 +493,7 @@ This project is licensed under the MIT License.
 ---
 
 **Made with ❤️ by Festory Team**
+
 
 
 
